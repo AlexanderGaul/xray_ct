@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.5.1)
+
+project("Part2")
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
+
+IF (WIN32)
+  SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+ELSE()
+  SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+ENDIF()
+
+set(PART2_SOURCES "src/main.cpp")
+set(PART2_HEADERS "")
+
+add_executable(part2 ${PART2_SOURCES} ${PART2_HEADERS})
