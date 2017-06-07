@@ -4,6 +4,7 @@ Git repository for part 2 of the Praktikum: "Image Reconstruction and Visualizat
 How to specifically use this application, additional exernal libraries or code you used etc.
 
 ## Team Members:
- - Someone <someone@somewhere.example>
- - ...
+ - Gaul
+ - Griebel
+ - Hornung
 
