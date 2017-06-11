@@ -19,6 +19,7 @@ public:
           _upperRight(upperRight),
           _sp(sp)
     {
+
     }
 
     Eigen::AlignedBox3f getBoundingBox() const
@@ -33,9 +34,9 @@ public:
 
     Eigen::Vector3i getNumVoxels() const
     {
-        int x = floor((_lowerLeft[0]-_upperRight[0])/_sp[0]);
-        int y = floor((_lowerLeft[1]-_upperRight[1])/_sp[1]);
-        int z = floor((_lowerLeft[2]-_upperRight[2])/_sp[2]);
+        int x = abs(floor((_lowerLeft[0]-_upperRight[0])/_sp[0]));
+        int y = abs(floor((_lowerLeft[1]-_upperRight[1])/_sp[1]));
+        int z = abs(floor((_lowerLeft[2]-_upperRight[2])/_sp[2]));
         return Eigen::Vector3i(x, y, z);
     }
 
