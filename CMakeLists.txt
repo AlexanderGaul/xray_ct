@@ -17,8 +17,17 @@ ELSE()
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 ENDIF()
 
-set(ACQ_SRCS src/acq/AcquisitionModel.cpp)
-set(ACQ_HDRS src/acq/AcquisitionModel.h)
+
+
+set(ACQ_SRCS
+        src/edf/EDFhandler.cpp
+        src/acq/AcquisitionModel.cpp)
+set(ACQ_HDRS
+        src/edf/EDFhandler.h
+        src/edf/IOutilities.h
+        src/edf/Volume.h
+        src/acq/AcquisitionModel.h
+        )
 
 set(GUI_SRCS src/gui/MainWindow.cpp src/gui/AcquisitionWidget.cpp)
 set(GUI_HDRS src/gui/MainWindow.h src/gui/MainWindow.h)
@@ -32,7 +41,7 @@ set(CMAKE_AUTOMOC ON)
 set(PART2_SOURCES src/main.cpp ${ACQ_SRCS} ${GUI_SRCS})
 set(PART2_HEADERS ${ACQ_HDRS} ${GUI_HDRS})
 
-add_executable(part2 ${PART2_SOURCES} ${PART2_HEADERS})
+add_executable(part2 ${PART2_HEADERS} ${PART2_SOURCES} )
 target_link_libraries(part2 Qt5::Widgets)
 #add_executable(part2_tests ${PART2_TEST_SRCS} ${PART2_HEADERS} src/catch.hpp)
 #target_link_libraries(part2_tests Qt5::Widgets)
