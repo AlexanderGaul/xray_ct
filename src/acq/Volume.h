@@ -19,7 +19,6 @@ public:
           _upperRight(upperRight),
           _sp(sp)
     {
-
     }
 
     Eigen::AlignedBox3f getBoundingBox() const
