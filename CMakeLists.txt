@@ -18,14 +18,13 @@ ELSE()
 ENDIF()
 
 
-
 set(ACQ_SRCS
-        src/edf/EDFhandler.cpp
+        src/acq/EDFhandler.cpp
         src/acq/AcquisitionModel.cpp)
 set(ACQ_HDRS
-        src/edf/EDFhandler.h
-        src/edf/IOutilities.h
-        src/edf/Volume.h
+        src/acq/EDFhandler.h
+        src/acq/IOutilities.h
+        src/acq/Volume.h
         src/acq/AcquisitionModel.h
         )
 
@@ -42,6 +41,7 @@ set(PART2_SOURCES src/main.cpp ${ACQ_SRCS} ${GUI_SRCS})
 set(PART2_HEADERS ${ACQ_HDRS} ${GUI_HDRS})
 
 add_executable(part2 ${PART2_HEADERS} ${PART2_SOURCES} )
+set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(part2 Qt5::Widgets)
 #add_executable(part2_tests ${PART2_TEST_SRCS} ${PART2_HEADERS} src/catch.hpp)
 #target_link_libraries(part2_tests Qt5::Widgets)

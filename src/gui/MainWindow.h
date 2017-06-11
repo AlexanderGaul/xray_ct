@@ -1,15 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
+#include <QImage>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QString>
 #include <QVBoxLayout>
 
 #include "AcquisitionWidget.h"
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow() {
+    MainWindow()
+    {
         QVBoxLayout* layout = new QVBoxLayout;
 
         QHBoxLayout* topLayout = new QHBoxLayout;
@@ -28,6 +33,12 @@ public:
         rootWidget->setLayout(layout);
         setCentralWidget(rootWidget);
     }
+
+    void loadImage(std::string path)
+    {
+        aWidget.loadImage(path);
+    }
+
 public slots:
     
 private slots:

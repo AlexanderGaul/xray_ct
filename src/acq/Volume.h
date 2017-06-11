@@ -43,6 +43,7 @@ public:
     {
         return _content;
     }
+
     void setContent(const Eigen::VectorXf& content)
     {
         _content = content;
