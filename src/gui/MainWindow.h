@@ -13,7 +13,8 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow()
+    MainWindow(std::string path)
+        : _aWidget(path)
     {
         QVBoxLayout* layout = new QVBoxLayout;
 
@@ -34,17 +35,13 @@ public:
         setCentralWidget(rootWidget);
     }
 
-    void loadImage(std::string path)
-    {
-        aWidget.loadImage(path);
-    }
 
 public slots:
     
 private slots:
     
 private:
-    AcquisitionWidget aWidget;
+    AcquisitionWidget _aWidget;
     QPushButton* _aButton;
     QPushButton* _rButton;
     QPushButton* _vButton;

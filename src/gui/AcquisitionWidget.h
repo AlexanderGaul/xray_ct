@@ -17,11 +17,6 @@ public:
     {
     }
 
-    void loadImage(std::string path)
-    {
-        _aModel.loadImage(path);
-    }
-
 private:
     AcquisitionModel _aModel;
 };

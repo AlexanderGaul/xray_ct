@@ -13,8 +13,7 @@ int main(int argc, char *argv[]){
     }
 
     QApplication a(argc, argv);
-    MainWindow w;
-    w.loadImage(argv[1]);
+    MainWindow w(argv[1]);
     w.show();
 
     return a.exec();
