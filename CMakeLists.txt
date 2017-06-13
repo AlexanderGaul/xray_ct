@@ -20,12 +20,14 @@ ENDIF()
 
 set(ACQ_SRCS
         src/acq/EDFhandler.cpp
-        src/acq/AcquisitionModel.cpp)
+        src/acq/AcquisitionModel.cpp
+        src/acq/AcquisitionPose.cpp)
 set(ACQ_HDRS
         src/acq/EDFhandler.h
         src/acq/IOutilities.h
         src/acq/Volume.h
         src/acq/AcquisitionModel.h
+        src/acq/AcquisitionPose.h
         )
 
 set(GUI_SRCS src/gui/MainWindow.cpp src/gui/AcquisitionWidget.cpp)
