@@ -30,7 +30,7 @@ void AcquisitionPose::updatePose()
     src_ = rotation_ * Eigen::Vector3f(- s2dd_ / 2.f, 0.f, 0.f) + center_;
     det_ = rotation_ * Eigen::Vector3f(s2dd_ / 2.f, 0.f, 0.f) + center_;
     det_normal_ = rotation_ * Eigen::Vector3f(-1.f, 0.f, 0.f);
-    det_upl_ = rotation_ * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, 0.f) + center_;
+    det_upl_ = rotation_ * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, det_height_ / 2.f) + center_;
 }
 
 void AcquisitionPose::setCenter(Eigen::Vector3f center)
@@ -50,16 +50,7 @@ Eigen::Vector3f AcquisitionPose::getDetectorUpperLeft()
 }
 Eigen::Vector3f AcquisitionPose::getDetectorLowerRight()
 {
-    Eigen::Matrix3f rot;
-    rot <<  0, -1, 0,
-            1, 0, 0,
-            0, 0, 1;
-    Eigen::Vector3f offset_x = rot * det_normal_ * (det_width_ / 2.f);
-    rot <<  0, 0, 1,
-            0, 1, 0,
-            -1, 0, 0;
-    Eigen::Vector3f offset_y = rot * det_normal_ * (det_height_ / 2.f);
-    return det_ + offset_x + offset_y;
+    return rotation_ * Eigen::Vector3f(s2dd_ / 2.f, -det_width_ / 2.f, -det_height_ / 2.f) + center_;
 }
 
 Eigen::ParametrizedLine<float, 3> AcquisitionPose::getRay(int horizontal, int vertical)
