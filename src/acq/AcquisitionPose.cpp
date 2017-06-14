@@ -6,6 +6,7 @@ AcquisitionPose::AcquisitionPose(float s2dd, float det_w, float det_h, int pixel
     src_(- s2dd / 2.f, 0.f, 0.f), 
     det_(s2dd / 2.f, 0.f, 0.f),
     det_normal_(-1.f, 0.f, 0.f),
+    det_upl_(s2dd/2.f, det_w/2.f, det_h/2.f),
     det_width_(det_w), 
     det_height_(det_h), 
     pxl_horizontal_(pixel_h), 
