@@ -177,8 +177,7 @@ Volume EDFHandler::read(const std::string& filename)
     Eigen::Vector3f lowerLeft = Eigen::Vector3f::Zero();
     Eigen::Vector3f upperRight = lowerLeft + (dimSizes.cast<float>().array() * dimSpacing.array() ).matrix();
 
-    Volume vol(lowerLeft, upperRight, dimSpacing);
-    vol.setContent(data);
+    Volume vol(lowerLeft, upperRight, dimSpacing, std::move(data));
 
     return vol;
 }
@@ -227,7 +226,7 @@ void EDFHandler::write(const std::string& filename, const Volume& vol)
     file << "\n}\n";
 
     // write the volume data
-    file.write(reinterpret_cast<const char*>(vol.getContent().data()), vol.getNumVoxels().prod() * sizeof(float) );
+    file.write(reinterpret_cast<const char*>(vol.content().rawData()), vol.getNumVoxels().prod() * sizeof(float) );
     file.close();
 }
 
