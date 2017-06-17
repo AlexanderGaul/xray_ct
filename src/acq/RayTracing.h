@@ -32,10 +32,6 @@ class RayTracing
     //calculates the forwardProjection of the given ray and the given box
     static float forwardProject(const Volume& box, const Line3f& ray);
     
-    static Eigen::Vector3f maxVoxel(Eigen::Vector3f direction){
-        
-    }
-    
 };
 
 #endif // RAYTRACING_H
