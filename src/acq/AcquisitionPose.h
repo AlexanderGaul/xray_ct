@@ -32,7 +32,7 @@ public:
     Eigen::Vector3f getSourcePosition();
     Eigen::Vector3f getDetectorCenter();
 
-    void setCenter(Eigen::Vector3f center);
+    void setCenter(const Eigen::Vector3f& center);
     void setRotation(float rotation);
     
     Eigen::Vector3f getDetectorUpperLeft();

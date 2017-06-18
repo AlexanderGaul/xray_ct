@@ -9,7 +9,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(Eigen3 REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui)
+include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src)
+
 
 IF (WIN32)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
@@ -47,3 +48,13 @@ set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(part2 Qt5::Widgets)
 #add_executable(part2_tests ${PART2_TEST_SRCS} ${PART2_HEADERS} src/catch.hpp)
 #target_link_libraries(part2_tests Qt5::Widgets)
+
+
+set(ACQ_POSE_SRC src/acq/AcquisitionPose.cpp)
+add_library(acq_pose_lib ${ACQ_POSE_SRC})
+
+set(ACQ_POSE_TEST_SRC src/tests/acq_pose_tests.cpp)
+add_executable(acq_pose_tests ${ACQ_POSE_TEST_SRC})
+target_link_libraries(acq_pose_tests acq_pose_lib)
+
+

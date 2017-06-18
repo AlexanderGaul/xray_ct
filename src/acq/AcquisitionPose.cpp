@@ -34,7 +34,7 @@ void AcquisitionPose::updatePose()
     det_upl_ = rotation_ * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, det_height_ / 2.f) + center_;
 }
 
-void AcquisitionPose::setCenter(Eigen::Vector3f center)
+void AcquisitionPose::setCenter(const Eigen::Vector3f& center)
 {
     center_ = center;
     updatePose();

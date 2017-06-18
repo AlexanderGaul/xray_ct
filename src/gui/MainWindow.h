@@ -10,11 +10,12 @@
 #include <QVBoxLayout>
 
 #include "AcquisitionWidget.h"
+#include "PoseViewer.h"
 
 class MainWindow : public QMainWindow {
 public:
     MainWindow(std::string path)
-        : _aWidget(path)
+  //      : _aWidget(path)
     {
         QVBoxLayout* layout = new QVBoxLayout;
 
@@ -24,9 +25,13 @@ public:
         _rButton = new QPushButton("REC");
         _vButton = new QPushButton("VIS");
 
+        _pose_viewer = new PoseViewer();
+
         topLayout->addWidget(_aButton);
         topLayout->addWidget(_rButton);
         topLayout->addWidget(_vButton);
+
+        topLayout->addWidget(_pose_viewer);
 
         layout->addItem(topLayout);
 
@@ -45,6 +50,10 @@ private:
     QPushButton* _aButton;
     QPushButton* _rButton;
     QPushButton* _vButton;
+
+
+    PoseViewer* _pose_viewer;
+
 };
 
 #endif // MAINWINDOW_H
