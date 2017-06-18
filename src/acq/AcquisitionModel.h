@@ -28,6 +28,8 @@ private:
         }
         return true;
     }
+    
+    
 
 public:
     AcquisitionModel()
@@ -55,6 +57,7 @@ public:
     }
 
 private:
+    
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
     Volume _volume;
