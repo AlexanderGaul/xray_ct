@@ -26,6 +26,7 @@ class RayTracing
     static constexpr float nanConst = std::numeric_limits<float>::has_signaling_NaN ?
             std::numeric_limits<float>::signaling_NaN() : std::numeric_limits<float>::quiet_NaN();
     
+public:
     //return t so that ray.pointAt(t) is the actual intersection point
     static float boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
