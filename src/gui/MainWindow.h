@@ -11,7 +11,6 @@
 
 #include "AcquisitionWidget.h"
 #include "PoseViewer.h"
-#include "PoseWidget.h"
 
 class MainWindow : public QMainWindow {
 public:
@@ -19,40 +18,35 @@ public:
         : _aWidget(path)
     {
 
+        /*
+        // TEST FOR POSEVIEWER WITH MEMORY LEAK
+
         QTabWidget* tabWidget = new QTabWidget();
 
-        //_pose_viewer = new PoseViewer();
-        PoseWidget* widget = new PoseWidget();
+        AcquisitionPose* pose = new AcquisitionPose();
+        PoseViewer* widget = new PoseViewer(pose);
         tabWidget->addTab(widget, tr("Acquisition"));
         setCentralWidget(tabWidget);
+        */
 
 
-
-        //QVBoxLayout* mainLayout = new QVBoxLayout;
-        //mainLayout->addWidget(tabWidget);
-        //setLayout(mainLayout);
-
-        /*
-        QVBoxLayout* layout = new GridLayout;
+        QVBoxLayout* layout = new QVBoxLayout;
         QHBoxLayout* topLayout = new QHBoxLayout;
 
         _aButton = new QPushButton("ACQ");
         _rButton = new QPushButton("REC");
         _vButton = new QPushButton("VIS");
 
-        _pose_viewer = new PoseViewer();
-
         topLayout->addWidget(_aButton);
         topLayout->addWidget(_rButton);
         topLayout->addWidget(_vButton);
-
-        topLayout->addWidget(_pose_viewer);
 
         layout->addItem(topLayout);
 
         QWidget* rootWidget = new QWidget;
         rootWidget->setLayout(layout);
-        */
+        setCentralWidget(rootWidget);
+        
     }
 
 
@@ -66,8 +60,6 @@ private:
     QPushButton* _rButton;
     QPushButton* _vButton;
 
-
-    PoseViewer* _pose_viewer;
 
 };
 

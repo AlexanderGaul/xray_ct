@@ -29,8 +29,6 @@ set(ACQ_SRCS
         src/acq/AcquisitionModel.cpp
         src/acq/AcquisitionPose.cpp
         src/acq/RayTracing.cpp
-        src/acq/PoseViewer.cpp
-        src/acq/PoseWidget.cpp
         )
 set(ACQ_HDRS
         src/acq/EDFhandler.h
@@ -39,12 +37,21 @@ set(ACQ_HDRS
         src/acq/AcquisitionModel.h
         src/acq/AcquisitionPose.h
         src/acq/RayTracing.h
-        src/acq/PoseViewer.h
-        src/acq/PoseWidget.h
         )
 
-set(GUI_SRCS src/gui/MainWindow.cpp src/gui/AcquisitionWidget.cpp)
-set(GUI_HDRS src/gui/MainWindow.h src/gui/MainWindow.h)
+set(GUI_SRCS 
+        src/gui/MainWindow.cpp 
+        src/gui/AcquisitionWidget.cpp
+        src/gui/PoseViewer.cpp
+        src/gui/PoseDisplay.cpp
+        )
+set(GUI_HDRS 
+        src/gui/MainWindow.h 
+        src/gui/AcquisitionWidget.h
+        src/gui/PoseViewer.h
+        src/gui/PoseDisplay.h
+
+        )
 set(PART2_TEST_SOURCES test/test_RayTracing.cpp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -61,11 +68,13 @@ target_link_libraries(part2_lib Qt5::Widgets)
 add_executable(part2 src/main.cpp )
 set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 
+target_link_libraries(part2 part2_lib Qt5::Widgets)
 
-target_link_libraries(part2 Qt5::Widgets)
-#add_executable(part2_tests ${PART2_TEST_SRCS} ${PART2_HEADERS} src/catch.hpp)
-#target_link_libraries(part2_tests Qt5::Widgets)
 
-add_executable(part2_tests_pose ${PART2_TEST_SOURCES})
-target_link_libraries(part2_tests_pose part2_lib Catch Qt5::Widgets)
+#set(POSE_TEST test/acq_pose_tests.cpp)
+#add_executable(pose_test ${POSE_TEST} src/catch.hpp)
+#target_link_libraries(pose_test part2_lib Qt5::Widgets)
+
+add_executable(part2_test ${PART2_TEST_SOURCES})
+target_link_libraries(part2_test part2_lib Catch Qt5::Widgets)
 
