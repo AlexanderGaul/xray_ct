@@ -1,5 +1,9 @@
 #include "AcquisitionPose.h"
 
+AcquisitionPose::AcquisitionPose() :
+    AcquisitionPose(0.5f, 0.2f, 0.2f, 5, 5)
+{
+}
 
 AcquisitionPose::AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v) :
     s2dd_(s2dd),
@@ -25,6 +29,17 @@ Eigen::Vector3f AcquisitionPose::getDetectorCenter()
 {
     return det_;
 }
+float AcquisitionPose::getDetectorWidth()
+{ return det_width_;}
+Eigen::Vector3f AcquisitionPose::getCenter()
+{ return center_;}
+float AcquisitionPose::getRotation()
+{ return rotation_.angle(); }
+int AcquisitionPose::getPixelHorizontal()
+{ return pxl_horizontal_; }
+int AcquisitionPose::getPixelVertical()
+{ return pxl_vertical_; }
+
 
 void AcquisitionPose::updatePose()
 {
@@ -56,6 +71,16 @@ Eigen::Vector3f AcquisitionPose::getDetectorLowerRight()
 
 Eigen::ParametrizedLine<float, 3> AcquisitionPose::getRay(int horizontal, int vertical)
 {
+    Eigen::Vector3f pixel_center = getPixelCenter(horizontal, vertical);
+
+    Eigen::Vector3f dir = pixel_center - getSourcePosition();
+    dir.normalize();
+
+    return Eigen::ParametrizedLine<float, 3>(getSourcePosition(), dir);
+}
+
+Eigen::Vector3f AcquisitionPose::getPixelCenter(int horizontal, int vertical)
+{
     Eigen::Vector3f right = rotation_ * Eigen::Vector3f(0.f, -1.f, 0.f);
     Eigen::Vector3f down = rotation_ * Eigen::Vector3f(0.f, 0.f, -1.f);
 
@@ -64,8 +89,5 @@ Eigen::ParametrizedLine<float, 3> AcquisitionPose::getRay(int horizontal, int ve
 
     Eigen::Vector3f pixel_center = getDetectorUpperLeft() + pxl_dist_h * (1. / 2.) + pxl_dist_h * horizontal + pxl_dist_v * (1. / 2.) + pxl_dist_v * vertical;
 
-    Eigen::Vector3f dir = pixel_center - getSourcePosition();
-    dir.normalize();
-
-    return Eigen::ParametrizedLine<float, 3>(getSourcePosition(), dir);
+    return pixel_center;
 }

@@ -6,7 +6,7 @@
 #include "gui/MainWindow.h"
 
 int main(int argc, char *argv[]){
-    /*
+   	/*
     if(argc < 2)
     {
         std::cerr << "ERROR: \t No .edf image file provided" << std::endl;

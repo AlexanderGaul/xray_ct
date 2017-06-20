@@ -1,13 +1,28 @@
 #pragma once
 
-#include "AcquisitonPose"
+#include <QWidget>
+#include <QPainter>
 
 
-class PoseViewer : public Widget
+#include "AcquisitionPose.h"
+
+
+class PoseViewer : public QWidget
 {
+	Q_OBJECT
+private:
+    bool show_rays_;
+    float zoom_ = 1000;
+
 public:
-	AcquisitionPose pose_;
 
-	virtual void paintEvent(QPaintEvent* event);
+    AcquisitionPose pose_;
 
+    PoseViewer();
+
+    virtual void paintEvent(QPaintEvent* event);
+
+public slots:
+	void setShowRays(int state);
+	void setZoom(int zoom);
 };

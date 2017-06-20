@@ -11,14 +11,29 @@
 
 #include "AcquisitionWidget.h"
 #include "PoseViewer.h"
+#include "PoseWidget.h"
 
 class MainWindow : public QMainWindow {
 public:
     MainWindow(std::string path)
-  //      : _aWidget(path)
+        : _aWidget(path)
     {
-        QVBoxLayout* layout = new QVBoxLayout;
 
+        QTabWidget* tabWidget = new QTabWidget();
+
+        //_pose_viewer = new PoseViewer();
+        PoseWidget* widget = new PoseWidget();
+        tabWidget->addTab(widget, tr("Acquisition"));
+        setCentralWidget(tabWidget);
+
+
+
+        //QVBoxLayout* mainLayout = new QVBoxLayout;
+        //mainLayout->addWidget(tabWidget);
+        //setLayout(mainLayout);
+
+        /*
+        QVBoxLayout* layout = new GridLayout;
         QHBoxLayout* topLayout = new QHBoxLayout;
 
         _aButton = new QPushButton("ACQ");
@@ -37,7 +52,7 @@ public:
 
         QWidget* rootWidget = new QWidget;
         rootWidget->setLayout(layout);
-        setCentralWidget(rootWidget);
+        */
     }
 
 

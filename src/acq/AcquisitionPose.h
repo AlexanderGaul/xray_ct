@@ -27,10 +27,17 @@ private:
 
 
 public:
+    AcquisitionPose();
     AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v);
 
     Eigen::Vector3f getSourcePosition();
     Eigen::Vector3f getDetectorCenter();
+    float getDetectorWidth();
+
+    Eigen::Vector3f getCenter();
+    float getRotation();
+    int getPixelHorizontal();
+    int getPixelVertical();
 
     void setCenter(const Eigen::Vector3f& center);
     void setRotation(float rotation);
@@ -39,6 +46,8 @@ public:
     Eigen::Vector3f getDetectorLowerRight();
     
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical);
+    Eigen::Vector3f getPixelCenter(int horizontal, int vertical);
+
 };
 
 #endif

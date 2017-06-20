@@ -1,33 +1,97 @@
 
 
-void PoseWidget::paintEvent(QPainterEvent* p_e)
+#include <iostream>
+#include "PoseViewer.h"
+
+PoseViewer::PoseViewer() :
+    show_rays_(false),
+    zoom_(500)
+{
+
+}
+
+void PoseViewer::paintEvent(QPaintEvent* p_e)
 {
 	QPainter painter(this);
+    QPen pen;
+
+
 
     // xc and yc are the center of the widget's rect.
-    qreal xc = width() * 0.5;
-    qreal yc = height() * 0.5;
+    float x_center = width() * 0.5;
+    float y_center = height() * 0.5;
 
     painter.setPen(Qt::black);
 
     // draw the cross lines.
-    painter.drawLine(xc, rect().top(), xc, rect().bottom());
-    painter.drawLine(rect().left(), yc, rect().right(), yc);
+    painter.drawLine(x_center, rect().top(), x_center, rect().bottom());
+    painter.drawLine(rect().left(), y_center, rect().right(), y_center);
 
+    painter.resetTransform();
+    painter.setPen(Qt::black);
+    if(show_rays_){
+        for(int i = 0; i < pose_.getPixelHorizontal(); i++)
+        {
+            Eigen::Vector3f pixel = pose_.getPixelCenter(i, 0);
+            painter.drawLine(
+                x_center + pose_.getSourcePosition()(0) * zoom_, 
+                y_center - pose_.getSourcePosition()(1) * zoom_, 
+                x_center + pixel(0) * zoom_, 
+                y_center - pixel(1) * zoom_);
+        }
+    }
+    
     painter.setBrush(Qt::white);
-    painter.setPen(Qt::blue);
 
-    // Draw a 13x17 rectangle rotated to 45 degrees around its center-point
-    // in the center of the canvas.
+    //painter.translate(x_center, y_center);
 
-    // translates the coordinate system by xc and yc
-    painter.translate(xc, yc);
+    pen.setColor(Qt::red);
+    pen.setWidth(2);
+    
+    painter.resetTransform();
+    painter.translate(
+        x_center + pose_.getSourcePosition()(0) * zoom_,
+        y_center - pose_.getSourcePosition()(1) * zoom_
+    );
+    painter.setPen(pen);
+    painter.drawEllipse(-2, -2, 4, 4);
 
-    // then rotate the coordinate system by 45 degrees
-    painter.rotate(45);
+
+    painter.resetTransform();
+    pen.setColor(Qt::blue);
+    painter.setPen(pen);
+
+    //painter.setWidth(2)
+
+    pose_.setRotation(M_PI * 0.25);
+   
+    painter.translate(
+        x_center + pose_.getDetectorCenter()(0) * zoom_, 
+        y_center - pose_.getDetectorCenter()(1) * zoom_
+       );
+    painter.rotate(-pose_.getRotation() / M_PI * 180);
 
     // we need to move the rectangle that we draw by rx and ry so it's in the center.
-    qreal rx = -(13 * 0.5);
-    qreal ry = -(17 * 0.5);
-    painter.drawRect(QRect(rx, ry, 2, 50));
+    float rx = 0;
+    float ry = -pose_.getDetectorWidth() * zoom_ * 0.5;
+    painter.drawRect(QRect(rx, ry, 4, pose_.getDetectorWidth() * zoom_));
+  
+}
+
+void PoseViewer::setShowRays(int state)
+{
+    if(state == 0)
+    {
+        show_rays_ = false;
+    }
+    else
+    {
+        show_rays_ = true;
+    }
+    update();
+}
+void PoseViewer::setZoom(int zoom)
+{
+    zoom_ = zoom * 5;
+    update();
 }

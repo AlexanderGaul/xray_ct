@@ -23,7 +23,10 @@ set(ACQ_SRCS
         src/acq/EDFhandler.cpp
         src/acq/AcquisitionModel.cpp
         src/acq/AcquisitionPose.cpp
-        src/acq/RayTracing.cpp)
+        src/acq/RayTracing.cpp
+        src/acq/PoseViewer.cpp
+        src/acq/PoseWidget.cpp
+        )
 set(ACQ_HDRS
         src/acq/EDFhandler.h
         src/acq/IOutilities.h
@@ -31,6 +34,8 @@ set(ACQ_HDRS
         src/acq/AcquisitionModel.h
         src/acq/AcquisitionPose.h
         src/acq/RayTracing.h
+        src/acq/PoseViewer.h
+        src/acq/PoseWidget.h
         )
 
 set(GUI_SRCS src/gui/MainWindow.cpp src/gui/AcquisitionWidget.cpp)
@@ -50,13 +55,5 @@ set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(part2 Qt5::Widgets)
 #add_executable(part2_tests ${PART2_TEST_SRCS} ${PART2_HEADERS} src/catch.hpp)
 #target_link_libraries(part2_tests Qt5::Widgets)
-
-
-set(ACQ_POSE_SRC src/acq/AcquisitionPose.cpp)
-add_library(acq_pose_lib ${ACQ_POSE_SRC})
-
-set(ACQ_POSE_TEST_SRC src/tests/acq_pose_tests.cpp)
-add_executable(acq_pose_tests ${ACQ_POSE_TEST_SRC})
-target_link_libraries(acq_pose_tests acq_pose_lib)
 
 
