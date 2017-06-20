@@ -42,11 +42,11 @@ private:
     }
     
     void checkInvariant(size_t vecSize) const{
-        if(vecSize != (sizeX() + 1) * (sizeY() + 1) * (sizeZ() + 1)){
+        if(vecSize != (sizeX()) * (sizeY()) * (sizeZ())){
             std::string exText {"The vector given as argument of the Vec3D constructor has size "};
             exText += vecSize;
             exText += " but the given size parameters indicate a size of ";
-            exText += (sizeX() + 1) * (sizeY() + 1) * (sizeZ() + 1);
+            exText += (sizeX()) * (sizeY()) * (sizeZ());
 
             throw std::length_error {exText};
         }
@@ -56,23 +56,23 @@ public:
     
     Vec3D () : _sizes{size_vector_type::Zero()}, _content {} {    }
     
-    Vec3D (index_type maxX, index_type maxY, index_type maxZ, const vector_type& vec) 
-    : Vec3D {size_vector_type {maxX, maxY, maxZ}, vec} {
+    Vec3D (index_type sizeX, index_type sizeY, index_type sizeZ, const vector_type& vec)
+    : Vec3D {size_vector_type {sizeX, sizeY, sizeZ}, vec} {
         
     }
     
-    Vec3D (index_type maxX, index_type maxY, index_type maxZ, vector_type&& vec) 
-    : Vec3D {size_vector_type {maxX, maxY, maxZ}, std::move(vec)} {
+    Vec3D (index_type sizeX, index_type sizeY, index_type sizeZ, vector_type&& vec)
+    : Vec3D {size_vector_type {sizeX, sizeY, sizeZ}, std::move(vec)} {
         
     }
     
-    Vec3D (Eigen::Vector3i maxDims, const vector_type& vec) 
-    : _sizes {maxDims}, _content {vec} {
+    Vec3D (Eigen::Vector3i sizeDims, const vector_type& vec)
+    : _sizes {sizeDims}, _content {vec} {
         checkInvariant(vec.size());
     }
     
-    Vec3D (Eigen::Vector3i maxDims, vector_type&& vec) 
-    : _sizes {maxDims}, _content {} {
+    Vec3D (Eigen::Vector3i sizeDims, vector_type&& vec)
+    : _sizes {sizeDims}, _content {} {
         checkInvariant(vec.size());
         //move only when the invariant was already checked
         _content = std::move(vec);
