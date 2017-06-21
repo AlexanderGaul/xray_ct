@@ -1,5 +1,8 @@
 //#include <algorithm>
+#include <iostream>
+
 #include "PoseDisplay.h"
+
 
 void PoseDisplay::paintEvent(QPaintEvent* p_e)
 {
@@ -25,12 +28,15 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     if(show_rays_){
         for(int i = 0; i < pose_->getPixelHorizontal(); i++)
         {
-            Eigen::Vector3f pixel = pose_->getPixelCenter(i, 0);
-            painter.drawLine(
-                x_center + pose_->getSourcePosition()(0) * zoom_, 
-                y_center - pose_->getSourcePosition()(1) * zoom_, 
-                x_center + pixel(0) * zoom_, 
-                y_center - pixel(1) * zoom_);
+            for(int j = 0; j < pose_->getPixelVertical(); j++)
+            {
+                Eigen::Vector3f pixel = pose_->getPixelCenter(i, j);
+                painter.drawLine(
+                    x_center + pose_->getSourcePosition()(0) * zoom_, 
+                    y_center - pose_->getSourcePosition()(1) * zoom_, 
+                    x_center + pixel(0) * zoom_, 
+                    y_center - pixel(1) * zoom_);
+            }
         }
     }
     
@@ -50,10 +56,31 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     painter.drawEllipse(-2, -2, 4, 4);
 
 
+
+
     painter.resetTransform();
     pen.setColor(Qt::blue);
     painter.setPen(pen);
 
+    //painter.scale(zoom_, zoom_);
+    
+    Eigen::Vector3f detCorners[4];
+    detCorners[0] = pose_->getDetectorUpperLeft();
+    detCorners[1] = pose_->getDetectorLowerLeft();
+    detCorners[2] = pose_->getDetectorLowerRight();
+    detCorners[3] = pose_->getDetectorUpperRight();
+    for(int i = 0; i < 4; i++)
+    {
+        painter.drawLine(
+            x_center + detCorners[i](0) * zoom_,
+            y_center - detCorners[i](1) * zoom_,
+            x_center + detCorners[(i + 1) % 4](0) * zoom_,
+            y_center - detCorners[(i + 1) % 4](1) * zoom_  
+        );
+    }
+    
+    
+    /*
     //painter.setWidth(2)
     painter.translate(
         x_center + pose_->getDetectorCenter()(0) * zoom_, 
@@ -65,8 +92,9 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     float rx = 0;
     float ry = -pose_->getDetectorWidth() * zoom_ * 0.5;
     painter.drawRect(QRect(rx, ry, 4, pose_->getDetectorWidth() * zoom_));
-  
+    */
 }
+
 
 
 void PoseDisplay::setShowRays(int state)
@@ -90,7 +118,7 @@ void PoseDisplay::setZoom(int zoom)
 void PoseDisplay::setPose(AcquisitionPose* pose)
 {
     pose_ = pose;
-    //update();
+    update();
 }
 
 
@@ -98,4 +126,39 @@ PoseDisplay::PoseDisplay() :
     show_rays_(false),
     zoom_(500),
     pose_(nullptr)
-{}
+{
+    setFocusPolicy(Qt::ClickFocus);
+    //grabKeyboard();
+}
+/*
+void PoseDisplay::mousePressEvent(QMouseEvent* event)
+{
+    grabKeyboard();
+}*/
+
+void PoseDisplay::keyPressEvent(QKeyEvent* event)
+{
+    if(pose_ != nullptr)
+    {       
+        if(event->key() == Qt::Key_Left)
+        {
+            pose_->setRotationLocalY(pose_->getRotationLocalY() + 0.1f);
+            update();
+        }
+        else if(event->key() == Qt::Key_Right)
+        {
+            pose_->setRotationLocalY(pose_->getRotationLocalY() - 0.1f);
+            update();
+        }
+        else if(event->key() == Qt::Key_Up)
+        {
+            pose_->setRotationGlobalZ(pose_->getRotationGlobalZ() + 0.1f);
+            update();
+        }
+        else if(event->key() == Qt::Key_Down)
+        {
+            pose_->setRotationGlobalZ(pose_->getRotationGlobalZ() - 0.1f);
+            update();
+        }
+    }
+}

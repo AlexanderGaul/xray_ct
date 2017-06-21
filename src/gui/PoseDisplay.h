@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QKeyEvent>
 
 #include "AcquisitionPose.h"
 
@@ -16,8 +17,11 @@ private:
 public:
 	PoseDisplay();
 	void setPose(AcquisitionPose* pose_);
-	virtual void paintEvent(QPaintEvent* event);
 
+	virtual void paintEvent(QPaintEvent* event);
+	
+	virtual void keyPressEvent(QKeyEvent* event);
+	//virtual void mousePressEvent(QMouseEvent *event);	
 public slots:
 	void setShowRays(int state);
 	void setZoom(int zoom);

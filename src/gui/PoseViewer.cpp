@@ -6,6 +6,7 @@
 PoseViewer::PoseViewer(AcquisitionPose* pose) :
     PoseViewer()
 {
+    pose_ = pose;
     pose_display_->setPose(pose);
 }
 
@@ -38,4 +39,6 @@ PoseViewer::PoseViewer()
 void PoseViewer::setPose(AcquisitionPose* pose)
 {
     pose_display_->setPose(pose);
+    pose_ = pose;
 }
+
