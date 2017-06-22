@@ -1,11 +1,12 @@
-#ifndef DATACONTAINER_H
-#define DATACONTAINER_H
+#pragma once
 
+#include <Eigen/Eigen>
 
 class DataContainer
 {
 public:
     DataContainer();
-};
 
-#endif // DATACONTAINER_H
+    virtual
+    void mult(Eigen::Vector3f vector) = 0;
+};
