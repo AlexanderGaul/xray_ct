@@ -21,9 +21,8 @@ TEST_CASE("test ray tracing")
         Eigen::Vector3f origin(0.5, 0.5, -1);
         Eigen::Vector3f direction(0, 0, 1);
         Eigen::ParametrizedLine<float, 3> ray(origin, direction);
-        float scaling = RayTracing::boxIntersect(box, ray);
 
-        REQUIRE(scaling == Approx(1.0));
+        REQUIRE(RayTracing::boxIntersect(box, ray) == Eigen::Vector3f(0.5, 0.5, 1));
     }
     SECTION("askew line")
     {
@@ -31,14 +30,7 @@ TEST_CASE("test ray tracing")
         Eigen::Vector3f origin(1, 1, -1);
         Eigen::Vector3f direction(-0.5, -0.5, 1);
         Eigen::ParametrizedLine<float, 3> ray(origin, direction);
-        float scaling = RayTracing::boxIntersect(box, ray);
 
-        REQUIRE(scaling == Approx(1.0));
-
-        Eigen::Vector3f intersection(origin + direction * scaling);
-
-        REQUIRE(intersection[0] == 0.5);
-        REQUIRE(intersection[1] == 0.5);
-        REQUIRE(intersection[2] == 0);
+        REQUIRE(RayTracing::boxIntersect(box, ray) == Eigen::Vector3f(0.5, 0.5, 0));
     }
 }
