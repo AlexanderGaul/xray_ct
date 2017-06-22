@@ -27,10 +27,14 @@ class RayTracing
             std::numeric_limits<float>::signaling_NaN() : std::numeric_limits<float>::quiet_NaN();
     
 public:
-    //return t so that ray.pointAt(t) is the actual intersection point
+    /**
+     * return t so that ray.pointAt(t) is the actual intersection point
+     */
     static float boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
-    //calculates the forwardProjection of the given ray and the given box
+    /**
+     * calculates the forwardProjection of the given ray and the given box
+     */
     static float forwardProject(const Volume& box, const Line3f& ray);
     
 };
