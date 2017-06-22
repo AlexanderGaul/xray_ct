@@ -33,7 +33,8 @@ public:
     static float boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
     /**
-     * calculates the forwardProjection of the given ray and the given box
+     * calculates the forwardProjection of the given ray and the given box.
+     * @return sum of all contributions of the ray going through the box
      */
     static float forwardProject(const Volume& box, const Line3f& ray);
     
