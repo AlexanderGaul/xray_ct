@@ -13,48 +13,27 @@
 class AcquisitionModel
 {
 private:
-    bool checkIfVolumeFitsBlackBox()
-    {
-        // check if the volume fits the black box
-        Eigen::Vector3i voxels = _volume.getNumVoxels();
-        Eigen::Vector3f spacing = _volume.getSpacing();
-
-        for(int i = 0; i<3; i++)
-        {
-            if(voxels[i] * spacing[i] > FIXED_BOX_SIZE[i])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    bool checkIfVolumeFitsBlackBox();
     
-    
-
 public:
-    AcquisitionModel()
-        : _volume(Eigen::Vector3f(-1,-1,-1),
-                  Eigen::Vector3f(-1,-1,-1),
-                  Eigen::Vector3f(-1,-1,-1)
-                  )
-    {
-        _filled = false;
-    }
+    /**
+     * @brief AcquisitionModel. Creates an acquisition model with
+     * an empty volume.
+     */
+    AcquisitionModel();
 
-    AcquisitionModel(std::string path)
-        : _volume(EDFHandler::read(path))
-    {
-        _filled = true;
-    }
+    /**
+     * @brief AcquisitionModel. Creates an acquisition model and loads
+     * an EDF image from the given path.
+     * @param path - file system path determining location of EDF image.
+     */
+    AcquisitionModel(std::string path);
 
-    void loadImage(std::string path)
-    {
-        _volume = EDFHandler::read(path);
-        if(!checkIfVolumeFitsBlackBox())
-        {
-            throw std::logic_error("the specified volume does not fit the black box!");
-        }
-    }
+    /**
+     * @brief loadImage. Loads a new EDF image into the acquisition model.
+     * @param path - file system path determining location of EDF image.
+     */
+    void loadImage(std::string path);
 
 private:
     
