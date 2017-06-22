@@ -3,6 +3,7 @@
 #include <Eigen/Eigen>
 
 #include "DataContainer.h"
+#include "Volume.h"
 
 /**
  * This class implements the conjugate gradient algorithm.
@@ -17,13 +18,14 @@ public:
      * The initial guess x_0 is set to the zero vector.
      * @brief conjugateGradient
      * @param steps
-     * @param b
+     * @param b - solution vector (extracted volume)
      * @param A
      */
-    void conjugateGradient(int steps, Eigen::Vector3f b,
+    void conjugateGradient(int steps, Volume& b,
                            DataContainer& A)
     {
-        Eigen::Vector3f x0(0,0,0);
+        Eigen::VectorXf x0;
 
+        //TODO
     }
 };

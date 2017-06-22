@@ -41,6 +41,11 @@ void AcquisitionModel::loadImage(std::string path)
     }
 }
 
+void AcquisitionModel::writeImage(std::string path)
+{
+    EDFHandler::write(path, _volume);
+}
+
 std::vector<float> AcquisitionModel::forwardProject(std::size_t row)
 {
     std::vector<float> ret;
@@ -52,4 +57,9 @@ std::vector<float> AcquisitionModel::forwardProject(std::size_t row)
     }
 
     return ret;
+}
+
+float AcquisitionModel::forwardProject(std::size_t row, std::size_t col)
+{
+    return RayTracing::forwardProject(_volume, pose.getRay(col, row));
 }
