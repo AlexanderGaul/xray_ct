@@ -30,7 +30,14 @@ public:
     /**
      * return t so that ray.pointAt(t) is the actual intersection point
      */
-    static float boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
+    static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
+
+    /**
+     *
+     * @brief boxIntersect Returns the intersection point of the ray with the box.
+     * @return an 3x1 Eigen Vector which contains the point of intersection.
+     */
+    static Eigen::Vector3f boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
     /**
      * calculates the forwardProjection of the given ray and the given box.
