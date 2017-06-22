@@ -43,10 +43,14 @@ set(ACQ_HDRS
 set(REC_SRCS
         src/rec/CG.cpp
         src/rec/DataContainer.cpp
+        src/rec/NormalReconstructionContainer.cpp
+        src/rec/RegularizationContainer.cpp
         )
 set(REC_HDRS
         src/rec/CG.h
         src/rec/DataContainer.h
+        src/rec/NormalReconstructionContainer.h
+        src/rec/RegularizationContainer.h
         )
 
 # specify gui source files
