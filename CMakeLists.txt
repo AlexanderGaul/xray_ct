@@ -9,7 +9,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(Eigen3 REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui)
+include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src)
+
 
 IF (WIN32)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
@@ -27,7 +28,8 @@ set(ACQ_SRCS
         src/acq/EDFhandler.cpp
         src/acq/AcquisitionModel.cpp
         src/acq/AcquisitionPose.cpp
-        src/acq/RayTracing.cpp)
+        src/acq/RayTracing.cpp
+        )
 set(ACQ_HDRS
         src/acq/EDFhandler.h
         src/acq/IOutilities.h
@@ -37,8 +39,19 @@ set(ACQ_HDRS
         src/acq/RayTracing.h
         )
 
-set(GUI_SRCS src/gui/MainWindow.cpp src/gui/AcquisitionWidget.cpp)
-set(GUI_HDRS src/gui/MainWindow.h src/gui/MainWindow.h)
+set(GUI_SRCS 
+        src/gui/MainWindow.cpp 
+        src/gui/AcquisitionWidget.cpp
+        src/gui/PoseViewer.cpp
+        src/gui/PoseDisplay.cpp
+        )
+set(GUI_HDRS 
+        src/gui/MainWindow.h 
+        src/gui/AcquisitionWidget.h
+        src/gui/PoseViewer.h
+        src/gui/PoseDisplay.h
+
+        )
 set(PART2_TEST_SOURCES test/test_RayTracing.cpp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -54,7 +67,14 @@ target_link_libraries(part2_lib Qt5::Widgets)
 
 add_executable(part2 src/main.cpp )
 set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
+
 target_link_libraries(part2 part2_lib Qt5::Widgets)
 
-add_executable(part2_tests ${PART2_TEST_SOURCES})
-target_link_libraries(part2_tests part2_lib Catch Qt5::Widgets)
+
+#set(POSE_TEST test/acq_pose_tests.cpp)
+#add_executable(pose_test ${POSE_TEST} src/catch.hpp)
+#target_link_libraries(pose_test part2_lib Qt5::Widgets)
+
+add_executable(part2_test ${PART2_TEST_SOURCES})
+target_link_libraries(part2_test part2_lib Catch Qt5::Widgets)
+
