@@ -7,28 +7,27 @@
 // #include <QScrollArea>
 
 
-#include "AcquisitionPose.h"
+#include "AcquisitionModel.h"
 #include "PoseDisplay.h"
 
 
 class PoseViewer : public QWidget
 {
 private:
-    QGridLayout* layout_;
-	QGridLayout* layout_boxes_;
+    QGridLayout _layout;
+	QGridLayout _layoutBoxes;
 
 	// QScrollArea* scroll_area_;
-	QSpinBox* zoom_box_;
-	QCheckBox* rays_box_;
+	QSpinBox _zoomBox;
+	QCheckBox _raysBox;
 
-	PoseDisplay* pose_display_;
+	PoseDisplay _poseDisplay;
 
-	AcquisitionPose* pose_;
+	bool _showRays;
+	int _zoom;
 
 public:
-	//void setPose(AcquisitionPose* pose);
-	PoseViewer();
-    PoseViewer(AcquisitionPose* pose);
-    void setPose(AcquisitionPose* pose);
+    
+    PoseViewer(AcquisitionModel* pose);
 
 };

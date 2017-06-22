@@ -1,23 +1,18 @@
 #include "AcquisitionPose.h"
 
-AcquisitionPose::AcquisitionPose() :
-    AcquisitionPose(0.5f, 0.2f, 0.2f, 5, 5)
-{
-}
-
 AcquisitionPose::AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v) :
     s2dd_(s2dd),
     src_(- s2dd / 2.f, 0.f, 0.f), 
     det_(s2dd / 2.f, 0.f, 0.f),
     det_normal_(-1.f, 0.f, 0.f),
     det_upl_(s2dd/2.f, det_w/2.f, det_h/2.f),
+    center_(0.f, 0.f, 0.f),
+    rot_global_z_(0.f, Eigen::Vector3f(0.f, 0.f, 1.f)),
+    rot_local_y_(0.f, Eigen::Vector3f(0.f, 1.f, 0.f)),
     det_width_(det_w), 
     det_height_(det_h), 
     pxl_horizontal_(pixel_h), 
-    pxl_vertical_(pixel_v),
-    center_(0.f, 0.f, 0.f),
-    rot_global_z_(0.f, Eigen::Vector3f(0.f, 0.f, 1.f)),
-    rot_local_y_(0.f, Eigen::Vector3f(0.f, 1.f, 0.f))
+    pxl_vertical_(pixel_v)
 {
 }
 
@@ -59,6 +54,7 @@ void AcquisitionPose::updatePose()
     det_        = getRot() * Eigen::Vector3f(s2dd_ / 2.f, 0.f, 0.f) + center_;
     det_normal_ = getRot() * Eigen::Vector3f(-1.f, 0.f, 0.f);
     det_upl_    = getRot() * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, det_height_ / 2.f) + center_;
+    emit poseChanged();
 }
 
 void AcquisitionPose::setCenter(const Eigen::Vector3f& center)

@@ -3,9 +3,12 @@
 
 #include <vector>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
+#include <QObject>
 
-class AcquisitionPose
+class AcquisitionPose : public QObject
 {
+    Q_OBJECT
 private:
     float s2dd_;
 
@@ -28,9 +31,14 @@ private:
     void updatePose();
     Eigen::Matrix3f getRot();
 
-
+signals:
+    void poseChanged();
 public:
-    AcquisitionPose();
+    AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
+        : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4, 0.4, 5, 5) {
+            
+        } 
+
     AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v);
 
     Eigen::Vector3f getSourcePosition();
@@ -56,6 +64,8 @@ public:
     Eigen::Vector3f getDetectorUpperRight();
     Eigen::Vector3f getDetectorLowerRight();
     Eigen::Vector3f getDetectorLowerLeft();
+    
+    
     
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical);
     Eigen::Vector3f getPixelCenter(int horizontal, int vertical);

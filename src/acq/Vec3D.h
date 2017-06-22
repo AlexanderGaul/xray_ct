@@ -29,7 +29,7 @@ private:
             exText += " z: ";
             exText += std::to_string(sizeZ());
             
-            exText += " but the given indices (equal to size-1) were: ";
+            exText += " but the given indices (up to size-1) were: ";
             exText += " x: ";
             exText += std::to_string(x);
             exText += " y: ";
@@ -127,12 +127,12 @@ public:
     }
     
     T& getChecked(index_type x, index_type y, index_type z){
-        checkBounds();
+        checkBounds(x,y,z);
         return get(x, y, z);
     }
     
     const T& getChecked(index_type x, index_type y, index_type z) const {
-        checkBounds();
+        checkBounds(x,y,z);
         return get(x, y, z);
     }
     

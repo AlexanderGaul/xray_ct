@@ -88,7 +88,7 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
         const float maxZ = step.z() <= 0 ? 0 : boundingBox.sizes().z();
         
         const Eigen::Vector3f voxel {volume.getSpacing()};
-        const Eigen::Vector3f maxVoxel {Eigen::Vector3f(maxX, maxY, maxZ).cwiseQuotient(voxel)};
+        const Eigen::Vector3i maxVoxel {volume.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
         const Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction)};
         const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
         Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
@@ -110,18 +110,18 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
         float acc = 0;
         
         for(;;) {
-            acc += volume.content().get(pos);
+            acc += volume.content().getChecked(pos);
             if(tMax.x() < tMax.y()) { 
                 if(tMax.x() < tMax.z()) {
                     pos.x() += step.x();
-                    if(pos.x() > maxVoxel.x()) {
+                    if(pos.x() < 0 || pos.x() > maxVoxel.x()) {
                         return acc;
                     }
                     
                     tMax.x() += tDelta.x();
                 } else  {
                     pos.z() += step.z();
-                    if(pos.z() > maxVoxel.z()) {
+                    if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
                         return acc;
                     }
                     tMax.z() += tDelta.z();
@@ -129,13 +129,13 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
             } else  {
                 if(tMax.y() < tMax.z()) {
                     pos.y() += step.y();
-                    if(pos.y() > maxVoxel.y()){
+                    if(pos.y() < 0 || pos.y() > maxVoxel.y()){
                         return acc;
                     }
                     tMax.y() += tDelta.y();
                 } else  {
                     pos.z() +=  step.z();
-                    if(pos.z() > maxVoxel.z()) {
+                    if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
                         return acc;
                     }
                     tMax.z() += tDelta.z();

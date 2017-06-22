@@ -1,6 +1,3 @@
-//#include <algorithm>
-#include <iostream>
-
 #include "PoseDisplay.h"
 
 
@@ -19,23 +16,26 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     painter.drawLine(x_center, rect().top(), x_center, rect().bottom());
     painter.drawLine(rect().left(), y_center, rect().right(), y_center);
 
-    if(pose_ == nullptr)
+    if(_model == nullptr)
     {
     	return;
     }
     painter.resetTransform();
     painter.setPen(Qt::black);
-    if(show_rays_){
-        for(int i = 0; i < pose_->getPixelHorizontal(); i++)
+    const Eigen::Vector2i detectorSize = _model->getDetectorSize();
+    const Eigen::Vector3f sourcePos = _model->getSourcePosition();
+    
+    if(_showRays){
+        for(int i = 0; i < detectorSize.x(); i++)
         {
-            for(int j = 0; j < pose_->getPixelVertical(); j++)
+            for(int j = 0; j < detectorSize.y(); j++)
             {
-                Eigen::Vector3f pixel = pose_->getPixelCenter(i, j);
+                Eigen::Vector3f pixel = _model->getPixelCenter(i, j);
                 painter.drawLine(
-                    x_center + pose_->getSourcePosition()(0) * zoom_, 
-                    y_center - pose_->getSourcePosition()(1) * zoom_, 
-                    x_center + pixel(0) * zoom_, 
-                    y_center - pixel(1) * zoom_);
+                    x_center + sourcePos.x() * _zoom, 
+                    y_center - sourcePos.y() * _zoom, 
+                    x_center + pixel(0) * _zoom, 
+                    y_center - pixel(1) * _zoom);
             }
         }
     }
@@ -49,8 +49,8 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     
     painter.resetTransform();
     painter.translate(
-        x_center + pose_->getSourcePosition()(0) * zoom_,
-        y_center - pose_->getSourcePosition()(1) * zoom_
+        x_center + sourcePos.x() * _zoom,
+        y_center - sourcePos.y() * _zoom
     );
     painter.setPen(pen);
     painter.drawEllipse(-2, -2, 4, 4);
@@ -64,18 +64,15 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
 
     //painter.scale(zoom_, zoom_);
     
-    Eigen::Vector3f detCorners[4];
-    detCorners[0] = pose_->getDetectorUpperLeft();
-    detCorners[1] = pose_->getDetectorLowerLeft();
-    detCorners[2] = pose_->getDetectorLowerRight();
-    detCorners[3] = pose_->getDetectorUpperRight();
+    std::array<Eigen::Vector3f, 4> detCorners = _model->getDetector();
+    
     for(int i = 0; i < 4; i++)
     {
         painter.drawLine(
-            x_center + detCorners[i](0) * zoom_,
-            y_center - detCorners[i](1) * zoom_,
-            x_center + detCorners[(i + 1) % 4](0) * zoom_,
-            y_center - detCorners[(i + 1) % 4](1) * zoom_  
+            x_center + detCorners[i].x() * _zoom,
+            y_center - detCorners[i].y() * _zoom,
+            x_center + detCorners[(i + 1) % 4].x() * _zoom,
+            y_center - detCorners[(i + 1) % 4].y() * _zoom  
         );
     }
     
@@ -101,31 +98,24 @@ void PoseDisplay::setShowRays(int state)
 {
     if(state == 0)
     {
-        show_rays_ = false;
+        _showRays = false;
     }
     else
     {
-        show_rays_ = true;
+        _showRays = true;
     }
     update();
 }
 void PoseDisplay::setZoom(int zoom)
 {
-    zoom_ = zoom * 5;
+    _zoom = zoom * 5;
     update();
 }
 
-void PoseDisplay::setPose(AcquisitionPose* pose)
-{
-    pose_ = pose;
-    update();
-}
-
-
-PoseDisplay::PoseDisplay() :
-    show_rays_(false),
-    zoom_(500),
-    pose_(nullptr)
+PoseDisplay::PoseDisplay(AcquisitionModel *model) :
+    _showRays (false),
+    _zoom (500),
+    _model (model)
 {
     setFocusPolicy(Qt::ClickFocus);
     //grabKeyboard();
@@ -138,26 +128,26 @@ void PoseDisplay::mousePressEvent(QMouseEvent* event)
 
 void PoseDisplay::keyPressEvent(QKeyEvent* event)
 {
-    if(pose_ != nullptr)
+    if(_model != nullptr)
     {       
         if(event->key() == Qt::Key_Left)
         {
-            pose_->setRotationLocalY(pose_->getRotationLocalY() + 0.1f);
+            _model->updateRotation(RotationAxis::Z, 0.1f);
             update();
         }
         else if(event->key() == Qt::Key_Right)
         {
-            pose_->setRotationLocalY(pose_->getRotationLocalY() - 0.1f);
+            _model->updateRotation(RotationAxis::Z, -0.1f);
             update();
         }
         else if(event->key() == Qt::Key_Up)
         {
-            pose_->setRotationGlobalZ(pose_->getRotationGlobalZ() + 0.1f);
+            _model->updateRotation(RotationAxis::X, 0.1f);
             update();
         }
         else if(event->key() == Qt::Key_Down)
         {
-            pose_->setRotationGlobalZ(pose_->getRotationGlobalZ() - 0.1f);
+            _model->updateRotation(RotationAxis::X, -0.1f);
             update();
         }
     }

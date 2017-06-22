@@ -16,25 +16,18 @@ bool AcquisitionModel::checkIfVolumeFitsBlackBox()
     return true;
 }
 
-AcquisitionModel::AcquisitionModel()
-    : _volume(Eigen::Vector3f(-1,-1,-1),
-              Eigen::Vector3f(-1,-1,-1),
-              Eigen::Vector3f(-1,-1,-1)
-              )
-{
-    _filled = false;
-}
-
-
 AcquisitionModel::AcquisitionModel(std::string path)
-    : _volume(EDFHandler::read(path))
+    :  _filled {true}, _volume{EDFHandler::read(path)}, 
+    _pose {std::make_unique<AcquisitionPose>(_volume.getBoundingBox())}
 {
-    _filled = true;
+    QObject::connect(_pose.get(), &AcquisitionPose::poseChanged, this, &AcquisitionModel::poseChanged);
 }
 
 void AcquisitionModel::loadImage(std::string path)
 {
     _volume = EDFHandler::read(path);
+    _pose = std::make_unique<AcquisitionPose>(_volume.getBoundingBox());
+    QObject::connect(_pose.get(), &AcquisitionPose::poseChanged, this, &AcquisitionModel::poseChanged);
     if(!checkIfVolumeFitsBlackBox())
     {
         throw std::logic_error("the specified volume does not fit the black box!");
@@ -43,13 +36,13 @@ void AcquisitionModel::loadImage(std::string path)
 
 std::vector< std::vector< float > > AcquisitionModel::forwardProject() {
         std::vector<float> temp {};
-        temp.reserve(pose.getPixelHorizontal());
+        temp.reserve(_pose->getPixelHorizontal());
         
-        std::vector<std::vector<float>> ret (pose.getPixelVertical(), temp);
-        for(int y = 0; y < pose.getPixelVertical(); ++y){
-            auto& currRow = ret[y];
-            for(int x = 0; x < pose.getPixelHorizontal(); ++x){
-                currRow[x] = RayTracing::forwardProject(_volume, pose.getRay(x, y));
+        std::vector<std::vector<float>> ret (_pose->getPixelVertical(), temp);
+        for(int y = 0; y < _pose->getPixelVertical(); ++y){
+            auto& currRow = ret.at(y);
+            for(int x = 0; x < _pose->getPixelHorizontal(); ++x){
+                currRow.push_back(RayTracing::forwardProject(_volume, _pose->getRay(x, y)));
             }
         }
         

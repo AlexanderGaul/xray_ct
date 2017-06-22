@@ -4,24 +4,24 @@
 #include <QPainter>
 #include <QKeyEvent>
 
-#include "AcquisitionPose.h"
+#include "AcquisitionModel.h"
 
+/*
+ * Only paints the current aquisition pose
+ */
 class PoseDisplay : public QWidget
 {
 	Q_OBJECT
 private:
-	bool show_rays_;
-	int zoom_;
-	//AcquisitionPose pose_;
-	AcquisitionPose* pose_;
+	bool _showRays;
+	int _zoom;
+	AcquisitionModel *_model;
 public:
-	PoseDisplay();
-	void setPose(AcquisitionPose* pose_);
+	PoseDisplay(AcquisitionModel *model);
 
-	virtual void paintEvent(QPaintEvent* event);
+	virtual void paintEvent(QPaintEvent *event);
 	
-	virtual void keyPressEvent(QKeyEvent* event);
-	//virtual void mousePressEvent(QMouseEvent *event);	
+	virtual void keyPressEvent(QKeyEvent *event);
 public slots:
 	void setShowRays(int state);
 	void setZoom(int zoom);
