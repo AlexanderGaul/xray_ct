@@ -9,6 +9,8 @@
 
 #include "EDFhandler.h"
 #include "Volume.h"
+#include "AcquisitionPose.h"
+#include "RayTracing.h"
 
 class AcquisitionModel
 {
@@ -35,11 +37,13 @@ public:
      */
     void loadImage(std::string path);
 
+    std::vector<std::vector<float>> forwardProject();
 private:
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
     Volume _volume;
+    AcquisitionPose pose;
 
 };
 

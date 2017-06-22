@@ -40,3 +40,18 @@ void AcquisitionModel::loadImage(std::string path)
         throw std::logic_error("the specified volume does not fit the black box!");
     }
 }
+
+std::vector< std::vector< float > > AcquisitionModel::forwardProject() {
+        std::vector<float> temp {};
+        temp.reserve(pose.getPixelHorizontal());
+        
+        std::vector<std::vector<float>> ret (pose.getPixelVertical(), temp);
+        for(int y = 0; y < pose.getPixelVertical(); ++y){
+            auto& currRow = ret[y];
+            for(int x = 0; x < pose.getPixelHorizontal(); ++x){
+                currRow[x] = RayTracing::forwardProject(_volume, pose.getRay(x, y));
+            }
+        }
+        
+        return ret;
+    }
