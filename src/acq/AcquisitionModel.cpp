@@ -41,17 +41,15 @@ void AcquisitionModel::loadImage(std::string path)
     }
 }
 
-std::vector< std::vector< float > > AcquisitionModel::forwardProject() {
-        std::vector<float> temp {};
-        temp.reserve(pose.getPixelHorizontal());
-        
-        std::vector<std::vector<float>> ret (pose.getPixelVertical(), temp);
-        for(int y = 0; y < pose.getPixelVertical(); ++y){
-            auto& currRow = ret[y];
-            for(int x = 0; x < pose.getPixelHorizontal(); ++x){
-                currRow[x] = RayTracing::forwardProject(_volume, pose.getRay(x, y));
-            }
-        }
-        
-        return ret;
+std::vector<float> AcquisitionModel::forwardProject(std::size_t row)
+{
+    std::vector<float> ret;
+    ret.reserve(pose.getPixelHorizontal());
+
+    for(int x = 0; x < pose.getPixelHorizontal(); ++x)
+    {
+        ret[x] = RayTracing::forwardProject(_volume, pose.getRay(x, row));
     }
+
+    return ret;
+}

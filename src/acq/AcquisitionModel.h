@@ -37,7 +37,12 @@ public:
      */
     void loadImage(std::string path);
 
-    std::vector<std::vector<float>> forwardProject();
+    /**
+     * @brief forwardProject Computes the forward projection on-the-fly (only calculates one row of system matrix).
+     * @param row - specifies the row of the system matrix to be computed
+     * @return one row of the system matrix
+     */
+    std::vector<float> forwardProject(std::size_t row);
 private:
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
