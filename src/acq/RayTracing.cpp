@@ -1,6 +1,6 @@
 #include "RayTracing.h"
 
-float RayTracing::boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept {
+float RayTracing::boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept {
         //based on "An Efficient and Robust Ray–Box Intersection Algorithm"
         //link:  http://people.csail.mit.edu/amy/papers/box-jgt.pdf
         float tmin, tmax, tymin, tymax, tzmin, tzmax;
@@ -64,9 +64,15 @@ float RayTracing::boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray
         return tmin;
     }
 
+
+Eigen::Vector3f RayTracing::boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept
+{
+    return Eigen::Vector3f(ray.origin() + ray.direction() * boxIntersectHelper(box, ray));
+}
+
 float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
         const auto boundingBox = volume.getBoundingBox();
-        const float tIntersect = boxIntersect(boundingBox, ray);
+        const float tIntersect = boxIntersectHelper(boundingBox, ray);
         
         //The ray doesn't intersect the volume
         if(std::isnan(tIntersect)){

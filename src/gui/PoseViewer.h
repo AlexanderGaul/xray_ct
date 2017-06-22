@@ -23,6 +23,8 @@ private:
 
 	PoseDisplay* pose_display_;
 
+	AcquisitionPose* pose_;
+
 public:
 	//void setPose(AcquisitionPose* pose);
 	PoseViewer();

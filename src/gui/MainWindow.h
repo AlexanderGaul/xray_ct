@@ -18,7 +18,7 @@ public:
         : _aWidget(path)
     {
 
-        /*
+
         // TEST FOR POSEVIEWER WITH MEMORY LEAK
 
         QTabWidget* tabWidget = new QTabWidget();
@@ -27,9 +27,9 @@ public:
         PoseViewer* widget = new PoseViewer(pose);
         tabWidget->addTab(widget, tr("Acquisition"));
         setCentralWidget(tabWidget);
-        */
 
 
+/*
         QVBoxLayout* layout = new QVBoxLayout;
         QHBoxLayout* topLayout = new QHBoxLayout;
 
@@ -46,7 +46,7 @@ public:
         QWidget* rootWidget = new QWidget;
         rootWidget->setLayout(layout);
         setCentralWidget(rootWidget);
-        
+*/        
     }
 
 
