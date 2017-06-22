@@ -9,6 +9,8 @@
 
 #include "EDFhandler.h"
 #include "Volume.h"
+#include "AcquisitionPose.h"
+#include "RayTracing.h"
 
 class AcquisitionModel
 {
@@ -55,12 +57,28 @@ public:
             throw std::logic_error("the specified volume does not fit the black box!");
         }
     }
+    
+    std::vector<std::vector<float>> forwardProject() {
+        std::vector<float> temp {};
+        temp.reserve(pose.getPixelHorizontal());
+        
+        std::vector<std::vector<float>> ret (pose.getPixelVertical(), temp);
+        for(int y = 0; y < pose.getPixelVertical(); ++y){
+            auto& currRow = ret[y];
+            for(int x = 0; x < pose.getPixelHorizontal(); ++x){
+                currRow[x] = RayTracing::forwardProject(_volume, pose.getRay(x, y));
+            }
+        }
+        
+        return ret;
+    }
 
 private:
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
     Volume _volume;
+    AcquisitionPose pose;
 
 };
 
