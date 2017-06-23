@@ -113,11 +113,11 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
             return acc;
         }
 
-        std::cout << "begin loggin" << std::endl;
+
         for(;;) {
             acc += volume.content().getChecked(pos);
-            std::cout << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
-            if(tMax.x() < tMax.y()) { 
+
+            if(tMax.x() < tMax.y()) {
                 if(tMax.x() < tMax.z()) {
                     pos.x() += step.x();
                     if(pos.x() < 0 || pos.x() > maxVoxel.x()) {
