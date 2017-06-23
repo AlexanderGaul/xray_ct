@@ -41,7 +41,7 @@ protected slots:
     void paintEvent(QPaintEvent *event) override{
         //for some reason update wasn't called automatically
         //even though the drawWidgets are children of this widget
-        currWiget().update();
+        currWidget().update();
     }
     
     /*
@@ -72,7 +72,7 @@ private:
      * returns the widget that is currently shown
      * used to see which widget has to be updated
      */
-    QWidget& currWiget();
+    QWidget& currWidget();
     
     QVBoxLayout _mainLayout;
     QTabWidget _widgetStack;

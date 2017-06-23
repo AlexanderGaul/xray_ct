@@ -53,7 +53,7 @@ ResultWidget::ResultWidget(AcquisitionModel* model, QWidget* parent)
 bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
         if(event->type() == QEvent::Paint && ( watched == &_drawWidgetSingle ||
             watched == &_drawWidgetAll || watched == &_drawWidgetAngle)){
-            QWidget& widget = currWiget();
+            QWidget& widget = currWidget();
             QSize size = widget.size();
             if(_currProjection.empty()){
                 return true;
@@ -74,12 +74,13 @@ bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
                     painter.fillRect(x*pixelWidth, y*pixelHeight, pixelWidth, pixelHeight, currColor);
                 }
             }
+            return true;
         } else {
             return QObject::eventFilter(watched, event);
         }
     }
 
-QWidget& ResultWidget::currWiget() {
+QWidget& ResultWidget::currWidget() {
         switch(_widgetStack.currentIndex()){
             case 0:
                 return _drawWidgetSingle;
@@ -87,6 +88,8 @@ QWidget& ResultWidget::currWiget() {
                 return _drawWidgetAll;
             case 2:
                 return _drawWidgetAngle;
+            default:
+                return _drawWidgetSingle;
         }
     }
 

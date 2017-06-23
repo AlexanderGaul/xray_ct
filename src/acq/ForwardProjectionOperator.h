@@ -44,6 +44,6 @@ public:
      * so that they close a full circle, where "neighboring" poses differ by the same angle
      */
     static std::vector<std::vector<float>> forwardProjectRotateAngle(const Volume&, AcquisitionPose /*,Steps, RotationAxis*/){
-        
+        return std::vector<std::vector<float>> {};
     };
 };
