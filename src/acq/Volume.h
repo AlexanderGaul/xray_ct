@@ -15,6 +15,11 @@ private:
     Eigen::Vector3f _sp;
 
     content_type _content;
+    
+    //move the center of the _boundingBox to the origin
+    void centerBoundingBox(){
+        _boundingBox.translate(-_boundingBox.center());
+    }
 
 public:
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp)
@@ -22,6 +27,7 @@ public:
           _sp(sp),
           _content {}
     {
+        centerBoundingBox();
     }
     
     template <class Vec>
@@ -30,6 +36,7 @@ public:
           _sp(sp),
           _content ((upperRight - lowerLeft).cwiseQuotient(sp).cast<int>(), std::forward<Vec>(content))
     {
+        centerBoundingBox();
     }
 
     Eigen::AlignedBox3f getBoundingBox() const
