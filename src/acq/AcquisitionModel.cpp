@@ -34,17 +34,35 @@ void AcquisitionModel::loadImage(std::string path)
     }
 }
 
-std::vector< std::vector< float > > AcquisitionModel::forwardProject() {
-        std::vector<float> temp {};
-        temp.reserve(_pose->getPixelHorizontal());
-        
-        std::vector<std::vector<float>> ret (_pose->getPixelVertical(), temp);
-        for(int y = 0; y < _pose->getPixelVertical(); ++y){
-            auto& currRow = ret.at(y);
-            for(int x = 0; x < _pose->getPixelHorizontal(); ++x){
-                currRow.push_back(RayTracing::forwardProject(_volume, _pose->getRay(x, y)));
-            }
-        }
-        
-        return ret;
+void AcquisitionModel::writeImage(std::string path)
+{
+    EDFHandler::write(path, _volume);
+}
+
+std::vector<float> AcquisitionModel::forwardProject(std::size_t row)
+{
+    std::vector<float> ret;
+    ret.reserve(_pose->getPixelHorizontal());
+
+    for(int x = 0; x < _pose->getPixelHorizontal(); ++x)
+    {
+        ret.push_back(RayTracing::forwardProject(_volume, _pose->getRay(x, row)));
     }
+
+    return ret;
+}
+
+float AcquisitionModel::forwardProject(std::size_t row, std::size_t col)
+{
+    return RayTracing::forwardProject(_volume, _pose->getRay(col, row));
+}
+
+
+std::vector<std::vector<float>> AcquisitionModel::forwardProject (){
+    std::vector<std::vector<float>> ret;
+    ret.reserve(_pose->getPixelVertical());
+    for(int y = 0; y < _pose->getPixelVertical(); ++y){
+        ret.push_back(forwardProject(y));
+    }
+    return ret;
+}

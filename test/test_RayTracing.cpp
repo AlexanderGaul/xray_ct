@@ -1,4 +1,5 @@
 #define CATCH_CONFIG_MAIN
+
 #include "catch.hpp"
 
 #include <Eigen/Eigen>
@@ -22,7 +23,7 @@ TEST_CASE("test ray tracing")
         Eigen::Vector3f direction(0, 0, 1);
         Eigen::ParametrizedLine<float, 3> ray(origin, direction);
 
-        REQUIRE(RayTracing::boxIntersect(box, ray) == Eigen::Vector3f(0.5, 0.5, 1));
+        REQUIRE(RayTracing::boxIntersect(box, ray) == Eigen::Vector3f(0.5, 0.5, 0));
     }
     SECTION("askew line")
     {

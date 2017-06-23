@@ -67,7 +67,9 @@ set(GUI_HDRS
         src/gui/PoseDisplay.h
         )
 
-set(PART2_TEST_SOURCES test/test_RayTracing.cpp)
+set(PART2_TEST_SOURCES
+        test/test_RayTracing.cpp
+        test/test_SinogramGeneration.cpp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

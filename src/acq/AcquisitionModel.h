@@ -45,12 +45,6 @@ public:
     void loadImage(std::string path);
     
     /**
-     * @brief forwardProject. calculates the forward projection of the current acquistion pose.
-     * @return returns the forward Projection
-     */
-    std::vector<std::vector<float>> forwardProject();
-    
-    /**
      * The next few methods offer an interface to the pose for the gui.
      * See AcquisitionPose for documentation.
      */
@@ -80,9 +74,29 @@ public:
     Eigen::Vector3f getPixelCenter(int i, int j){
         return _pose->getPixelCenter(i, j);
     }
-signals:
+  
+    /**
+     * @brief writeImage. Writes an EDF iamge into a specified path
+     * @param path - file system path determining the destination of the image.
+     */
+    void writeImage(std::string path);
+
+    /**
+     * @brief forwardProject Computes the forward projection on-the-fly (only calculates one row of system matrix).
+     * @param row - specifies the row of the system matrix to be computed
+     * @return one row of the system matrix
+     */
+    std::vector<float> forwardProject(std::size_t row);
+
+    float forwardProject(std::size_t row, std::size_t col);
+    
+    /*
+     * Calculates the complete forward Projection for the current acquistion pose
+     */
+    std::vector<std::vector<float>> forwardProject ();
+signals:  
     //emited when the acquistion pose changes (because of user action)
-   void poseChanged();
+    void poseChanged();
 private:
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
