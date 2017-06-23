@@ -29,6 +29,7 @@ set(ACQ_SRCS
         src/acq/AcquisitionModel.cpp
         src/acq/AcquisitionPose.cpp
         src/acq/RayTracing.cpp
+        src/acq/ForwardProjectionOperator.cpp
         )
 set(ACQ_HDRS
         src/acq/EDFhandler.h
@@ -38,6 +39,7 @@ set(ACQ_HDRS
         src/acq/AcquisitionPose.h
         src/acq/RayTracing.h
         src/acq/Vec3D.h
+        src/acq/ForwardProjectionOperator.h
         )
 
 # specifiy reconstruction source files

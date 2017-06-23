@@ -10,10 +10,11 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "EDFhandler.h"
-#include "Volume.h"
 #include "AcquisitionPose.h"
+#include "EDFhandler.h"
+#include "ForwardProjectionOperator.h"
 #include "RayTracing.h"
+#include "Volume.h"
 
 /*
  * Represents an axis of rotation.
@@ -87,17 +88,8 @@ public:
      * @param path - file system path determining the destination of the image.
      */
     void writeImage(std::string path);
-
-    /**
-     * @brief forwardProject Computes the forward projection on-the-fly (only calculates one row of system matrix).
-     * @param row - specifies the row of the system matrix to be computed
-     * @return one row of the system matrix
-     */
-    std::vector<float> forwardProject(std::size_t row);
-
-    float forwardProject(std::size_t row, std::size_t col);
     
-    /*
+    /**
      * Calculates the complete forward Projection for the current acquistion pose
      */
     std::vector<std::vector<float>> forwardProject ();
@@ -110,6 +102,7 @@ private:
     bool _filled;
     Volume _volume;
     std::unique_ptr<AcquisitionPose> _pose;
+    std::unique_ptr<ForwardProjectionOperator> _op;
 
 };
 
