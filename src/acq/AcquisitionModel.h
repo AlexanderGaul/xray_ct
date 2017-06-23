@@ -87,7 +87,9 @@ public:
      * Calculates a forward Projection for Steps rotations of the current Pose around the
      * Rotation axis
      */
-    std::vector<std::vector<float>> forwardProjectAngle(/*Steps, RotationAxis*/){} ;
+    std::vector<std::vector<float>> forwardProjectAngle(/*Steps, RotationAxis*/){
+        return std::vector<std::vector<float>> {};
+    }
     
     
     /*
