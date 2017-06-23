@@ -57,6 +57,7 @@ public:
             _pose->setRotationGlobalZ(_pose->getRotationGlobalZ()+angle);
         }
     }
+
     
     /*
      * Returns the corners of the detector in the following order:

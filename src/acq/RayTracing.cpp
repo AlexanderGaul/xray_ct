@@ -108,9 +108,15 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
         Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
         
         float acc = 0;
-        
+        if(pos.x() > maxVoxel.x() || pos.y() > maxVoxel.y() || pos.z() > maxVoxel.z())
+        {
+            return acc;
+        }
+
+        std::cout << "begin loggin" << std::endl;
         for(;;) {
             acc += volume.content().getChecked(pos);
+            std::cout << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
             if(tMax.x() < tMax.y()) { 
                 if(tMax.x() < tMax.z()) {
                     pos.x() += step.x();

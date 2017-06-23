@@ -2,9 +2,10 @@
 #define RAYTRACING_H
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
+#include <cmath>
+#include <iostream>
 #include <limits>
 #include <vector>
-#include <cmath>
 
 #include "Vec3D.h"
 #include "Volume.h"
