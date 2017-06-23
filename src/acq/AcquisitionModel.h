@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <array>
 
 #include <QObject>
 #include <QFile>
@@ -49,6 +50,7 @@ public:
      * See AcquisitionPose for documentation.
      */
     void updateRotation(RotationAxis axis, float angle){
+        //see description of the rotation axis for why the if is as it is
         if(axis == RotationAxis::Z){
             _pose->setRotationLocalY(_pose->getRotationLocalY()+angle);
         } else {
@@ -56,6 +58,10 @@ public:
         }
     }
     
+    /*
+     * Returns the corners of the detector in the following order:
+     * UpperLeft, LowerLeft, LowerRight, UpperRight
+     */
     std::array<Eigen::Vector3f, 4> getDetector(){
         return std::array<Eigen::Vector3f, 4> {
             _pose->getDetectorUpperLeft(), _pose->getDetectorLowerLeft(),
