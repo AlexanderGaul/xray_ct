@@ -27,18 +27,19 @@ public:
     /**
      * Uses only 1 pose.
      * @brief forwardProject
-     * @return
+     * @return the forward projection in a ROW MAJOR ORDER
      */
     static std::vector<float> forwardProject(const Volume& vol, const AcquisitionPose& pose);
 
     /**
      * because of the required return value optimisation there shouldn't be any copies
      * @brief forwardProjectFull
-     * @return
+     * @return returns the result of the above function for every pose
      */
     static std::vector<std::vector<float>> forwardProjectFull(const Volume& vol, const std::vector<AcquisitionPose>& poses);
     
     /**
+     * TODO
      * Calculates the forwardProjection of steps poses, that are created by rotating pose around the RotationAxis,
      * so that they close a full circle, where "neighboring" poses differ by the same angle
      */

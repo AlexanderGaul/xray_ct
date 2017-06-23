@@ -5,8 +5,9 @@ std::vector<float> ForwardProjectionOperator::forwardProject (const Volume& vol,
 {
     std::vector<float> ret;
     ret.reserve(pose.getPixelVertical() * pose.getPixelHorizontal());
-    for(int x = 0; x < pose.getPixelHorizontal(); ++x){
-        for(int y = 0; y < pose.getPixelVertical(); ++y){
+    //row Major representation
+    for(int y = 0; y < pose.getPixelVertical(); ++y){
+        for(int x = 0; x < pose.getPixelHorizontal(); ++x){
             ret.push_back(RayTracing::forwardProject(vol, pose.getRay(x, y)));
         }
     }

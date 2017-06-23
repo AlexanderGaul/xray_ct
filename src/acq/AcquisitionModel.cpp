@@ -65,8 +65,21 @@ void AcquisitionModel::writeImage(std::string path) const
     EDFHandler::write(path, _volume);
 }
 
-std::vector<float> AcquisitionModel::forwardProject() const{
-    return ForwardProjectionOperator::forwardProject(_volume, currPoseChecked());
+std::vector<std::vector<float>> AcquisitionModel::forwardProjectSingle() const{
+    auto verticalPixels = currPoseChecked().getPixelVertical();
+    auto horizontalPixels = currPoseChecked().getPixelHorizontal();
+    std::vector<std::vector<float>> ret;
+    ret.reserve(horizontalPixels);
+    std::vector<float> temp = ForwardProjectionOperator::forwardProject(_volume, currPoseChecked());
+    for(int y = 0; y < verticalPixels; ++ y){
+        std::vector<float> row {};
+        row.reserve(verticalPixels);
+        for(int x = 0; x < horizontalPixels; ++x){
+            row.push_back(temp.at(x + y * horizontalPixels));
+        }
+        ret.push_back(std::move(row));
+    }
+    return ret;
 }
 
 std::vector<std::vector<float>> AcquisitionModel::forwardProjectFull() const{
@@ -75,4 +88,47 @@ std::vector<std::vector<float>> AcquisitionModel::forwardProjectFull() const{
 
 Eigen::AlignedBox3f AcquisitionModel::getBoundingBox() const{
         return _volume.getBoundingBox();
+    }
+
+void AcquisitionModel::clearPoses() {
+        _poses.clear();
+        //since the stack must alway contain one element, add the default pose again
+        _poses.push_back(AcquisitionPose {getBoundingBox()});
+        emit poseChanged();
+    }
+
+void AcquisitionModel::deletePose() {
+        //since there always has to be an element pop always works
+        _poses.pop_back();
+        if(_poses.empty()){
+            _poses.push_back(AcquisitionPose {getBoundingBox()});
+        }
+        emit poseChanged();
+    }
+
+void AcquisitionModel::savePose() {
+        _poses.push_back(AcquisitionPose {getBoundingBox()});
+        emit poseChanged();
+    }
+
+AcquisitionPose& AcquisitionModel::currPose() {
+        return _poses.back();
+    }
+
+const AcquisitionPose& AcquisitionModel::currPose() const {
+        return _poses.back();
+    }
+
+AcquisitionPose& AcquisitionModel::currPoseChecked() {
+        if(_poses.empty()){
+            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
+        }
+        return _poses.back();
+    }
+
+const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
+        if(_poses.empty()){
+            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
+        }
+        return _poses.back();
     }

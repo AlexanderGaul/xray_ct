@@ -15,11 +15,13 @@ public:
     AcquisitionWidget(std::string path)
         : _aModel(path), layout {}, _pose{&_aModel}, _res {&_aModel}
     {
-        _res.setMinimumSize(400, 400);
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, this, &AcquisitionWidget::update);
         QObject::connect(&_pose, &PoseViewer::sceneRotationChanged, &_res, &ResultWidget::recalcProject);
-        layout.addWidget(&_pose);
-        layout.addWidget(&_res);
+        /*
+         * Without the strech factor of 1 _res takes most of the  width of the widget
+         */
+        layout.addWidget(&_pose, 1);
+        layout.addWidget(&_res, 1);
         this->setLayout(&layout);
     }
     
@@ -27,6 +29,7 @@ public slots:
     /*
      * It should be possible to directly acess the update of QWidget inside of connect
      * but something didn't quite work, so this is a quick fix
+     * TODO
      */
     void update(){
         QWidget::update();

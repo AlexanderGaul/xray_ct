@@ -75,7 +75,7 @@ public:
     /**
      * Calculates the complete forward Projection for the current acquistion pose
      */
-    std::vector<float> forwardProject() const;
+    std::vector<std::vector<float>> forwardProjectSingle() const;
 
     /**
      * Calculates the complete forward Projection for all poses stored in the vector
@@ -89,6 +89,27 @@ public:
      */
     std::vector<std::vector<float>> forwardProjectAngle(/*Steps, RotationAxis*/){} ;
     
+    
+    /*
+     * The follwing fuctions are used to modify the the Pose Stack/Vector
+     */
+    
+    /*
+     * Deletes all stored poses
+     */
+    void clearPoses();
+    
+    /*
+     * Deletes the current Pose. If its the last one reset it to the default pose.
+     */
+    void deletePose();
+    
+    /*
+     * Saves the current pose, so that a new one can be defined by the user
+     */
+    void savePose();
+    
+    
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();
@@ -100,27 +121,13 @@ private:
      * inserted into the poses stack.
      * It is called the current Pose.
      */
-    AcquisitionPose& currPose(){
-        return _poses.back();
-    }
+    AcquisitionPose& currPose();
     
-    const AcquisitionPose& currPose() const{
-        return _poses.back();
-    }
+    const AcquisitionPose& currPose() const;
     
-    AcquisitionPose& currPoseChecked(){
-        if(_poses.empty()){
-            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
-        }
-        return _poses.back();
-    }
+    AcquisitionPose& currPoseChecked();
     
-    const AcquisitionPose& currPoseChecked() const{
-        if(_poses.empty()){
-            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
-        }
-        return _poses.back();
-    }
+    const AcquisitionPose& currPoseChecked() const;
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
