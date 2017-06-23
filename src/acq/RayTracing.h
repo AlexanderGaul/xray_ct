@@ -26,9 +26,12 @@ class RayTracing
     static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
 
     /*
-     * Return a Vector containing only NaNs
+     * Used as a return value
      * Represents the the intersections points of a ray and a box if they never actually
-     * Intersect
+     * Intersect.
+     * Should never be used but caught before it can be used in a calculation
+     * If available this is a signaling NaN which might make the usage of this in a 
+     * calculation easier to spot
      */
     static constexpr float nanConst = std::numeric_limits<float>::has_signaling_NaN ?
             std::numeric_limits<float>::signaling_NaN() : std::numeric_limits<float>::quiet_NaN();

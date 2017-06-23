@@ -15,32 +15,34 @@
 class ForwardProjectionOperator
 {
 private:
-    std::unique_ptr<AcquisitionPose>& _pose;
-    Volume& _volume;
-
+    //thic class cannot be instantiated
+    ForwardProjectionOperator() = delete;
+    
     std::vector<float> forwardProject(std::size_t row);
 
     float forwardProject(std::size_t row, std::size_t col);
 
 public:
-    ForwardProjectionOperator(Volume& volume, std::unique_ptr<AcquisitionPose>& pose)
-        : _volume(volume),
-          _pose(pose)
-    {
-
-    }
 
     /**
      * Uses only 1 pose.
      * @brief forwardProject
      * @return
      */
-    std::vector<float> forwardProject();
+    static std::vector<float> forwardProject(const Volume& vol, const AcquisitionPose& pose);
 
     /**
-     * TODO: avoid copy of large vector!
+     * because of the required return value optimisation there shouldn't be any copies
      * @brief forwardProjectFull
      * @return
      */
-    std::vector<std::vector<float>> forwardProjectFull();
+    static std::vector<std::vector<float>> forwardProjectFull(const Volume& vol, const std::vector<AcquisitionPose>& poses);
+    
+    /**
+     * Calculates the forwardProjection of steps poses, that are created by rotating pose around the RotationAxis,
+     * so that they close a full circle, where "neighboring" poses differ by the same angle
+     */
+    static std::vector<std::vector<float>> forwardProjectRotateAngle(const Volume&, AcquisitionPose /*,Steps, RotationAxis*/){
+        
+    };
 };

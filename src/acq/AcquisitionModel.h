@@ -28,9 +28,6 @@ enum class RotationAxis : bool {
 class AcquisitionModel : public QObject
 {
     Q_OBJECT
-private:
-    bool checkIfVolumeFitsBlackBox();
-    
 public:
 
     /**
@@ -47,7 +44,7 @@ public:
     void loadImage(std::string path);
     
     /**
-     * The next few methods offer an interface to the pose for the gui.
+     * The next few methods offer an interface to pose that is shown in the the gui.
      * See AcquisitionPose for documentation.
      */
     void updateRotation(RotationAxis axis, float angle);
@@ -56,38 +53,85 @@ public:
      * Returns the corners of the detector in the following order:
      * UpperLeft, LowerLeft, LowerRight, UpperRight
      */
-    std::array<Eigen::Vector3f, 4> getDetector();
+    std::array<Eigen::Vector3f, 4> getDetector() const;
 
-    Eigen::Vector2i getDetectorSize();
+    Eigen::Vector2i getDetectorSize() const;
 
-    Eigen::Vector3f getSourcePosition();
+    Eigen::Vector3f getSourcePosition() const;
     
-    Eigen::Vector3f getPixelCenter(int i, int j);
+    Eigen::Vector3f getPixelCenter(int i, int j) const;
     
-    Eigen::AlignedBox3f getBoundingBox();
+    /*
+     * returns the bouding Box of the volume
+     */
+    Eigen::AlignedBox3f getBoundingBox() const;
   
     /**
      * @brief writeImage. Writes an EDF iamge into a specified path
      * @param path - file system path determining the destination of the image.
      */
-    void writeImage(std::string path);
+    void writeImage(std::string path) const;
     
     /**
      * Calculates the complete forward Projection for the current acquistion pose
      */
-    std::vector<float> forwardProject();
+    std::vector<float> forwardProject() const;
 
-    std::vector<std::vector<float>> forwardProjectFull();
+    /**
+     * Calculates the complete forward Projection for all poses stored in the vector
+     */
+    std::vector<std::vector<float>> forwardProjectFull() const;
+    
+    /**
+     * TODO
+     * Calculates a forward Projection for Steps rotations of the current Pose around the
+     * Rotation axis
+     */
+    std::vector<std::vector<float>> forwardProjectAngle(/*Steps, RotationAxis*/){} ;
+    
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();
 private:
+    bool checkIfVolumeFitsBlackBox();
+    
+    /*
+     * The pose that is shown on the screen and which can be modified, is the last pose
+     * inserted into the poses stack.
+     * It is called the current Pose.
+     */
+    AcquisitionPose& currPose(){
+        return _poses.back();
+    }
+    
+    const AcquisitionPose& currPose() const{
+        return _poses.back();
+    }
+    
+    AcquisitionPose& currPoseChecked(){
+        if(_poses.empty()){
+            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
+        }
+        return _poses.back();
+    }
+    
+    const AcquisitionPose& currPoseChecked() const{
+        if(_poses.empty()){
+            throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
+        }
+        return _poses.back();
+    }
     
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
     Volume _volume;
-    std::unique_ptr<AcquisitionPose> _pose;
-    std::unique_ptr<ForwardProjectionOperator> _op;
+    /*
+     * Is effectively a stack. May later be replaced with std::stack TODO
+     * Stores older poses that were created by the user, so that a ForwardProjection on 
+     * more than one pose can be calculated.
+     * There has to be alway one element in this stack, which is the one shown in the gui.
+     */
+    std::vector<AcquisitionPose> _poses;
 
 };
 

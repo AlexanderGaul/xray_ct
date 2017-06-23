@@ -6,9 +6,8 @@
 #include <Eigen/Geometry>
 #include <QObject>
 
-class AcquisitionPose : public QObject
+class AcquisitionPose
 {
-    Q_OBJECT
 private:
     float s2dd_;
 
@@ -29,10 +28,8 @@ private:
     int pxl_vertical_;
 
     void updatePose();
-    Eigen::Matrix3f getRot();
+    Eigen::Matrix3f getRot() const;
 
-signals:
-    void poseChanged();
 public:
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
         : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4, 0.4, 5, 5) {
@@ -41,18 +38,18 @@ public:
 
     AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v);
 
-    Eigen::Vector3f getSourcePosition();
-    Eigen::Vector3f getDetectorCenter();
-    float getDetectorWidth();
+    Eigen::Vector3f getSourcePosition() const;
+    Eigen::Vector3f getDetectorCenter() const;
+    float getDetectorWidth() const;
 
-    Eigen::Vector3f getCenter();
+    Eigen::Vector3f getCenter() const;
     
     //float getRotation();
-    float getRotationGlobalZ();
-    float getRotationLocalY();
+    float getRotationGlobalZ() const;
+    float getRotationLocalY() const;
 
-    int getPixelHorizontal();
-    int getPixelVertical();
+    int getPixelHorizontal() const;
+    int getPixelVertical() const;
 
     void setCenter(const Eigen::Vector3f& center);
 
@@ -60,13 +57,13 @@ public:
     void setRotationGlobalZ(float rot_global_z);
     void setRotationLocalY(float rot_local_y);
     
-    Eigen::Vector3f getDetectorUpperLeft();
-    Eigen::Vector3f getDetectorUpperRight();
-    Eigen::Vector3f getDetectorLowerRight();
-    Eigen::Vector3f getDetectorLowerLeft();
+    Eigen::Vector3f getDetectorUpperLeft() const;
+    Eigen::Vector3f getDetectorUpperRight() const;
+    Eigen::Vector3f getDetectorLowerRight() const;
+    Eigen::Vector3f getDetectorLowerLeft() const;
     
-    Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical);
-    Eigen::Vector3f getPixelCenter(int horizontal, int vertical);
+    Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical) const;
+    Eigen::Vector3f getPixelCenter(int horizontal, int vertical) const;
 
 };
 
