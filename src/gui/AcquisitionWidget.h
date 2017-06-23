@@ -17,6 +17,7 @@ public:
     {
         _res.setMinimumSize(400, 400);
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, this, &AcquisitionWidget::update);
+        QObject::connect(&_pose, &PoseViewer::sceneRotationChanged, &_res, &ResultWidget::recalcProject);
         layout.addWidget(&_pose);
         layout.addWidget(&_res);
         this->setLayout(&layout);

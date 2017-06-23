@@ -16,6 +16,10 @@ private:
 	bool _showRays;
 	int _zoom;
 	AcquisitionModel *_model;
+
+signals:
+    void sceneChanged();
+
 public:
 	PoseDisplay(AcquisitionModel *model);
 

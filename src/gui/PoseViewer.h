@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <QWidget>
 #include <QGridLayout>
 #include <QSpinBox>
@@ -13,6 +15,7 @@
 
 class PoseViewer : public QWidget
 {
+    Q_OBJECT
 private:
     QGridLayout _layout;
 	QGridLayout _layoutBoxes;
@@ -26,8 +29,17 @@ private:
 	bool _showRays;
 	int _zoom;
 
+signals:
+    void sceneRotationChanged();
+
 public:
     
     PoseViewer(AcquisitionModel* pose);
+
+public slots:
+    void sceneChanged()
+    {
+        emit sceneRotationChanged();
+    }
 
 };

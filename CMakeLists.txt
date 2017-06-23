@@ -37,6 +37,7 @@ set(ACQ_HDRS
         src/acq/AcquisitionModel.h
         src/acq/AcquisitionPose.h
         src/acq/RayTracing.h
+        src/acq/Vec3D.h
         )
 
 # specifiy reconstruction source files
@@ -59,17 +60,21 @@ set(GUI_SRCS
         src/gui/AcquisitionWidget.cpp
         src/gui/PoseViewer.cpp
         src/gui/PoseDisplay.cpp
+        src/gui/ResultWidget.cpp
         )
 set(GUI_HDRS 
         src/gui/MainWindow.h 
         src/gui/AcquisitionWidget.h
         src/gui/PoseViewer.h
         src/gui/PoseDisplay.h
+        src/gui/ResultWidget.h
         )
 
 set(PART2_TEST_SOURCES
         test/test_RayTracing.cpp
-        test/test_SinogramGeneration.cpp)
+        test/test_SinogramGeneration.cpp
+        test/test_AcquisitionPose.cpp
+    )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

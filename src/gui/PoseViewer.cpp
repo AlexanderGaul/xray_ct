@@ -18,4 +18,6 @@ PoseViewer::PoseViewer(AcquisitionModel* model)
 
     connect(&_raysBox, SIGNAL(stateChanged(int)), &_poseDisplay, SLOT(setShowRays(int)));
     connect(&_zoomBox, SIGNAL(valueChanged(int)), &_poseDisplay, SLOT(setZoom(int)));
+
+    connect(&_poseDisplay, SIGNAL(sceneChanged()), this, SLOT(sceneChanged()));
 }
