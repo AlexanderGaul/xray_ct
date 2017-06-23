@@ -75,7 +75,6 @@ set(GUI_HDRS
 set(PART2_TEST_SOURCES
         test/test_RayTracing.cpp
         test/test_SinogramGeneration.cpp
-        test/test_AcquisitionPose.cpp
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
