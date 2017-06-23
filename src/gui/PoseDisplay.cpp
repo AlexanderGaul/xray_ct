@@ -1,6 +1,5 @@
 #include "PoseDisplay.h"
 
-
 void PoseDisplay::paintEvent(QPaintEvent* p_e)
 {
 	QPainter painter(this);
@@ -32,9 +31,9 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
             {
                 Eigen::Vector3f pixel = _model->getPixelCenter(i, j);
                 painter.drawLine(
-                    x_center + sourcePos.x() * _zoom, 
-                    y_center - sourcePos.y() * _zoom, 
-                    x_center + pixel(0) * _zoom, 
+                    x_center + sourcePos.x() * _zoom,
+                    y_center - sourcePos.y() * _zoom,
+                    x_center + pixel(0) * _zoom,
                     y_center - pixel(1) * _zoom);
             }
         }
@@ -72,10 +71,23 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
             x_center + detCorners[i].x() * _zoom,
             y_center - detCorners[i].y() * _zoom,
             x_center + detCorners[(i + 1) % 4].x() * _zoom,
-            y_center - detCorners[(i + 1) % 4].y() * _zoom  
+            y_center - detCorners[(i + 1) % 4].y() * _zoom
         );
     }
     
+    
+    //paint the bounding box of the main volume
+    auto boundingBox = _model->getBoundingBox();
+    auto topLeftCorner = boundingBox.corner(Eigen::AlignedBox3f::TopLeftFloor);
+    auto lowerRightCorner = boundingBox.corner(Eigen::AlignedBox3f::BottomRightFloor);
+    
+    
+    painter.resetTransform();
+    painter.translate(x_center, y_center);
+    painter.drawRect( topLeftCorner.x() *_zoom, topLeftCorner.y() *_zoom,
+                      (lowerRightCorner.x() - topLeftCorner.x()) *_zoom,
+                      (lowerRightCorner.y() - topLeftCorner.y()) *_zoom);
+                     
     
     /*
     //painter.setWidth(2)
