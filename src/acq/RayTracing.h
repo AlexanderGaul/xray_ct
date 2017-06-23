@@ -18,6 +18,12 @@ class RayTracing
         return std::signbit(x) ? -1 : 1;
     }
     
+
+    /**
+     * return t so that ray.pointAt(t) is the actual intersection point
+     */
+    static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
+
     /*
      * Return a Vector containing only NaNs
      * Represents the the intersections points of a ray and a box if they never actually
@@ -27,10 +33,6 @@ class RayTracing
             std::numeric_limits<float>::signaling_NaN() : std::numeric_limits<float>::quiet_NaN();
     
 public:
-    /**
-     * return t so that ray.pointAt(t) is the actual intersection point
-     */
-    static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
 
     /**
      *
