@@ -76,3 +76,7 @@ std::vector<float> AcquisitionModel::forwardProject(){
 std::vector<std::vector<float>> AcquisitionModel::forwardProjectFull(){
     return _op->forwardProjectFull();
 }
+
+Eigen::AlignedBox3f AcquisitionModel::getBoundingBox() {
+        return _volume.getBoundingBox();
+    }

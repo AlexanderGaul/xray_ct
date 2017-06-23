@@ -65,8 +65,6 @@ public:
     Eigen::Vector3f getDetectorLowerRight();
     Eigen::Vector3f getDetectorLowerLeft();
     
-    
-    
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical);
     Eigen::Vector3f getPixelCenter(int horizontal, int vertical);
 

@@ -63,6 +63,8 @@ public:
     Eigen::Vector3f getSourcePosition();
     
     Eigen::Vector3f getPixelCenter(int i, int j);
+    
+    Eigen::AlignedBox3f getBoundingBox();
   
     /**
      * @brief writeImage. Writes an EDF iamge into a specified path
