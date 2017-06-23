@@ -73,7 +73,9 @@ public:
     /**
      * Calculates the complete forward Projection for the current acquistion pose
      */
-    std::vector<std::vector<float>> forwardProject ();
+    std::vector<float> forwardProject();
+
+    std::vector<std::vector<float>> forwardProjectFull();
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();

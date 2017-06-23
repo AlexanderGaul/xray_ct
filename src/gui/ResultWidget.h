@@ -33,7 +33,24 @@ public slots:
      * recalculated and redrawn
      */
     void recalcProject(){
-        _currProjection = _model->forwardProject();
+        _currProjection = _model->forwardProjectFull();
+
+        // we know that projection contains a linearized square matrix
+//        std::vector<float> projection = _model->forwardProject();
+//        int n = sqrt(projection.size());
+
+//        _currProjection.clear();
+//        _currProjection.reserve(n);
+//        for(int i = 0; i < n; i++)
+//        {
+//            std::vector<float> temp;
+//            temp.reserve(n);
+//            for(int j = 0; j < n; j++)
+//            {
+//                temp.push_back(projection[i*n + j]);
+//            }
+//            _currProjection.push_back(temp);
+//        }
         repaint();
     }
     

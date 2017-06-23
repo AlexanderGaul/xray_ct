@@ -30,5 +30,17 @@ public:
 
     }
 
-    std::vector<std::vector<float>> forwardProject ();
+    /**
+     * Uses only 1 pose.
+     * @brief forwardProject
+     * @return
+     */
+    std::vector<float> forwardProject();
+
+    /**
+     * TODO: avoid copy of large vector!
+     * @brief forwardProjectFull
+     * @return
+     */
+    std::vector<std::vector<float>> forwardProjectFull();
 };

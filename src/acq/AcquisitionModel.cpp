@@ -69,6 +69,10 @@ void AcquisitionModel::writeImage(std::string path)
     EDFHandler::write(path, _volume);
 }
 
-std::vector<std::vector<float>> AcquisitionModel::forwardProject (){
+std::vector<float> AcquisitionModel::forwardProject(){
     return _op->forwardProject();
+}
+
+std::vector<std::vector<float>> AcquisitionModel::forwardProjectFull(){
+    return _op->forwardProjectFull();
 }
