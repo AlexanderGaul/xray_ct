@@ -50,38 +50,19 @@ public:
      * The next few methods offer an interface to the pose for the gui.
      * See AcquisitionPose for documentation.
      */
-    void updateRotation(RotationAxis axis, float angle){
-        //see description of the rotation axis for why the if is as it is
-        if(axis == RotationAxis::Z){
-            _pose->setRotationLocalY(_pose->getRotationLocalY()+angle);
-        } else {
-            _pose->setRotationGlobalZ(_pose->getRotationGlobalZ()+angle);
-        }
-    }
-
+    void updateRotation(RotationAxis axis, float angle);
     
-    /*
+    /**
      * Returns the corners of the detector in the following order:
      * UpperLeft, LowerLeft, LowerRight, UpperRight
      */
-    std::array<Eigen::Vector3f, 4> getDetector(){
-        return std::array<Eigen::Vector3f, 4> {
-            _pose->getDetectorUpperLeft(), _pose->getDetectorLowerLeft(),
-            _pose->getDetectorLowerRight(), _pose->getDetectorUpperRight()
-        };
-    }
+    std::array<Eigen::Vector3f, 4> getDetector();
+
+    Eigen::Vector2i getDetectorSize();
+
+    Eigen::Vector3f getSourcePosition();
     
-    Eigen::Vector2i getDetectorSize(){
-        return Eigen::Vector2i {_pose->getPixelHorizontal(), _pose->getPixelVertical()};
-    }
-    
-    Eigen::Vector3f getSourcePosition(){
-        return _pose->getSourcePosition();
-    }
-    
-    Eigen::Vector3f getPixelCenter(int i, int j){
-        return _pose->getPixelCenter(i, j);
-    }
+    Eigen::Vector3f getPixelCenter(int i, int j);
   
     /**
      * @brief writeImage. Writes an EDF iamge into a specified path

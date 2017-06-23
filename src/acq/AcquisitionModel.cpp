@@ -36,6 +36,34 @@ void AcquisitionModel::loadImage(std::string path)
     }
 }
 
+void AcquisitionModel::updateRotation(RotationAxis axis, float angle){
+    //see description of the rotation axis for why the if is as it is
+    if(axis == RotationAxis::Z){
+        _pose->setRotationLocalY(_pose->getRotationLocalY()+angle);
+    } else {
+        _pose->setRotationGlobalZ(_pose->getRotationGlobalZ()+angle);
+    }
+}
+
+std::array<Eigen::Vector3f, 4> AcquisitionModel::getDetector(){
+    return std::array<Eigen::Vector3f, 4> {
+        _pose->getDetectorUpperLeft(), _pose->getDetectorLowerLeft(),
+        _pose->getDetectorLowerRight(), _pose->getDetectorUpperRight()
+    };
+}
+
+Eigen::Vector2i AcquisitionModel::getDetectorSize(){
+    return Eigen::Vector2i {_pose->getPixelHorizontal(), _pose->getPixelVertical()};
+}
+
+Eigen::Vector3f AcquisitionModel::getSourcePosition(){
+    return _pose->getSourcePosition();
+}
+
+Eigen::Vector3f AcquisitionModel::getPixelCenter(int i, int j){
+    return _pose->getPixelCenter(i, j);
+}
+
 void AcquisitionModel::writeImage(std::string path)
 {
     EDFHandler::write(path, _volume);
