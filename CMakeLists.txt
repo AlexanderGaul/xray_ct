@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(Eigen3 REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src)
+include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src/rec)
 
 
 IF (WIN32)
@@ -31,7 +31,7 @@ set(CMAKE_AUTOMOC ON)
 add_subdirectory(src)
 
 # create executable for application
-add_executable(part2 src/main.cpp )
+add_executable(part2 src/main.cpp)
 set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(part2 part2_lib_acq part2_lib_gui part2_lib_rec Qt5::Widgets)
@@ -42,6 +42,7 @@ target_link_libraries(part2 part2_lib_acq part2_lib_gui part2_lib_rec Qt5::Widge
 
 # specify test source files
 set(PART2_TEST_SOURCES
+        test/test_CG.cpp
         test/test_RayTracing.cpp
         test/test_SinogramGeneration.cpp
     )
