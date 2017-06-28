@@ -65,6 +65,10 @@ public:
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical) const;
     Eigen::Vector3f getPixelCenter(int horizontal, int vertical) const;
 
+    Eigen::ParametrizedLine<float, 3> getRay(int index) const
+    {
+        return getRay(index / pxl_horizontal_, index % pxl_horizontal_);
+    }
 };
 
 #endif

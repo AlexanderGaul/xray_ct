@@ -1,6 +1,11 @@
 #pragma once
 
 #include <Eigen/Eigen>
+#include <Eigen/Geometry>
+
+#include <vector>
+
+#include "AcquisitionPose.h"
 
 /**
  * This is the abstract container class representing the system matrix B.
@@ -9,7 +14,22 @@
  */
 class DataContainer
 {
+private:
+    std::vector<AcquisitionPose> poses;
 public:
+    DataContainer(std::vector<AcquisitionPose>& poses)
+        : poses(poses)
+    {
+    }
+
     virtual
-    void mult(Eigen::Vector3f vector) = 0;
+    Eigen::SparseVector<float> mult(Eigen::VectorXf vector) = 0;
+
+    Eigen::SparseVector<float> row(int index)
+    {
+        int rowsTotal = poses[0].getPixelVertical();
+        int pixelTotal = poses[0].getPixelVertical() * poses[0].getPixelHorizontal();
+
+
+    }
 };

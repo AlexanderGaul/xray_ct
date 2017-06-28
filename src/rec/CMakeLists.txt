@@ -5,12 +5,14 @@ set(REC_SRCS
         CG.cpp
         DataContainer.cpp
         NormalReconstructionContainer.cpp
+        ReconstructionModel.cpp
         RegularizationContainer.cpp
         )
 set(REC_HDRS
         CG.h
         DataContainer.h
         NormalReconstructionContainer.h
+        ReconstructionModel.h
         RegularizationContainer.h
         )
 

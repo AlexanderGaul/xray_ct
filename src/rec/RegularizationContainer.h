@@ -10,7 +10,7 @@ class RegularizationContainer : public DataContainer
 {
 public:
     virtual
-    void mult(Eigen::Vector3f vector) override
+    Eigen::SparseVector<float> mult(Eigen::VectorXf vector) override
     {
         std::cout << "TODO: regularized reconstruction" << std::endl;
     }

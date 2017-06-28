@@ -143,6 +143,17 @@ public:
     T const * rawData() const noexcept{
         return _content.data(); 
     }
+
+    /**
+     * Convert the input coordinate into a numeric value.
+     * @brief getIndex
+     * @param input
+     * @return
+     */
+    int getIndex(Eigen::Vector3i input) const
+    {
+        return input[0] + input[1] * sizeX() + input[2] * sizeX() * sizeY();
+    }
 };
 
 #endif // VEC3D_H

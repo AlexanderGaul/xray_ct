@@ -2,6 +2,7 @@
 #define RAYTRACING_H
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -50,6 +51,99 @@ public:
      * @return sum of all contributions of the ray going through the box
      */
     static float forwardProject(const Volume& box, const Line3f& ray);
+
+
+
+
+    /**
+     * Computes one row of the system matrix.
+     * @brief systemMatrix
+     * @param volume
+     * @param ray
+     * @return
+     */
+    static
+    Eigen::SparseVector<int> systemMatrix(const Volume& volume, const Line3f& ray)
+    {
+        const auto boundingBox = volume.getBoundingBox();
+        const float tIntersect = boxIntersectHelper(boundingBox, ray);
+
+        Eigen::SparseVector<int> ret;
+
+        //The ray doesn't intersect the volume
+        if(std::isnan(tIntersect)){
+            return ret;
+        }
+
+        const Eigen::Vector3f direction {ray.direction()};
+        const Eigen::Vector3i step {simpSign(direction.x()), simpSign(direction.y()), simpSign(direction.z())};
+
+        //calculate the maximal absolute boundaries of the box in the direction of the ray
+        const float maxX = step.x() <= 0 ? 0 : boundingBox.sizes().x();
+        const float maxY = step.y() <= 0 ? 0 : boundingBox.sizes().y();
+        const float maxZ = step.z() <= 0 ? 0 : boundingBox.sizes().z();
+
+        const Eigen::Vector3f voxel {volume.getSpacing()};
+        const Eigen::Vector3i maxVoxel {volume.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
+        const Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction)};
+        const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
+        Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
+
+        //calculate fraction
+
+        //calculate the boundaries of a voxel in the direction of the ray
+        const float boundX = step.x() <= 0 ? 0 : voxel.x();
+        const float boundY = step.y() <= 0 ? 0 : voxel.y();
+        const float boundZ = step.z() <= 0 ? 0 : voxel.z();
+        const Eigen::Vector3f bounds {boundX, boundY, boundZ};
+        //intersection point relative to initially intersected voxel
+        const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
+        //the above in relative distance to the next hit boundary
+        const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
+
+        Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
+
+        if(pos.x() > maxVoxel.x() || pos.y() > maxVoxel.y() || pos.z() > maxVoxel.z())
+        {
+            return ret;
+        }
+
+
+        for(;;) {
+            ret.coeffRef(volume.content().getIndex(pos));
+
+            if(tMax.x() < tMax.y()) {
+                if(tMax.x() < tMax.z()) {
+                    pos.x() += step.x();
+                    if(pos.x() < 0 || pos.x() > maxVoxel.x()) {
+                        return ret;
+                    }
+
+                    tMax.x() += tDelta.x();
+                } else  {
+                    pos.z() += step.z();
+                    if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
+                        return ret;
+                    }
+                    tMax.z() += tDelta.z();
+                }
+            } else  {
+                if(tMax.y() < tMax.z()) {
+                    pos.y() += step.y();
+                    if(pos.y() < 0 || pos.y() > maxVoxel.y()){
+                        return ret;
+                    }
+                    tMax.y() += tDelta.y();
+                } else  {
+                    pos.z() +=  step.z();
+                    if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
+                        return ret;
+                    }
+                    tMax.z() += tDelta.z();
+                }
+            }
+        }
+    }
     
 };
 
