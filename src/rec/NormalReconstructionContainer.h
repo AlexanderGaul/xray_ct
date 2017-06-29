@@ -1,15 +1,29 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
+#include <Eigen/Eigen>
+
+#include "AcquisitionPose.h"
+#include "AcquisitionModel.h"
 #include "DataContainer.h"
+#include "ReconstructionModel.h"
+#include "RayTracing.h"
 
 class NormalReconstructionContainer : public DataContainer
 {
 
-    virtual
-    void mult(Eigen::Vector3f vector) override
+private:
+
+public:
+    NormalReconstructionContainer(const Volume& volume, std::vector<AcquisitionPose>& poses)
+        : DataContainer(volume, poses)
     {
-        std::cout << "TODO: normal reconstruction" << std::endl;
+    }
+    
+    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) override
+    {
+        return backwardProj(forwardProj(vector));
     }
 };

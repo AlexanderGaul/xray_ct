@@ -70,7 +70,7 @@ Eigen::Vector3f RayTracing::boxIntersect(const Eigen::AlignedBox3f& box, const L
     return Eigen::Vector3f(ray.origin() + ray.direction() * boxIntersectHelper(box, ray));
 }
 
-float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
+float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Eigen::VectorXf values) {
         const auto boundingBox = volume.getBoundingBox();
         const float tIntersect = boxIntersectHelper(boundingBox, ray);
         
@@ -81,11 +81,6 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
         
         const Eigen::Vector3f direction {ray.direction()};
         const Eigen::Vector3i step {simpSign(direction.x()), simpSign(direction.y()), simpSign(direction.z())};
-        
-        //calculate the maximal absolute boundaries of the box in the direction of the ray
-        const float maxX = step.x() <= 0 ? 0 : boundingBox.sizes().x();
-        const float maxY = step.y() <= 0 ? 0 : boundingBox.sizes().y();
-        const float maxZ = step.z() <= 0 ? 0 : boundingBox.sizes().z();
         
         const Eigen::Vector3f voxel {volume.getSpacing()};
         const Eigen::Vector3i maxVoxel {volume.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
@@ -115,7 +110,7 @@ float RayTracing::forwardProject(const Volume& volume, const Line3f& ray) {
 
 
         for(;;) {
-            acc += volume.content().getChecked(pos);
+            acc += values[volume.coordinateToIndex(pos)];
 
             if(tMax.x() < tMax.y()) {
                 if(tMax.x() < tMax.z()) {

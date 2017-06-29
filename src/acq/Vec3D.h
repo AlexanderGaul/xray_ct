@@ -12,7 +12,7 @@ class Vec3D
     using index_type = int;
     using vector_type = Eigen::VectorXf;
     using size_vector_type = Eigen::Matrix<index_type, 3, 1>;
-    using type = T;
+    using content_type = T;
     using typeRef = T&;
 private:
     size_vector_type _sizes;
@@ -44,9 +44,9 @@ private:
     void checkInvariant(size_t vecSize) const{
         if(vecSize != (sizeX()) * (sizeY()) * (sizeZ())){
             std::string exText {"The vector given as argument of the Vec3D constructor has size "};
-            exText += vecSize;
+            exText += std::to_string(vecSize);
             exText += " but the given size parameters indicate a size of ";
-            exText += (sizeX()) * (sizeY()) * (sizeZ());
+            exText += std::to_string((sizeX()) * (sizeY()) * (sizeZ()));
 
             throw std::length_error {exText};
         }
@@ -136,12 +136,31 @@ public:
         return get(x, y, z);
     }
     
-    T* rawData() noexcept{
+    vector_type& rawVec() noexcept{
+        return _content; 
+    }
+    
+    const vector_type& rawVec() const noexcept{
+        return _content; 
+    }
+    
+    content_type * rawData() noexcept{
         return _content.data(); 
     }
     
-    T const * rawData() const noexcept{
+    content_type const * rawData() const noexcept{
         return _content.data(); 
+    }
+
+    /**
+     * Convert the input coordinate into a numeric value.
+     * @brief getIndex
+     * @param input
+     * @return
+     */
+    int getIndex(Eigen::Vector3i input) const
+    {
+        return input[0] + input[1] * sizeX() + input[2] * sizeX() * sizeY();
     }
 };
 

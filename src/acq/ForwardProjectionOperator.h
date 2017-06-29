@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include <Eigen/Dense>
+
 #include "AcquisitionPose.h"
 #include "RayTracing.h"
 
@@ -30,6 +32,8 @@ public:
      * @return the forward projection in a ROW MAJOR ORDER
      */
     static std::vector<float> forwardProject(const Volume& vol, const AcquisitionPose& pose);
+    
+    
 
     /**
      * because of the required return value optimisation there shouldn't be any copies
@@ -37,6 +41,11 @@ public:
      * @return returns the result of the above function for every pose
      */
     static std::vector<std::vector<float>> forwardProjectFull(const Volume& vol, const std::vector<AcquisitionPose>& poses);
+    
+    /*
+     * Computes A*values, where A is the system matrix of the tomographic problem
+     */
+    static Eigen::Vector3f forwardProj(const VolumeBase& vol, const std::vector<AcquisitionPose>& poses, const Eigen::VectorXf& values);
     
     /**
      * TODO

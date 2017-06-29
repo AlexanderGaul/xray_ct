@@ -32,7 +32,7 @@ private:
 
 public:
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
-        : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4, 0.4, 100, 100) {
+        : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4f, 0.4f, 5, 5) {
             
         } 
 
@@ -65,6 +65,10 @@ public:
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical) const;
     Eigen::Vector3f getPixelCenter(int horizontal, int vertical) const;
 
+    Eigen::ParametrizedLine<float, 3> getRay(int index) const
+    {
+        return getRay(index / pxl_horizontal_, index % pxl_horizontal_);
+    }
 };
 
 #endif
