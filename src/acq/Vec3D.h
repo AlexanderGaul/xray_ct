@@ -44,9 +44,9 @@ private:
     void checkInvariant(size_t vecSize) const{
         if(vecSize != (sizeX()) * (sizeY()) * (sizeZ())){
             std::string exText {"The vector given as argument of the Vec3D constructor has size "};
-            exText += vecSize;
+            exText += std::to_string(vecSize);
             exText += " but the given size parameters indicate a size of ";
-            exText += (sizeX()) * (sizeY()) * (sizeZ());
+            exText += std::to_string((sizeX()) * (sizeY()) * (sizeZ()));
 
             throw std::length_error {exText};
         }

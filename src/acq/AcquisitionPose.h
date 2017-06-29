@@ -32,7 +32,7 @@ private:
 
 public:
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
-        : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4, 0.4, 5, 5) {
+        : AcquisitionPose(boundingBox.diagonal().norm()*1.5, 0.4f, 0.4f, 5, 5) {
             
         } 
 
