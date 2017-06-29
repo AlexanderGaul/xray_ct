@@ -27,7 +27,7 @@ std::vector<std::vector<float>> ForwardProjectionOperator::forwardProjectFull(co
 }
 
 Eigen::VectorXf forwardProj(const Volume& vol, const std::vector<AcquisitionPose>& poses, const Eigen::VectorXf& values){
-    Eigen::VectorXf proj {poses.size()*poses[0].getPixelHorizontal()*poses[0].getPixelVertical()};
+    Eigen::VectorXf proj {(int)poses.size()*poses[0].getPixelHorizontal()*poses[0].getPixelVertical()};
     int poseCount = poses.size();
     int verticalPixels = poses[0].getPixelVertical();
     int horizontalPixels = poses[0].getPixelHorizontal();
