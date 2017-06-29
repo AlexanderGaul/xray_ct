@@ -8,10 +8,22 @@
 
 class RegularizationContainer : public DataContainer
 {
+private:
+    float _lambda;
 public:
-    virtual
-    Eigen::SparseVector<float> mult(Eigen::VectorXf vector) override
+    RegularizationContainer(const Volume& volume, std::vector<AcquisitionPose>& poses, float lambda)
+        : DataContainer(volume, poses), _lambda {lambda}
     {
-        std::cout << "TODO: regularized reconstruction" << std::endl;
+    }
+    
+    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) override
+    {
+        //calculates A^T*A*x
+        Eigen::VectorXf res = backwardProj(forwardProj(vector));
+        
+        //adds lambda*I*x = lambda * x
+        res += _lambda*vector;
+        
+        return res;
     }
 };

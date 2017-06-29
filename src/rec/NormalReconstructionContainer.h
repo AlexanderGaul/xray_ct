@@ -17,24 +17,13 @@ class NormalReconstructionContainer : public DataContainer
 private:
 
 public:
-    NormalReconstructionContainer(std::vector<AcquisitionPose>& poses)
-        : DataContainer(poses)
+    NormalReconstructionContainer(const Volume& volume, std::vector<AcquisitionPose>& poses)
+        : DataContainer(volume, poses)
     {
     }
-
-    Eigen::SparseVector<int> systemMatrix(int row)
+    
+    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) override
     {
-        return RayTracing::systemMatrix(_volume, _rays);
-    }
-
-    virtual
-    Eigen::SparseVector<float> mult(Eigen::VectorXf vector) override
-    {
-        Eigen::VectorXf res(vector.rows());
-        for(int i = 0; i<vector.rows(); ++i)
-        {
-            res(i) = getRow(i) * vector;
-        }
-        return res;
+        return backwardProj(forwardProj(vector));
     }
 };

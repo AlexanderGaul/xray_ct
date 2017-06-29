@@ -1,15 +1,17 @@
 #ifndef RAYTRACING_H
 #define RAYTRACING_H
-#include <Eigen/Geometry>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 #include <cmath>
 #include <iostream>
 #include <limits>
 #include <vector>
 
+#include <Eigen/Geometry>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
 #include "Vec3D.h"
 #include "Volume.h"
+#include "AcquisitionPose.h"
 
 class RayTracing
 {
@@ -46,51 +48,33 @@ public:
      */
     static Eigen::Vector3f boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
+    static float forwardProject(const VolumeBase& volume, const Line3f& ray, Eigen::VectorXf values);
     /**
      * calculates the forwardProjection of the given ray and the given box.
      * @return sum of all contributions of the ray going through the box
      */
-    static float forwardProject(const Volume& box, const Line3f& ray);
-
-
-
-
-    /**
-     * Computes one row of the system matrix.
-     * @brief systemMatrix
-     * @param volume
-     * @param ray
-     * @return
-     */
-    static
-    Eigen::SparseVector<int> systemMatrix(const Volume& volume, const Line3f& ray)
-    {
-        const auto boundingBox = volume.getBoundingBox();
+    static float backwardProj(const VolumeBase& box, const Line3f& ray, Eigen::VectorXf& backProj, float projValue){
+        //based on "An Efficient and Robust Ray–Box Intersection Algorithm"
+        //link:  http://people.csail.mit.edu/amy/papers/box-jgt.pdf
+           const auto boundingBox = box.getBoundingBox();
         const float tIntersect = boxIntersectHelper(boundingBox, ray);
-
-        Eigen::SparseVector<int> ret;
-
+        
         //The ray doesn't intersect the volume
         if(std::isnan(tIntersect)){
-            return ret;
+            return 0; //std::vector<Eigen::Vector3f> {}
         }
-
+        
         const Eigen::Vector3f direction {ray.direction()};
         const Eigen::Vector3i step {simpSign(direction.x()), simpSign(direction.y()), simpSign(direction.z())};
-
-        //calculate the maximal absolute boundaries of the box in the direction of the ray
-        const float maxX = step.x() <= 0 ? 0 : boundingBox.sizes().x();
-        const float maxY = step.y() <= 0 ? 0 : boundingBox.sizes().y();
-        const float maxZ = step.z() <= 0 ? 0 : boundingBox.sizes().z();
-
-        const Eigen::Vector3f voxel {volume.getSpacing()};
-        const Eigen::Vector3i maxVoxel {volume.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
+        
+        const Eigen::Vector3f voxel {box.getSpacing()};
+        const Eigen::Vector3i maxVoxel {box.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
         const Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction)};
         const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
         Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
-
+        
         //calculate fraction
-
+        
         //calculate the boundaries of a voxel in the direction of the ray
         const float boundX = step.x() <= 0 ? 0 : voxel.x();
         const float boundY = step.y() <= 0 ? 0 : voxel.y();
@@ -100,30 +84,31 @@ public:
         const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
         //the above in relative distance to the next hit boundary
         const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
-
+    
         Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
-
+        
+        float acc = 0;
         if(pos.x() > maxVoxel.x() || pos.y() > maxVoxel.y() || pos.z() > maxVoxel.z())
         {
-            return ret;
+            return acc;
         }
 
 
         for(;;) {
-            ret.coeffRef(volume.content().getIndex(pos));
+            backProj(box.coordinateToIndex(pos)) += projValue;
 
             if(tMax.x() < tMax.y()) {
                 if(tMax.x() < tMax.z()) {
                     pos.x() += step.x();
                     if(pos.x() < 0 || pos.x() > maxVoxel.x()) {
-                        return ret;
+                        return acc;
                     }
-
+                    
                     tMax.x() += tDelta.x();
                 } else  {
                     pos.z() += step.z();
                     if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
-                        return ret;
+                        return acc;
                     }
                     tMax.z() += tDelta.z();
                 }
@@ -131,18 +116,40 @@ public:
                 if(tMax.y() < tMax.z()) {
                     pos.y() += step.y();
                     if(pos.y() < 0 || pos.y() > maxVoxel.y()){
-                        return ret;
+                        return acc;
                     }
                     tMax.y() += tDelta.y();
                 } else  {
                     pos.z() +=  step.z();
                     if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
-                        return ret;
+                        return acc;
                     }
                     tMax.z() += tDelta.z();
                 }
             }
+        }       
+    }
+
+    static Eigen::VectorXf backwardProj(const VolumeBase& box, const std::vector<AcquisitionPose> poses, const Eigen::VectorXf forwardP){
+        Eigen::VectorXf proj = Eigen::VectorXf::Zero(box.getTotalVoxelCount());
+        if(poses.empty()){
+            return proj;
         }
+        
+        auto horizonalPixels = poses[0].getPixelHorizontal();
+        auto verticalPixels = poses[0].getPixelVertical();
+        
+        for(int p = 0; p < poses.size(); ++p){
+            auto pIndex = p*horizonalPixels*verticalPixels;
+            for(int y = 0; y < verticalPixels; ++y){
+                auto yIndex = y * horizonalPixels;
+                for(int x = 0; x < horizonalPixels; ++x){
+                    RayTracing::backwardProj(box, poses[p].getRay(x,y), proj, forwardP[x + yIndex + pIndex]);
+                }
+            }
+        }
+        
+        return proj;
     }
     
 };
