@@ -7,6 +7,8 @@ set(GUI_SRCS
         PoseViewer.cpp
         PoseDisplay.cpp
         ResultWidget.cpp
+        SliceWidget.cpp
+        SliceViewer.cpp
         )
 set(GUI_HDRS
         MainWindow.h
@@ -14,6 +16,8 @@ set(GUI_HDRS
         PoseViewer.h
         PoseDisplay.h
         ResultWidget.h
+        SliceWidget.h
+        SliceViewer.h
         )
 
 add_library(part2_lib_gui ${GUI_HDRS} ${GUI_SRCS} )

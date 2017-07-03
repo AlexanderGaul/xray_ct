@@ -111,7 +111,16 @@ public:
      */
     void savePose();
     
-    
+    /**
+     * Returns a reference to the volume (containing the raw data).
+     * @brief volume
+     * @return
+     */
+    const Volume& volume() const
+    {
+        return _volume;
+    }
+
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();

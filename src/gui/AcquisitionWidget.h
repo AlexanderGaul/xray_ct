@@ -27,6 +27,11 @@ public:
         layout.addWidget(&_res, 1);
         this->setLayout(&layout);
     }
+
+    const Volume& volume() const
+    {
+        return _aModel.volume();
+    }
     
 public slots:
     /*

@@ -11,14 +11,17 @@
 
 #include "AcquisitionWidget.h"
 #include "PoseViewer.h"
+#include "SliceViewer.h"
 
 class MainWindow : public QMainWindow {
 public:
     MainWindow(std::string path)
-        : _aWidget(path)
+        : _aWidget(path),
+          _sViewer(_aWidget.volume())
     {
         QTabWidget* tabWidget = new QTabWidget();
 
+        tabWidget->addTab(&_sViewer, tr("Raw volume"));
         tabWidget->addTab(&_aWidget, tr("Acquisition"));
         setCentralWidget(tabWidget);
     }
@@ -30,6 +33,8 @@ private slots:
     
 private:
     AcquisitionWidget _aWidget;
+
+    SliceViewer _sViewer;
 
 };
 
