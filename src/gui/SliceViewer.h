@@ -1,5 +1,4 @@
-#ifndef SLICEVIEWER_H
-#define SLICEVIEWER_H
+#pragma once
 
 #include <QGridLayout>
 #include <QLabel>
@@ -31,11 +30,13 @@ public:
 
         _axisSlider.setRange(1, 3);
         _axisSlider.setOrientation(Qt::Horizontal);
+        _axisSlider.setValue(2);
         _axisSlider.setSingleStep(1);
         QLabel *label1 = new QLabel("X", this);
         QLabel *label2 = new QLabel("Y", this);
         QLabel *label3 = new QLabel("Z", this);
         _sliderLayout.addWidget(&_axisSlider, 0, 0, 1, 2);
+
         _sliderLayout.addWidget(label1, 1, 0, 1, 1);
         _sliderLayout.addWidget(label2, 1, 1, 1, 1);
         _sliderLayout.addWidget(label3, 1, 2, 1, 1);
@@ -48,7 +49,8 @@ public:
         _layout.addItem(&_controlLayout, 1, 0);
         setLayout(&_layout);
 
-        QObject::connect(&_sWidget, &SliceWidget::sliceChanged, this, &SliceViewer::updateStatus);
+        connect(&_sWidget, &SliceWidget::sliceChanged, this, &SliceViewer::updateStatus);
+        connect(&_axisSlider, SIGNAL(valueChanged(int)), &_sWidget, SLOT(updateStatus(int)));
     }
 
 
@@ -62,5 +64,3 @@ public slots:
                                     " of "+QString::number(_sWidget.slices())));
     }
 };
-
-#endif // SLICEVIEWER_H

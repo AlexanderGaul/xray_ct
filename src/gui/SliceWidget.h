@@ -1,5 +1,7 @@
-#ifndef SLICEWIDGET_H
-#define SLICEWIDGET_H
+#pragma once
+
+#include <iostream>
+#include <vector>
 
 #include <QGridLayout>
 #include <QLabel>
@@ -19,9 +21,11 @@ private:
     const Volume& _volume;
     int _currSlice;
 
+    int _status;
+
 public:
     SliceWidget(const Volume& volume)
-        : _volume(volume), _currSlice(5)
+        : _volume(volume), _currSlice(volume.content().sizeZ()/2), _status(2)
     {
     }
 
@@ -32,19 +36,56 @@ public:
 
         const Vec3D<float>& content = _volume.content();
 
-        int pixelWidth = 1.0*width()/(content.sizeX());
-        int pixelHeight = 1.0*height()/(content.sizeY());
 
-        for(int i = 0; i<content.sizeX(); ++i)
+        // TODO: reduce duplication
+        if(_status == 2)
         {
-            for(int j = 0; j<content.sizeY(); ++j)
+            int pixelWidth = 1.0*width()/(content.sizeX());
+            int pixelHeight = 1.0*height()/(content.sizeY());
+            for(int i = 0; i< content.sizeX(); ++i)
             {
-                int curr = (content.get(i,j,_currSlice));
+                for(int j = 0; j<content.sizeY(); ++j)
+                {
+                    int curr = (content.get(i,j,_currSlice));
 
-                QColor color = QColor::fromRgb(curr, curr, curr);
-                painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
+                    QColor color = QColor::fromRgb(curr, curr, curr);
+                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
+                }
+            }
+            return;
+        }
+        if(_status == 1) // Y
+        {
+            int pixelWidth = 1.0*width()/(content.sizeX());
+            int pixelHeight = 1.0*height()/(content.sizeZ());
+            for(int i = 0; i< content.sizeX(); ++i)
+            {
+                for(int j = 0; j<content.sizeZ(); ++j)
+                {
+                    int curr = (content.get(i,_currSlice,j));
+
+                    QColor color = QColor::fromRgb(curr, curr, curr);
+                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
+                }
+            }
+            return;
+        }
+        if(_status == 0) // X
+        {
+            int pixelWidth = 1.0*width()/(content.sizeY());
+            int pixelHeight = 1.0*height()/(content.sizeZ());
+            for(int i = 0; i< content.sizeY(); ++i)
+            {
+                for(int j = 0; j<content.sizeZ(); ++j)
+                {
+                    int curr = (content.get(_currSlice,i,j));
+
+                    QColor color = QColor::fromRgb(curr, curr, curr);
+                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
+                }
             }
         }
+
     }
 
     void wheelEvent(QWheelEvent* event)
@@ -90,6 +131,10 @@ signals:
     void sliceChanged();
 
 public slots:
+    void updateStatus(int newStatus)
+    {
+        _status = newStatus-1;
+        std::cout << _status << std::endl;
+        repaint();
+    }
 };
-
-#endif // SLICEWIDGET_H
