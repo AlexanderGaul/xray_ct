@@ -1,4 +1,5 @@
 #include "ResultWidget.h"
+#include <algorithm>
 
 void ResultWidget::recalcProject() {
         switch(_widgetStack.currentIndex()){
@@ -60,11 +61,14 @@ bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
             }
             std::size_t pixelY = _currProjection.size();
             std::size_t pixelX = _currProjection[0].size();
-            std::size_t pixelWidth = size.width()/pixelX;
-            std::size_t pixelHeight = size.height()/pixelY;
+            
+            std::size_t pixelWidth = std::min(size.width(), size.height())/ std::max(pixelX, pixelY);
+            std::size_t pixelHeight = pixelWidth;
+            
             float max = maxPixel(_currProjection);
             QPainter painter {&widget};
             QColor currColor {};
+            
             for(int y = 0; y < pixelY; ++y){
                 for (int x = 0; x < pixelX; ++x){
                     //There were some negative values, so to avoid bugs, currValue is at least zero

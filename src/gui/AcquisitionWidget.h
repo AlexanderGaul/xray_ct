@@ -16,7 +16,10 @@ public:
         : _aModel(path), layout {}, _pose{&_aModel}, _res {&_aModel}
     {
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, this, &AcquisitionWidget::update);
-        QObject::connect(&_pose, &PoseViewer::sceneRotationChanged, &_res, &ResultWidget::recalcProject);
+        
+        QObject::connect(&_aModel, &AcquisitionModel::poseChanged, &_res, &ResultWidget::recalcProject);
+
+
         /*
          * Without the strech factor of 1 _res takes most of the  width of the widget
          */

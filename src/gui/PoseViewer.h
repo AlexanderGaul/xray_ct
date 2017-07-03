@@ -19,6 +19,7 @@ class PoseViewer : public QWidget
     Q_OBJECT
 private:
     QGridLayout _layout;
+    QGridLayout _viewsLayout;
 	QGridLayout _layoutBoxes;
     QHBoxLayout _layoutButtons;
 
@@ -27,6 +28,8 @@ private:
 	QCheckBox _raysBox;
 
 	PoseDisplay _poseDisplay;
+    PoseDisplay _poseDisplay2;
+    PoseDisplay _poseDisplay3;
     
     /*
      * Buttons to manipulate the pose stack in the AcquisitionModel
@@ -38,9 +41,7 @@ private:
     AcquisitionModel *_model;
 	bool _showRays;
 	int _zoom;
-signals:
-    void sceneRotationChanged();
-
+    
 public:
     
     PoseViewer(AcquisitionModel* model);
@@ -48,7 +49,7 @@ public:
 public slots:
     void sceneChanged()
     {
-        emit sceneRotationChanged();
+        emit _model->poseChanged();
     }
 
 };

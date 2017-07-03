@@ -39,6 +39,7 @@ Eigen::Matrix3f AcquisitionPose::getRot() const
 {
     Eigen::Matrix3f m1 = rot_global_z_.toRotationMatrix();
     Eigen::Matrix3f m2 =  rot_local_y_.toRotationMatrix();
+    //Eigen::Matrix3f m2_5 = Eigen::AngleAxisf(-M_PI / 4., m1 *  m2 * Eigen::Vector3f(1.f, 0.f, 0.f)).toRotationMatrix();
     return m2 * m1;
 }
 
