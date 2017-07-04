@@ -4,8 +4,12 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     _layout {}, 
     _viewsLayout {},
     _layoutBoxes {}, 
+    _generatorLayout {},
     _zoomBox{}, 
     _raysBox {}, 
+    _poseCount1 {},
+    _poseCount2 {},
+    _generatePosesButton {"Generate Poses"},
     _poseDisplay{model},
     _poseDisplay2{model, 0},
     _poseDisplay3{model, 1},
@@ -30,12 +34,23 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     _layout.addLayout(&_viewsLayout, 0, 0);
     _layout.addLayout(&_layoutBoxes, 1, 0);
     
+    
     _layoutButtons.addWidget(&_savePoseButton);
     _layoutButtons.addWidget(&_deletePoseButton);
     _layoutButtons.addWidget(&_clearButton);
     _layout.addLayout(&_layoutButtons, 3, 0);
+    
+    _generatorLayout.addWidget(&_poseCount1);
+    _generatorLayout.addWidget(&_poseCount2);
+    _generatorLayout.addWidget(&_generatePosesButton);
+    
+    _poseCount1.setMinimum(1);
+    _poseCount2.setMinimum(1);
+    _layout.addLayout(&_generatorLayout, 4, 0);
+    
     setLayout(&_layout);
-
+    
+    connect(&_generatePosesButton, &QPushButton::pressed, this, &PoseViewer::generatePoses);
     
     connect(&_savePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::savePose);
     connect(&_deletePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::deletePose);

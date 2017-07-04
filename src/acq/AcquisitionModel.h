@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <array>
+#include <cmath>
 
 #include <QObject>
 #include <QFile>
@@ -110,6 +111,47 @@ public:
      * Saves the current pose, so that a new one can be defined by the user
      */
     void savePose();
+    
+    
+    /*
+     * Is used for the pose generation
+     * 
+     * The same as below only that there are now to rotation axis. So for every possible rotation state
+     * around the first axis there are count2 rotations states around the second axis, so that
+     * in the end there are count1*count2 generated Poses.
+     */
+    void generatePoses(int count1, int count2){
+        _poses.pop_back();
+        float angleX = 2.f * M_PI / count1;
+        float angleZ = 2.f * M_PI / count2;
+        
+        for(int i = 0; i < count1; ++i){
+            for(int p = 0; p < count2; ++p){
+                AcquisitionPose pose {_volume.getBoundingBox()};
+                pose.setRotation(i*angleX, p*angleZ);
+                _poses.push_back(std::move(pose));
+            }
+        }
+    }
+    
+    /*
+     * 
+     * 
+     * There is one defined rotation axis (currently only the X-axis)
+     * 
+     * The full rotation of 2*PI is diveded into count1 parts. So that for the i-th of the count1 pose
+     * its rotation is defined as i*2*PI/count1 around the defined axis.
+     */
+    void generatePoses(int count1){
+        _poses.pop_back();
+        float angleX = 2.f * M_PI / count1;
+        
+        for(int i = 0; i < count1; ++i){
+            AcquisitionPose pose {_volume.getBoundingBox()};
+            pose.setRotation(i*angleX);
+            _poses.push_back(std::move(pose));
+        }
+    }
     
     /**
      * Returns a reference to the volume (containing the raw data).
