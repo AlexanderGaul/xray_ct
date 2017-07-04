@@ -16,19 +16,29 @@ public:
     Timer(std::string label)
         : _label(label)
     {
+        start();
+    }
+
+    void start()
+    {
         _begin = Clock::now();
     }
 
     /**
-      * The destructor of timer measures the time since the
-      * timer was created.
+      * This method measures the time since the
+      * timer was started.
       */
-    ~Timer()
+    void end()
     {
         std::chrono::system_clock::time_point end = Clock::now();
 
-        std::cout << _label << "\t"
+        std::cout << _label << " \t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(end - _begin).count()
                   << " ms" << std::endl;
+    }
+
+    void setLabel(std::string label)
+    {
+        _label = label;
     }
 };
