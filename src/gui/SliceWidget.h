@@ -26,15 +26,13 @@ private:
 
 public:
     SliceWidget(const Volume& volume)
-        : _volume(volume), _currSlice(volume.content().sizeZ()/2), _status(2)
+        : _volume(volume), _currSlice(0), _status(2)
     {
     }
 
     virtual
     void paintEvent(QPaintEvent *event)
     {
-        Timer timer("repaint SliceWidget");
-
         QPainter painter(this);
 
         const Vec3D<float>& content = _volume.content();
@@ -46,6 +44,7 @@ public:
         {
             int pixelWidth = 1.0*width()/(content.sizeX());
             int pixelHeight = 1.0*height()/(content.sizeY());
+
             for(int i = 0; i< content.sizeX(); ++i)
             {
                 for(int j = 0; j<content.sizeY(); ++j)
@@ -112,7 +111,7 @@ public:
         else
         {
             // go forward
-            if(_currSlice < _volume.content().sizeZ()-1)
+            if(_currSlice < slices()-1)
             {
                 _currSlice++;
                 emit sliceChanged();
@@ -128,6 +127,16 @@ public:
 
     int slices()
     {
+        switch(_status)
+        {
+            case 0:
+                return _volume.content().sizeX();
+            case 1:
+                return _volume.content().sizeY();
+            default:
+                return _volume.content().sizeZ();
+        }
+
         return _volume.content().sizeZ();
     }
 
@@ -137,8 +146,12 @@ signals:
 public slots:
     void updateStatus(int newStatus)
     {
-        _status = newStatus-1;
-        std::cout << _status << std::endl;
+        newStatus--; //zero-indexed slice widget
+        if(newStatus != _status)
+        {
+            _status = newStatus-1;
+            _currSlice = 0;
+        }
         repaint();
     }
 };
