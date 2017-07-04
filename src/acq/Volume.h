@@ -63,21 +63,44 @@ private:
 
     content_type _content;
 
+    float _maxEntry;
+
     //move the center of the _boundingBox to the origin
     void centerBoundingBox(){
         _boundingBox.translate(-_boundingBox.center());
     }
+
+    float computeMaxEntry()
+    {
+        float max = 0.0;
+        for(int i = 0; i<_content.sizeX(); ++i)
+        {
+         for(int j = 0; j<_content.sizeY(); ++j)
+         {
+             for(int k = 0; k<_content.sizeZ(); ++k)
+             {
+                 if(_content.get(i, j, k) > max)
+                 {
+                     max = _content.get(i,j,k);
+                 }
+             }
+         }
+        }
+        return max;
+    }
     
 public:
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp)
-        : Volume {lowerLeft, upperRight, sp, Eigen::VectorXf{}} {
+        : Volume {lowerLeft, upperRight, sp, Eigen::VectorXf{}}
+    {
         centerBoundingBox();
     }
     
     template <class Vec>
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp, Vec&& content)
         : VolumeBase {lowerLeft, upperRight, sp},
-          _content (getNumVoxels(), std::forward<Vec>(content))
+          _content (getNumVoxels(), std::forward<Vec>(content)),
+          _maxEntry(computeMaxEntry())
     {
         centerBoundingBox();
     }
@@ -95,6 +118,20 @@ public:
     void setContent(content_type&& content)
     {
         _content = std::move(content);
+    }
+
+    /**
+     * Return the maximum level of brightness.
+     * (this is computed via computeMaxEntry(), called from the
+     * constructors).
+     * This is used to show each image with good
+     * contrast on the screen.
+     * @brief maxEntry
+     * @return
+     */
+    float maxEntry() const
+    {
+        return _maxEntry;
     }
 
 };

@@ -10,6 +10,7 @@
 #include <QWheelEvent>
 #include <QWidget>
 
+#include "Timer.h"
 #include "Vec3D.h"
 #include "Volume.h"
 
@@ -32,11 +33,14 @@ public:
     virtual
     void paintEvent(QPaintEvent *event)
     {
+        Timer timer("repaint SliceWidget");
+
         QPainter painter(this);
 
         const Vec3D<float>& content = _volume.content();
 
-
+        float maxColor = _volume.maxEntry();
+        float colorCoeff = 255.0/maxColor;
         // TODO: reduce duplication
         if(_status == 2)
         {
@@ -46,7 +50,7 @@ public:
             {
                 for(int j = 0; j<content.sizeY(); ++j)
                 {
-                    int curr = (content.get(i,j,_currSlice));
+                    int curr = (content.get(i,j,_currSlice)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
@@ -62,7 +66,7 @@ public:
             {
                 for(int j = 0; j<content.sizeZ(); ++j)
                 {
-                    int curr = (content.get(i,_currSlice,j));
+                    int curr = (content.get(i,_currSlice,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
@@ -78,7 +82,7 @@ public:
             {
                 for(int j = 0; j<content.sizeZ(); ++j)
                 {
-                    int curr = (content.get(_currSlice,i,j));
+                    int curr = (content.get(_currSlice,i,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));

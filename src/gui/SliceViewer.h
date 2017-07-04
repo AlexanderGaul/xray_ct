@@ -30,7 +30,7 @@ public:
 
         _axisSlider.setRange(1, 3);
         _axisSlider.setOrientation(Qt::Horizontal);
-        _axisSlider.setValue(2);
+        _axisSlider.setValue(3); // Z is default direction
         _axisSlider.setSingleStep(1);
         QLabel *label1 = new QLabel("X", this);
         QLabel *label2 = new QLabel("Y", this);
