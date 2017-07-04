@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(Eigen3 REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src/rec)
+include_directories(${EIGEN3_INCLUDE_DIR} src/acq src/gui src/rec src/util)
 
 
 IF (WIN32)
@@ -34,7 +34,12 @@ add_subdirectory(src)
 add_executable(part2 src/main.cpp)
 set_target_properties(part2 PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(part2 part2_lib_acq part2_lib_gui part2_lib_rec Qt5::Widgets)
+target_link_libraries(part2
+                            part2_lib_acq
+                            part2_lib_util
+                            part2_lib_gui
+                            part2_lib_rec
+                            Qt5::Widgets)
 
 #set(POSE_TEST test/acq_pose_tests.cpp)
 #add_executable(pose_test ${POSE_TEST} src/catch.hpp)
@@ -48,5 +53,11 @@ set(PART2_TEST_SOURCES
     )
 # create test executable
 add_executable(part2_test ${PART2_TEST_SOURCES})
-target_link_libraries(part2_test part2_lib_acq part2_lib_gui part2_lib_rec Qt5::Widgets Catch)
+target_link_libraries(part2_test
+                            part2_lib_util
+                            part2_lib_acq
+                            part2_lib_gui
+                            part2_lib_rec
+                            Qt5::Widgets
+                            Catch)
 

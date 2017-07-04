@@ -6,3 +6,4 @@ add_subdirectory(gui)
 
 add_subdirectory(rec)
 
+add_subdirectory(util)
