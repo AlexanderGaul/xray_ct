@@ -7,7 +7,7 @@
 class Timer
 {
 private:
-    typedef std::chrono::high_resolution_clock Clock;
+    typedef std::chrono::system_clock Clock;
 
     std::string _label;
     std::chrono::system_clock::time_point _begin;
