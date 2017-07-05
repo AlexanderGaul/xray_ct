@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "AcquisitionModel.h"
 
 bool AcquisitionModel::checkIfVolumeFitsBlackBox()
@@ -132,3 +134,52 @@ const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
         }
         return _poses.back();
     }
+
+
+void AcquisitionModel::addSphericalPoses()
+{
+    
+    int count = 5;
+    
+    float distance = M_PI / count;
+    
+    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
+    {
+        addCircularPoses(yRot);
+    }
+}
+
+void AcquisitionModel::addHalfSphericalPoses()
+{
+    int count = 5;
+    
+    float distance = M_PI / count;
+    
+    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
+    {
+        addCircularPoses(yRot, M_PI);
+    }
+}
+
+
+void AcquisitionModel::addCircularPoses(float yAngle, float range)
+{
+    
+    int count = 10;
+    float distance;
+    float cosine = cosf(yAngle);
+    if(1.f / count > cosine)
+    {
+        distance = 3 * M_PI;
+    }
+    else
+    {
+        distance = range / cosine / count;
+    }
+    for(float zRot = 0; zRot < range; zRot += distance)
+    {
+        AcquisitionPose pose {getBoundingBox()};
+        pose.setRotation(zRot, yAngle);
+        _poses.push_back(pose);
+    }
+}

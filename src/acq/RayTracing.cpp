@@ -125,7 +125,7 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     Eigen::Vector3f tMax {tDelta.cwiseProduct(relativeIntersectFrac)};
     
     
-    float acc = 0;
+    float acc = 100;
     if(pos.x() > maxVoxel.x() || pos.y() > maxVoxel.y() || pos.z() > maxVoxel.z())
     {
         return acc;

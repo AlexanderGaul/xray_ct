@@ -1,6 +1,7 @@
 #ifndef ACQUISITIONPOSE_H
 #define ACQUISITIONPOSE_H
 
+#include <array>
 #include <vector>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -61,6 +62,7 @@ public:
     Eigen::Vector3f getDetectorUpperRight() const;
     Eigen::Vector3f getDetectorLowerRight() const;
     Eigen::Vector3f getDetectorLowerLeft() const;
+    std::array<Eigen::Vector3f, 4> getDetectorCorners() const;
     
     Eigen::ParametrizedLine<float, 3> getRay(int horizontal, int vertical) const;
     Eigen::Vector3f getPixelCenter(int horizontal, int vertical) const;

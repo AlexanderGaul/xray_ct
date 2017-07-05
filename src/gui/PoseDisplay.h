@@ -11,25 +11,31 @@
  */
 class PoseDisplay : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 private:
-	bool _showRays;
-	int _zoom;
-	int _axis;
-	AcquisitionModel *_model;
+    int _xAxis;
+    int _yAxis;
+    
+    bool _showRays;
+    int _zoom;
+    int _axis;
+    AcquisitionModel *_model;
 
-signals:
-    void sceneChanged();
 
 public:
-	PoseDisplay(AcquisitionModel *model);
-	PoseDisplay(AcquisitionModel *model, int axis);
+    PoseDisplay(AcquisitionModel *model);
+    PoseDisplay(AcquisitionModel *model, int axis);
 
-	virtual void paintEvent(QPaintEvent *event);
-	
-	virtual void keyPressEvent(QKeyEvent *event);
+    virtual void paintEvent(QPaintEvent *event);
+    
+    virtual void keyPressEvent(QKeyEvent *event);
 public slots:
-	void setShowRays(int state);
-	void setZoom(int zoom);
+    void setShowRays(int state);
+    void setZoom(int zoom);
+    
+private:
+    void paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity);
+signals:
+    void sceneChanged();
 
 };

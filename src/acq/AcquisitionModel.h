@@ -111,6 +111,12 @@ public:
      */
     void savePose();
     
+    
+    std::vector<AcquisitionPose>& getPoses()
+    {
+        return _poses;
+    }
+    
     /**
      * Returns a reference to the volume (containing the raw data).
      * @brief volume
@@ -120,7 +126,10 @@ public:
     {
         return _volume;
     }
-
+    
+    void addSphericalPoses();
+    void addHalfSphericalPoses();
+    void addCircularPoses(float, float = 2.f * M_PI);
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();

@@ -4,25 +4,6 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
 {
 	QPainter painter(this);
     QPen pen;
-    
-    int xAxis;
-    int yAxis;
-    
-    if(_axis == 2)
-    {
-        xAxis = 0;
-        yAxis = 1;
-    }
-    else if(_axis == 0)
-    {
-        xAxis = 1;
-        yAxis = 2;
-    }
-    else if(_axis == 1)
-    {
-        xAxis = 0;
-        yAxis = 2;
-    }
 
     // xc and yc are the center of the widget's rect.
     float x_center = width() * 0.5;
@@ -38,78 +19,14 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     {
     	return;
     }
-    painter.resetTransform();
-    painter.setPen(Qt::black);
-    const Eigen::Vector2i detectorSize = _model->getDetectorSize();
-    const Eigen::Vector3f sourcePos = _model->getSourcePosition();
     
-    
-    for(int i = 0; i < detectorSize.x(); i += detectorSize.x() - 1)
+    for(unsigned int i = 0; i < _model->getPoses().size(); i++)
     {
-        for(int j = 0; j < detectorSize.x(); j += detectorSize.y() - 1)
-        {
-            Eigen::Vector3f pixel = _model->getPixelCenter(i, j);
-                painter.drawLine(
-                    x_center + sourcePos(xAxis) * _zoom,
-                    y_center - sourcePos(yAxis) * _zoom,
-                    x_center + pixel(xAxis) * _zoom,
-                    y_center - pixel(yAxis) * _zoom);
-        }
+        if(i == _model->getPoses().size() - 1)
+        { paintPose(painter, (_model->getPoses())[i], false);}
+        else
+        { paintPose(painter, (_model->getPoses())[i], true); }
     }
-    
-    
-    if(_showRays)
-    {
-        for(int i = 0; i < detectorSize.x(); i++)
-        {
-            for(int j = 0; j < detectorSize.y(); j++)
-            {
-                Eigen::Vector3f pixel = _model->getPixelCenter(i, j);
-                painter.drawLine(
-                    x_center + sourcePos(xAxis) * _zoom,
-                    y_center - sourcePos(yAxis) * _zoom,
-                    x_center + pixel(xAxis) * _zoom,
-                    y_center - pixel(yAxis) * _zoom);
-            }
-        }
-    }
-    
-    //painter.setBrush(Qt::white);
-
-    //painter.translate(x_center, y_center);
-
-    pen.setColor(Qt::red);
-    pen.setWidth(2);
-    
-    painter.resetTransform();
-    painter.translate(
-        x_center + sourcePos(xAxis) * _zoom,
-        y_center - sourcePos(yAxis) * _zoom
-    );
-    painter.setPen(pen);
-    painter.drawEllipse(-2, -2, 4, 4);
-
-
-
-
-    painter.resetTransform();
-    pen.setColor(Qt::blue);
-    painter.setPen(pen);
-
-    //painter.scale(zoom_, zoom_);
-    
-    std::array<Eigen::Vector3f, 4> detCorners = _model->getDetector();
-    
-    for(int i = 0; i < 4; i++)
-    {
-        painter.drawLine(
-            x_center + detCorners[i](xAxis) * _zoom,
-            y_center - detCorners[i](yAxis) * _zoom,
-            x_center + detCorners[(i + 1) % 4](xAxis) * _zoom,
-            y_center - detCorners[(i + 1) % 4](yAxis) * _zoom
-        );
-    }
-    
     
     //paint the bounding box of the main volume
     auto boundingBox = _model->getBoundingBox();
@@ -124,9 +41,9 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     painter.setPen(pen);
     painter.resetTransform();
     painter.translate(x_center, y_center);
-    painter.drawRect( minCorner(xAxis) *_zoom, minCorner(yAxis) *_zoom,
-                      (maxCorner(xAxis) - minCorner(xAxis)) *_zoom,
-                      (maxCorner(yAxis) - minCorner(yAxis)) *_zoom);
+    painter.drawRect( minCorner(_xAxis) *_zoom, minCorner(_yAxis) *_zoom,
+                      (maxCorner(_xAxis) - minCorner(_xAxis)) *_zoom,
+                      (maxCorner(_yAxis) - minCorner(_yAxis)) *_zoom);
                      
     
     /*
@@ -144,7 +61,97 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     */
 }
 
+void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity = false)
+{
+    float x_center = width() * 0.5;
+    float y_center = height() * 0.5;
+    
+    QPen pen;
+    
+    
+    painter.resetTransform();
+    if(lowOpacity)
+    { pen.setColor(QColor(0, 0, 0, 32)); }
+    else
+    { pen.setColor(Qt::black); }
+    painter.setPen(pen);
+    
+    const Eigen::Vector2i detectorSize = _model->getDetectorSize();
+    const Eigen::Vector3f sourcePos = pose.getSourcePosition();
+    
+    
+    // rays on corners are always drawn
+    for(int i = 0; i < detectorSize.x(); i += detectorSize.x() - 1)
+    {
+        for(int j = 0; j < detectorSize.y(); j += detectorSize.y() - 1)
+        {
+            Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
+                painter.drawLine(
+                    x_center + sourcePos(_xAxis) * _zoom,
+                    y_center - sourcePos(_yAxis) * _zoom,
+                    x_center + pixel(_xAxis) * _zoom,
+                    y_center - pixel(_yAxis) * _zoom);
+        }
+    }
+    
+    if(_showRays)
+    {
+        for(int i = 0; i < detectorSize.x(); i++)
+        {
+            for(int j = 0; j < detectorSize.y(); j++)
+            {
+                Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
+                painter.drawLine(
+                    x_center + sourcePos(_xAxis) * _zoom,
+                    y_center - sourcePos(_yAxis) * _zoom,
+                    x_center + pixel(_xAxis) * _zoom,
+                    y_center - pixel(_yAxis) * _zoom);
+            }
+        }
+    }
 
+    //painter.setBrush(Qt::white);
+
+    //painter.translate(x_center, y_center);
+
+    pen.setColor(Qt::red);
+    if(lowOpacity)
+    { pen.setColor(QColor(255, 0, 0, 32)); }
+    else
+    { pen.setColor(Qt::red); }
+    pen.setWidth(2);
+    
+    painter.resetTransform();
+    painter.translate(
+        x_center + sourcePos(_xAxis) * _zoom,
+        y_center - sourcePos(_yAxis) * _zoom
+    );
+    painter.setPen(pen);
+    painter.drawEllipse(-2, -2, 4, 4);
+    
+    
+    painter.resetTransform();
+    if(lowOpacity)
+    { pen.setColor(QColor(0, 0, 255, 32));}
+    else
+    { pen.setColor(Qt::blue); }
+    painter.setPen(pen);
+
+    //painter.scale(zoom_, zoom_);
+    
+    std::array<Eigen::Vector3f, 4> detCorners = pose.getDetectorCorners();
+    
+    for(int i = 0; i < 4; i++)
+    {
+        painter.drawLine(
+            x_center + detCorners[i](_xAxis) * _zoom,
+            y_center - detCorners[i](_yAxis) * _zoom,
+            x_center + detCorners[(i + 1) % 4](_xAxis) * _zoom,
+            y_center - detCorners[(i + 1) % 4](_yAxis) * _zoom
+        );
+    }
+    
+}
 
 void PoseDisplay::setShowRays(int state)
 {
@@ -176,7 +183,21 @@ PoseDisplay::PoseDisplay(AcquisitionModel *model, int axis) :
     _model (model),
     _axis(axis)
 {
-    
+    if(_axis == 2)
+    {
+        _xAxis = 0;
+        _yAxis = 1;
+    }
+    else if(_axis == 0)
+    {
+        _xAxis = 1;
+        _yAxis = 2;
+    }
+    else if(_axis == 1)
+    {
+        _xAxis = 0;
+        _yAxis = 2;
+    }
 }
 /*
 void PoseDisplay::mousePressEvent(QMouseEvent* event)

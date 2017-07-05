@@ -12,6 +12,7 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     _savePoseButton {"Store current pose"}, 
     _deletePoseButton {"Delete current pose"}, 
     _clearButton {"Clear all poses"},
+    _sphericalPosesButton {"Add Spherical Set of Poses"},
      _model {model}
 {
 
@@ -33,6 +34,7 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     _layoutButtons.addWidget(&_savePoseButton);
     _layoutButtons.addWidget(&_deletePoseButton);
     _layoutButtons.addWidget(&_clearButton);
+    _layoutButtons.addWidget(&_sphericalPosesButton);
     _layout.addLayout(&_layoutButtons, 3, 0);
     setLayout(&_layout);
 
@@ -40,6 +42,7 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     connect(&_savePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::savePose);
     connect(&_deletePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::deletePose);
     connect(&_clearButton, &QPushButton::pressed, _model, &AcquisitionModel::clearPoses);
+    connect(&_sphericalPosesButton, &QPushButton::pressed, _model, &AcquisitionModel::addHalfSphericalPoses);
     
     
     connect(&_savePoseButton, &QPushButton::pressed, this, &PoseViewer::sceneChanged);

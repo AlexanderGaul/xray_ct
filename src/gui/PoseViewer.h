@@ -37,6 +37,8 @@ private:
     QPushButton _savePoseButton;
     QPushButton _deletePoseButton;
     QPushButton _clearButton;
+    
+    QPushButton _sphericalPosesButton;
 
     AcquisitionModel *_model;
 	bool _showRays;
