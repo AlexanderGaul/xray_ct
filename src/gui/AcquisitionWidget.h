@@ -8,17 +8,16 @@
 #include "AcquisitionModel.h"
 #include "ResultWidget.h"
 #include "PoseViewer.h"
+#include "Acquisition.h"
 
 class AcquisitionWidget : public QWidget {
     Q_OBJECT
 public:
     AcquisitionWidget(std::string path)
-        : _aModel(path), layout {}, _pose{&_aModel}, _res {&_aModel}
+        : _aModel(path), layout {}, _pose{_aModel}, _res {_aModel}
     {
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, this, &AcquisitionWidget::update);
-        
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, &_res, &ResultWidget::recalcProject);
-
 
         /*
          * Without the strech factor of 1 _res takes most of the  width of the widget
@@ -27,10 +26,9 @@ public:
         layout.addWidget(&_res, 1);
         this->setLayout(&layout);
     }
-
-    const Volume& volume() const
-    {
-        return _aModel.volume();
+    
+    Acquisition getAcq() const {
+        return _aModel.getAcq();
     }
     
 public slots:

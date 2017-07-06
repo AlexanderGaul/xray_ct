@@ -46,22 +46,18 @@ private:
     QPushButton _deletePoseButton;
     QPushButton _clearButton;
 
-    AcquisitionModel *_model;
+    AcquisitionModel& _model;
 	bool _showRays;
 	int _zoom;
     
 public:
     
-    PoseViewer(AcquisitionModel* model);
+    PoseViewer(AcquisitionModel& model);
 
 public slots:
-    void sceneChanged()
-    {
-        emit _model->poseChanged();
-    }
     
     void generatePoses(){
-        _model->generatePoses(_poseCount1.value(), _poseCount2.value());
+        _model.generatePoses(_poseCount1.value(), _poseCount2.value());
     }
 
 };

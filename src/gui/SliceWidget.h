@@ -9,25 +9,24 @@
 #include <QSlider>
 #include <QWheelEvent>
 #include <QWidget>
+#include <QImage>
 
-#include "Timer.h"
 #include "Vec3D.h"
 #include "Volume.h"
+#include "ReconstructionModel.h"
+#include "Acquisition.h"
 
 class SliceWidget : public QWidget
 {
     Q_OBJECT
 private:
-    /// reference to the raw data that is actually managed in the acquistion model
-    const Volume& _volume;
     int _currSlice;
-
     int _status;
+    ReconstructionModel _model;
+    QImage _image;
 
 public:
-    SliceWidget(const Volume& volume)
-        : _volume(volume), _currSlice(0), _status(2)
-    {
+    SliceWidget() : _currSlice(0), _status(2), _model {ReconstructionModel {}}, _image {} {
     }
 
     virtual
@@ -35,9 +34,12 @@ public:
     {
         QPainter painter(this);
 
-        const Vec3D<float>& content = _volume.content();
+        const Vec3D<float>& content = _model.getContent();
+        if(content.totalSize() == 0){
+            return;
+        }
 
-        float maxColor = _volume.maxEntry();
+        float maxColor = _model.rec().maxEntry();
         float colorCoeff = 255.0/maxColor;
         // TODO: reduce duplication
         if(_status == 2)
@@ -130,14 +132,44 @@ public:
         switch(_status)
         {
             case 0:
-                return _volume.content().sizeX();
+                std::cout << _model.rec().content().sizeX() << std::endl;
+                return _model.rec().content().sizeX();
             case 1:
-                return _volume.content().sizeY();
+                return _model.rec().content().sizeY();
             default:
-                return _volume.content().sizeZ();
+                return _model.rec().content().sizeZ();
         }
-
-        return _volume.content().sizeZ();
+    }
+    
+    /*
+     * called when the user requests a new Acquisition.
+     * 
+     * regularized defines which DataContainer to use
+     * lambda is the lambda for the regularized Container, it is only used when
+     * regularized is actually true, otherwise it is discarded
+     */
+    void setAcq(bool regularized, float lambda, int cgIterations, Acquisition&& acq){
+        _model = ReconstructionModel {regularized, lambda, cgIterations, std::move(acq.volBase), std::move(acq.poses), std::move(acq.measurements)};
+        update();
+        //Important reset, if the volume boundaries would recParamChanged
+        _currSlice = 0;
+        emit sliceChanged();
+    }
+    
+    /*
+     * called one of the parmeters is changed by the user in the ReconstructionView
+     * 
+     * param. description see above
+     */
+    void recParamChanged(bool regularized, float lambda, int cgIterations){
+        _model.recalcVolume(regularized, lambda, cgIterations);
+        update();
+        _currSlice = 0;
+        emit sliceChanged();
+    }
+    
+    std::shared_ptr<const Volume> getRec(){
+        return _model.getRec();
     }
 
 signals:
@@ -149,7 +181,7 @@ public slots:
         newStatus--; //zero-indexed slice widget
         if(newStatus != _status)
         {
-            _status = newStatus-1;
+            _status = newStatus;
             _currSlice = 0;
         }
         repaint();

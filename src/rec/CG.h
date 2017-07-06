@@ -29,9 +29,8 @@ public:
         /*
          * This is simply a copy of the algorithm mentioned on the slides
          */
-        auto vol = cont.getVolume();
         //init the vector to zero
-        Eigen::VectorXf result = Eigen::VectorXf::Zero(vol.getTotalVoxelCount());
+        Eigen::VectorXf result = Eigen::VectorXf::Zero(cont.getTotalVoxelCount());
         Eigen::VectorXf test = cont.mult(result);
         Eigen::VectorXf r = b - test;
         Eigen::VectorXf d = r;

@@ -41,7 +41,7 @@ private:
         }
     }
     
-    void checkInvariant(size_t vecSize) const{
+    void checkInvariant(int vecSize) const{
         if(vecSize != (sizeX()) * (sizeY()) * (sizeZ())){
             std::string exText {"The vector given as argument of the Vec3D constructor has size "};
             exText += std::to_string(vecSize);
@@ -90,7 +90,7 @@ public:
         return _sizes.z();
     }
     
-    size_t totalSize() const noexcept{
+    int totalSize() const noexcept{
         return _content.size();
     }
     
@@ -161,6 +161,14 @@ public:
     int getIndex(Eigen::Vector3i input) const
     {
         return input[0] + input[1] * sizeX() + input[2] * sizeX() * sizeY();
+    }
+    
+    float maxEntry() {
+        float max = std::numeric_limits<float>::min();
+        for(int i = 0; i < totalSize(); ++i) {
+            max = _content[i] > max ? _content[i] : max;
+        }
+        return max;
     }
 };
 

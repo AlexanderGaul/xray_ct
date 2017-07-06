@@ -1,6 +1,6 @@
 #include "PoseViewer.h"
 
-PoseViewer::PoseViewer(AcquisitionModel* model) : 
+PoseViewer::PoseViewer(AcquisitionModel& model) : 
     _layout {}, 
     _viewsLayout {},
     _layoutBoxes {}, 
@@ -52,14 +52,9 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     
     connect(&_generatePosesButton, &QPushButton::pressed, this, &PoseViewer::generatePoses);
     
-    connect(&_savePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::savePose);
-    connect(&_deletePoseButton, &QPushButton::pressed, _model, &AcquisitionModel::deletePose);
-    connect(&_clearButton, &QPushButton::pressed, _model, &AcquisitionModel::clearPoses);
-    
-    
-    connect(&_savePoseButton, &QPushButton::pressed, this, &PoseViewer::sceneChanged);
-    connect(&_deletePoseButton, &QPushButton::pressed, this, &PoseViewer::sceneChanged);
-    connect(&_clearButton, &QPushButton::pressed, this, &PoseViewer::sceneChanged);
+    connect(&_savePoseButton, &QPushButton::pressed, &_model, &AcquisitionModel::savePose);
+    connect(&_deletePoseButton, &QPushButton::pressed, &_model, &AcquisitionModel::deletePose);
+    connect(&_clearButton, &QPushButton::pressed, &_model, &AcquisitionModel::clearPoses);
     
     
     connect(&_raysBox, SIGNAL(stateChanged(int)), &_poseDisplay, SLOT(setShowRays(int)));
@@ -71,5 +66,5 @@ PoseViewer::PoseViewer(AcquisitionModel* model) :
     connect(&_raysBox, SIGNAL(stateChanged(int)), &_poseDisplay3, SLOT(setShowRays(int)));
     connect(&_zoomBox, SIGNAL(valueChanged(int)), &_poseDisplay3, SLOT(setZoom(int)));
 
-    connect(&_poseDisplay, SIGNAL(sceneChanged()), this, SLOT(sceneChanged()));
+   //connect(&_poseDisplay, &PoseDisplay::sceneChanged(), this, PoseView::sceneChanged()));
 }
