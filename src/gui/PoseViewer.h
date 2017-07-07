@@ -22,10 +22,18 @@ private:
     QGridLayout _viewsLayout;
 	QGridLayout _layoutBoxes;
     QHBoxLayout _layoutButtons;
-
+    QHBoxLayout _generatorLayout;
+    
 	// QScrollArea* scroll_area_;
 	QSpinBox _zoomBox;
 	QCheckBox _raysBox;
+    
+    /*
+     * The number of positions for the automatic generation of Poses
+     */
+    QSpinBox _poseCount1;
+    QSpinBox _poseCount2;
+    QPushButton _generatePosesButton;
 
 	PoseDisplay _poseDisplay;
     PoseDisplay _poseDisplay2;
@@ -52,6 +60,10 @@ public slots:
     void sceneChanged()
     {
         emit _model->poseChanged();
+    }
+    
+    void generatePoses(){
+        _model->generatePoses(_poseCount1.value(), _poseCount2.value());
     }
 
 };

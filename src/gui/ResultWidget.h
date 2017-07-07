@@ -11,6 +11,8 @@
 #include <QObject>
 #include <QVBoxLayout>
 #include <QEvent>
+#include <QImage>
+#include <QVector>
 
 #include "AcquisitionModel.h"
 
@@ -61,6 +63,19 @@ protected slots:
     bool eventFilter(QObject * watched, QEvent * event) override;
     
 private:
+    /*
+     * generates a vector of length 256 that contains all grey colors that are possible
+     * in the qt _image
+     * 
+     * This is given to stored image which is in the 8bit format
+     */
+    static QVector<QRgb> generateBlackWhiteColorTable(){
+        QVector<QRgb> vec {};
+        for(int i = 0; i < 256; ++i){
+            vec.push_back(qRgb(i, i, i));
+        }
+        return vec;
+    }
     
     /*
      * Find the maximum pixel value from the forward Projection.
@@ -78,10 +93,14 @@ private:
     QTabWidget _widgetStack;
     QWidget _drawWidgetSingle;
     QWidget _drawWidgetAll;
-    QWidget _drawWidgetAngle;
     DrawState _state;
     AcquisitionModel *_model;
-    std::vector<std::vector<float>> _currProjection;
+    /*
+     * stores the current visualisation of the x-ray simulation.
+     * 
+     * Currently always uses the 8 bit format
+     */
+    QImage _image;
 };
 
 #endif // RESULTWIDGET_H

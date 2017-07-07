@@ -136,10 +136,18 @@ public:
             return proj;
         }
         
+        if(poses.size() > static_cast<size_t>(std::numeric_limits<int>::max())){
+            std::string errorMessage {"The given array was to big. It had size: "};
+            errorMessage += std::to_string(poses.size());
+            errorMessage += " but maximum allowed size is: ";
+            errorMessage += std::to_string(std::numeric_limits<int>::max());
+            throw std::logic_error {errorMessage};
+        }
+        
         auto horizonalPixels = poses[0].getPixelHorizontal();
         auto verticalPixels = poses[0].getPixelVertical();
         
-        for(int p = 0; p < poses.size(); ++p){
+        for(int p = 0; p < int(poses.size()); ++p){
             auto pIndex = p*horizonalPixels*verticalPixels;
             for(int y = 0; y < verticalPixels; ++y){
                 auto yIndex = y * horizonalPixels;
