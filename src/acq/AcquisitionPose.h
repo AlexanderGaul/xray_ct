@@ -18,7 +18,9 @@ private:
     Eigen::Vector3f det_upl_;
 
     Eigen::Vector3f center_;
-
+    
+    Eigen::AngleAxisf _rotGlobalZ;
+    Eigen::AngleAxisf _rotLocalY;
     Eigen::AngleAxisf _rot;
 
     float det_width_;
@@ -51,14 +53,18 @@ public:
     }
 
     void setCenter(const Eigen::Vector3f& center);
-
-    void setRotation(Eigen::AngleAxisf rot);
-    void setRotation(float rotY, float rotZ);
-    void setRotation(float rotZ);
     
-    void addRotationZ(float rotZ);
-    void addRotationY(float rotY);
-    void addRotationX(float rotX);
+    float getRotationGlobalZ() const;
+    float getRotationLocalY() const;
+    
+    void setRotation(Eigen::AngleAxisf rot);
+    void setRotation(float globalZ, float localY = 0);
+    
+    void setRotationLocalY(float localY);
+    void setRotationGlobalZ(float globalZ);
+    
+    void addRotationGlobalZ(float rotZ);
+    void addRotationLocalY(float rotY);
     
     Eigen::Vector3f getDetectorUpperLeft() const;
     Eigen::Vector3f getDetectorUpperRight() const;

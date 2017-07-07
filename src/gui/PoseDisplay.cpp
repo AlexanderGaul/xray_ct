@@ -203,22 +203,22 @@ void PoseDisplay::mousePressEvent(QMouseEvent* event)
 void PoseDisplay::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _model.updateRotation(RotationAxis::Z, -0.1f);
-        //emit sceneChanged();
-        emit _model.poseChanged();
-        //update();
-    } else if(event->key() == Qt::Key_Right) {  
         _model.updateRotation(RotationAxis::Z, 0.1f);
         //emit sceneChanged();
         emit _model.poseChanged();
         //update();
+    } else if(event->key() == Qt::Key_Right) {  
+        _model.updateRotation(RotationAxis::Z, -0.1f);
+        //emit sceneChanged();
+        emit _model.poseChanged();
+        //update();
     } else if(event->key() == Qt::Key_Up) {
-        _model.updateRotation(RotationAxis::X, 0.1f);
+        _model.updateRotation(RotationAxis::Y, -0.1f);
         //emit sceneChanged();
         emit _model.poseChanged();
         //update();
     } else if(event->key() == Qt::Key_Down) {
-        _model.updateRotation(RotationAxis::X, -0.1f);
+        _model.updateRotation(RotationAxis::Y, 0.1f);
         //emit sceneChanged();
         emit _model.poseChanged();
         //update();

@@ -24,7 +24,7 @@
  */
 enum class RotationAxis : bool {
     Z,
-    X
+    Y
 };
 
 class AcquisitionModel : public QObject
@@ -102,7 +102,7 @@ public:
      * around the first axis there are count2 rotations states around the second axis, so that
      * in the end there are count1*count2 generated Poses.
      */
-
+    
     void generatePoses(int count1, int count2){
         _poses->pop_back();
         float angleX = 2.f * M_PI / count1;
@@ -119,6 +119,7 @@ public:
         updateProjection();
     }
     
+    
     /*
      * 
      * 
@@ -127,6 +128,7 @@ public:
      * The full rotation of 2*PI is diveded into count1 parts. So that for the i-th of the count1 pose
      * its rotation is defined as i*2*PI/count1 around the defined axis.
      */
+    
     void generatePoses(int count1){
         _poses->pop_back();
         float angleX = 2.f * M_PI / count1;
@@ -138,6 +140,7 @@ public:
         }
         updateProjection();
     }
+    
     
     /**
      * Returns a reference to the volume (containing the raw data).

@@ -10,6 +10,8 @@ AcquisitionPose::AcquisitionPose(float s2dd, float det_w, float det_h, int pixel
     det_upl_(s2dd/2.f, det_w/2.f, det_h/2.f),
     center_(0.f, 0.f, 0.f),
     _rot(Eigen::AngleAxisf::Identity()),
+    _rotGlobalZ(0.f, Eigen::Vector3f::UnitZ()),
+    _rotLocalY(0.f, Eigen::Vector3f::UnitY()),
     det_width_(det_w), 
     det_height_(det_h), 
     pxl_horizontal_(pixel_h), 
@@ -30,6 +32,11 @@ float AcquisitionPose::getDetectorWidth() const
 { return det_width_;}
 Eigen::Vector3f AcquisitionPose::getCenter() const
 { return center_;}
+
+float AcquisitionPose::getRotationGlobalZ() const
+{ return _rotGlobalZ.angle(); }
+float AcquisitionPose::getRotationLocalY() const
+{ return _rotLocalY.angle(); }
 
 Eigen::Matrix3f AcquisitionPose::getRot() const
 {
@@ -57,15 +64,18 @@ void AcquisitionPose::setCenter(const Eigen::Vector3f& center)
 }
 
 
-void AcquisitionPose::setRotation(float rotZ, float rotX)
+void AcquisitionPose::setRotation(float rotGlobalZ, float rotLocalY)
 {
-    
-    _rot = Eigen::AngleAxisf(rotZ, Eigen::Vector3f::UnitZ()) * Eigen::AngleAxisf(rotX, Eigen::Vector3f::UnitX());
+    _rotGlobalZ = Eigen::AngleAxisf(rotGlobalZ, Eigen::Vector3f::UnitZ());
+    _rotLocalY = Eigen::AngleAxisf(rotLocalY, Eigen::Vector3f::UnitY());
+    _rot = _rotGlobalZ * _rotLocalY;
     updatePose();
 }
 
-void AcquisitionPose::setRotation(float rotZ){
-    _rot = Eigen::AngleAxisf(rotZ, Eigen::Vector3f::UnitZ());
+void AcquisitionPose::setRotationGlobalZ(float globalZ)
+{
+    _rotGlobalZ = Eigen::AngleAxisf(globalZ, Eigen::Vector3f::UnitZ());
+    _rot = _rotGlobalZ * _rotLocalY;
     updatePose();
 }
 
@@ -75,20 +85,17 @@ void AcquisitionPose::setRotation(Eigen::AngleAxisf rot)
     updatePose();
 }
 
-void AcquisitionPose::addRotationZ(float rotZ)
+void AcquisitionPose::addRotationGlobalZ(float rotZ)
 {
-    _rot = Eigen::AngleAxisf(rotZ, Eigen::Vector3f::UnitZ()) * _rot;
+    _rotGlobalZ = Eigen::AngleAxisf(rotZ + getRotationGlobalZ(), Eigen::Vector3f::UnitZ());
+    _rot = _rotGlobalZ * _rotLocalY;
     updatePose();
 }
 
-void AcquisitionPose::addRotationY(float rotY)
+void AcquisitionPose::addRotationLocalY(float rotY)
 {
-    _rot = Eigen::AngleAxisf(rotY, Eigen::Vector3f::UnitY()) * _rot;
-    updatePose();   
-}
-
-void AcquisitionPose::addRotationX(float rotX){
-    _rot = Eigen::AngleAxisf(rotX, Eigen::Vector3f::UnitX()) * _rot;
+    _rotLocalY = Eigen::AngleAxisf(rotY + getRotationLocalY(), Eigen::Vector3f::UnitY());
+    _rot = _rotGlobalZ * _rotLocalY;
     updatePose();   
 }
 

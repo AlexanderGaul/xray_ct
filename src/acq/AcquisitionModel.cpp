@@ -38,9 +38,9 @@ void AcquisitionModel::loadImage(std::string path)
 void AcquisitionModel::updateRotation(RotationAxis axis, float angle){
     //see description of the rotation axis for why the if is as it is
     if(axis == RotationAxis::Z){
-        currPoseChecked().addRotationZ(angle);
-    } else if (axis == RotationAxis::X) {
-        currPoseChecked().addRotationX(angle);
+        currPoseChecked().addRotationGlobalZ(angle);
+    } else if (axis == RotationAxis::Y) {
+        currPoseChecked().addRotationLocalY(angle);
     }
     updateLastProjection();
 }
@@ -144,7 +144,7 @@ void AcquisitionModel::addHalfSphericalPoses()
         addCircularPoses(yRot, M_PI);
     }
 }   
-
+    
 
 void AcquisitionModel::addCircularPoses(float yAngle, float range)
 {
@@ -164,7 +164,7 @@ void AcquisitionModel::addCircularPoses(float yAngle, float range)
     {
         std::cout << zRot << ", " << yAngle << std::endl;
         AcquisitionPose pose {getBoundingBox()};
-        pose.setRotation(yAngle, zRot);
+        pose.setRotation(zRot, yAngle);
         _poses->push_back(pose);
     }
 }
