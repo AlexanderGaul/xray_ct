@@ -12,30 +12,37 @@
 #include "AcquisitionWidget.h"
 #include "PoseViewer.h"
 #include "SliceViewer.h"
+#include "VisualizationWidget.h"
 
 class MainWindow : public QMainWindow {
 public:
     MainWindow(std::string path)
-        : _aWidget(path),
-          _sViewer(_aWidget.volume())
-    {
+    : _aWidget{path}, _rWidget {}, _vWidget {} {
         QTabWidget* tabWidget = new QTabWidget();
 
-        tabWidget->addTab(&_sViewer, tr("Raw volume"));
-        tabWidget->addTab(&_aWidget, tr("Acquisition"));
+        tabWidget->addTab(&_aWidget, "Acquisition");
+        tabWidget->addTab(&_rWidget, "Reconstruction");
+        tabWidget->addTab(&_vWidget, "Visualization");
         setCentralWidget(tabWidget);
+        
+        connect(&_rWidget, &SliceViewer::requestAcquisition, this, &MainWindow::requestedAquisition);
+        connect(&_vWidget, &VisualizationWidget::requestRecVolume, this, &MainWindow::requestedReconstruction);
     }
 
 
-public slots:
-    
 private slots:
+    void requestedAquisition(){
+        _rWidget.setAcq(_aWidget.getAcq());
+    }
+    
+    void requestedReconstruction(){
+        _vWidget.setRec(_rWidget.getRec());
+    }
     
 private:
     AcquisitionWidget _aWidget;
-
-    SliceViewer _sViewer;
-
+    SliceViewer _rWidget;
+    VisualizationWidget _vWidget;
 };
 
 #endif // MAINWINDOW_H

@@ -2,7 +2,7 @@
 
 #include "AcquisitionModel.h"
 
-bool AcquisitionModel::checkIfVolumeFitsBlackBox()
+bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
 {
     // check if the volume fits the black box
     Eigen::Vector3i voxels = _volume.getNumVoxels();
@@ -20,14 +20,15 @@ bool AcquisitionModel::checkIfVolumeFitsBlackBox()
 
 AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)}, 
-    _poses {_volume.getBoundingBox()}
+    _poses { std::make_shared<std::vector<AcquisitionPose>>( std::vector<AcquisitionPose> {_volume.getBoundingBox()})}, 
+    _measurements {std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(volume(), currPoseChecked()))}
 {
 }
 
 void AcquisitionModel::loadImage(std::string path)
 {
     _volume = EDFHandler::read(path);
-    _poses.push_back(_volume.getBoundingBox());
+    _poses->push_back(_volume.getBoundingBox());
     if(!checkIfVolumeFitsBlackBox())
     {
         throw std::logic_error("the specified volume does not fit the black box!");
@@ -41,6 +42,7 @@ void AcquisitionModel::updateRotation(RotationAxis axis, float angle){
     } else if (axis == RotationAxis::X) {
         currPoseChecked().addRotationX(angle);
     }
+    updateLastProjection();
 }
 
 std::array<Eigen::Vector3f, 4> AcquisitionModel::getDetector() const{
@@ -67,72 +69,54 @@ void AcquisitionModel::writeImage(std::string path) const
     EDFHandler::write(path, _volume);
 }
 
-std::vector<std::vector<float>> AcquisitionModel::forwardProjectSingle() const{
-    auto verticalPixels = currPoseChecked().getPixelVertical();
-    auto horizontalPixels = currPoseChecked().getPixelHorizontal();
-    std::vector<std::vector<float>> ret;
-    ret.reserve(horizontalPixels);
-    std::vector<float> temp = ForwardProjectionOperator::forwardProject(_volume, currPoseChecked());
-    for(int y = 0; y < verticalPixels; ++ y){
-        std::vector<float> row {};
-        row.reserve(verticalPixels);
-        for(int x = 0; x < horizontalPixels; ++x){
-            row.push_back(temp.at(x + y * horizontalPixels));
-        }
-        ret.push_back(std::move(row));
-    }
-    return ret;
-}
-
-std::vector<std::vector<float>> AcquisitionModel::forwardProjectFull() const{
-    return ForwardProjectionOperator::forwardProjectFull(_volume, _poses);
-}
-
 Eigen::AlignedBox3f AcquisitionModel::getBoundingBox() const{
         return _volume.getBoundingBox();
     }
 
 void AcquisitionModel::clearPoses() {
-        _poses.clear();
+        _poses->clear();
         //since the stack must alway contain one element, add the default pose again
-        _poses.push_back(AcquisitionPose {getBoundingBox()});
+        addDefaultPose();
+        updateProjection();
         emit poseChanged();
     }
 
 void AcquisitionModel::deletePose() {
         //since there always has to be an element pop always works
-        _poses.pop_back();
-        if(_poses.empty()){
-            _poses.push_back(AcquisitionPose {getBoundingBox()});
+        _poses->pop_back();
+        if(_poses->empty()){
+            addDefaultPose();
         }
+        updateProjection();
         emit poseChanged();
     }
 
 void AcquisitionModel::savePose() {
-        _poses.push_back(AcquisitionPose {getBoundingBox()});
+        addDefaultPose();
+        updateProjection();
         emit poseChanged();
     }
 
 AcquisitionPose& AcquisitionModel::currPose() {
-        return _poses.back();
+        return _poses->back();
     }
 
 const AcquisitionPose& AcquisitionModel::currPose() const {
-        return _poses.back();
+        return _poses->back();
     }
 
 AcquisitionPose& AcquisitionModel::currPoseChecked() {
-        if(_poses.empty()){
+        if(_poses->empty()){
             throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
         }
-        return _poses.back();
+        return _poses->back();
     }
 
 const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
-        if(_poses.empty()){
+        if(_poses->empty()){
             throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
         }
-        return _poses.back();
+        return _poses->back();
     }
 
 
@@ -159,7 +143,7 @@ void AcquisitionModel::addHalfSphericalPoses()
     {
         addCircularPoses(yRot, M_PI);
     }
-}
+}   
 
 
 void AcquisitionModel::addCircularPoses(float yAngle, float range)
@@ -178,8 +162,9 @@ void AcquisitionModel::addCircularPoses(float yAngle, float range)
     }
     for(float zRot = 0; zRot < range; zRot += distance)
     {
+        std::cout << zRot << ", " << yAngle << std::endl;
         AcquisitionPose pose {getBoundingBox()};
-        pose.setRotation(zRot, yAngle);
-        _poses.push_back(pose);
+        pose.setRotation(yAngle, zRot);
+        _poses->push_back(pose);
     }
 }

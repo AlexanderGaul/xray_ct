@@ -16,6 +16,7 @@
 #include "ForwardProjectionOperator.h"
 #include "RayTracing.h"
 #include "Volume.h"
+#include "Acquisition.h"
 
 /*
  * Represents an axis of rotation.
@@ -73,30 +74,6 @@ public:
      */
     void writeImage(std::string path) const;
     
-    /**
-     * Calculates the complete forward Projection for the current acquistion pose
-     */
-    std::vector<std::vector<float>> forwardProjectSingle() const;
-
-    /**
-     * Calculates the complete forward Projection for all poses stored in the vector
-     */
-    std::vector<std::vector<float>> forwardProjectFull() const;
-    
-    /**
-     * TODO
-     * Calculates a forward Projection for Steps rotations of the current Pose around the
-     * Rotation axis
-     */
-    std::vector<std::vector<float>> forwardProjectAngle(/*Steps, RotationAxis*/){
-        return std::vector<std::vector<float>> {};
-    }
-    
-    
-    /*
-     * The follwing fuctions are used to modify the the Pose Stack/Vector
-     */
-    
     /*
      * Deletes all stored poses
      */
@@ -114,7 +91,7 @@ public:
     
     
 
-    std::vector<AcquisitionPose>& getPoses()
+    std::shared_ptr<std::vector<AcquisitionPose>> getPoses()
     {
         return _poses;
     }
@@ -126,9 +103,8 @@ public:
      * in the end there are count1*count2 generated Poses.
      */
 
-    
-    void generatePoses(int count1 = 5, int count2 = 5){
-        _poses.pop_back();
+    void generatePoses(int count1, int count2){
+        _poses->pop_back();
         float angleX = 2.f * M_PI / count1;
         float angleZ = 2.f * M_PI / count2;
         
@@ -136,9 +112,11 @@ public:
             for(int p = 0; p < count2; ++p){
                 AcquisitionPose pose {_volume.getBoundingBox()};
                 pose.setRotation(i*angleX, p*angleZ);
-                _poses.push_back(std::move(pose));
+                _poses->push_back(std::move(pose));
             }
         }
+        
+        updateProjection();
     }
     
     /*
@@ -150,14 +128,15 @@ public:
      * its rotation is defined as i*2*PI/count1 around the defined axis.
      */
     void generatePoses(int count1){
-        _poses.pop_back();
+        _poses->pop_back();
         float angleX = 2.f * M_PI / count1;
         
         for(int i = 0; i < count1; ++i){
             AcquisitionPose pose {_volume.getBoundingBox()};
             pose.setRotation(i*angleX);
-            _poses.push_back(std::move(pose));
+            _poses->push_back(std::move(pose));
         }
+        updateProjection();
     }
     
     /**
@@ -170,14 +149,90 @@ public:
         return _volume;
     }
     
+
     void addSphericalPoses();
     void addHalfSphericalPoses();
     void addCircularPoses(float, float = 2.f * M_PI);
+
+    /*
+     * returns only the last projection
+     */
+    std::pair<int, const Eigen::VectorXf> getLastProj() {
+        const AcquisitionPose currAcq = currPoseChecked();
+        const int totalSize = currAcq.getPixelCount();
+        const int offset = _measurements->size() - totalSize;
+        
+        
+        Eigen::VectorXf proj {totalSize};
+        for(int p = 0; p < totalSize; ++p){
+            proj[p] = (*_measurements)[offset + p];
+        }
+        return std::make_pair(currAcq.getPixelVertical(), proj);
+    }
+    
+    /*
+     * returns a pair of the number of rows (=rays) in the _measurements arrey
+     * and the measurements themselves
+     * This may not be the safest way to acess the vector for painting it but
+     * probably the fastest.
+     * 
+     * TODO right now the Projection vector is copied unecessarily but a refernce
+     * didn't work. Shouldn't be a problem most of the time; can be fixed later
+     */
+    std::pair<int, const Eigen::VectorXf> getProj() {
+        return std::make_pair(_poses->size(), *_measurements); 
+    }
+    
+    const Eigen::VectorXf& getProjection(){
+        return *_measurements;
+    }
+    
+    /*
+     * returns the acquisition information needed for the reconstruction if requested
+     */
+    Acquisition getAcq() const {
+        return Acquisition {_volume, _poses, _measurements};
+    }
+
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();
 private:
-    bool checkIfVolumeFitsBlackBox();
+    bool checkIfVolumeFitsBlackBox() const;
+    
+    /*
+     * adds a new default AcquisitionPose
+     */
+    void addDefaultPose(){
+        _poses->push_back(AcquisitionPose {getBoundingBox()});
+        
+        updateLastProjection();
+    }
+    
+    /**
+     * Should be called when new poses were added
+     * Updates the _measurements vector
+     */
+    void updateProjection(){
+        _measurements = std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(_volume, *_poses, _volume.content().rawVec()));
+        emit poseChanged();
+    }
+    
+    /*
+     * This is somewaht useless currently. I will use it for optimisation later.
+     * Just use updateProjection for now instead
+     */
+    void updateLastProjection(){
+        const int rayCount = currPoseChecked().getPixelCount();
+        const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
+        const int offset = _measurements->size() - rayCount;
+        assert(rayCount == proj.size());
+        
+        for(int x = 0 ; x < rayCount; ++x) {
+            (*_measurements)[offset + x] = proj[x];
+        }
+        emit poseChanged();
+    }
     
     /*
      * The pose that is shown on the screen and which can be modified, is the last pose
@@ -201,7 +256,9 @@ private:
      * more than one pose can be calculated.
      * There has to be alway one element in this stack, which is the one shown in the gui.
      */
-    std::vector<AcquisitionPose> _poses;
+    std::shared_ptr<std::vector<AcquisitionPose>> _poses;
+    
+    std::shared_ptr<Eigen::VectorXf> _measurements;
 
 };
 

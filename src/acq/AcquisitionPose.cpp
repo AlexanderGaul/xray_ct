@@ -108,10 +108,6 @@ Eigen::Vector3f AcquisitionPose::getDetectorUpperRight() const
 {
     return getRot() * Eigen::Vector3f(s2dd_ / 2.f, -det_width_ / 2.f, det_height_ / 2.f) + center_;
 }
-std::array<Eigen::Vector3f, 4> AcquisitionPose::getDetectorCorners() const
-{
-    return std::array<Eigen::Vector3f, 4> {getDetectorUpperLeft(), getDetectorLowerLeft(), getDetectorLowerRight(), getDetectorUpperRight()};
-}
 
 Eigen::ParametrizedLine<float, 3> AcquisitionPose::getRay(int horizontal, int vertical)  const
 {

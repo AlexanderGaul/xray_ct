@@ -9,6 +9,7 @@ set(GUI_SRCS
         ResultWidget.cpp
         SliceWidget.cpp
         SliceViewer.cpp
+        VisualizationWidget.cpp
         )
 set(GUI_HDRS
         MainWindow.h
@@ -18,6 +19,7 @@ set(GUI_HDRS
         ResultWidget.h
         SliceWidget.h
         SliceViewer.h
+        VisualizationWidget.h
         )
 
 add_library(part2_lib_gui ${GUI_HDRS} ${GUI_SRCS} )

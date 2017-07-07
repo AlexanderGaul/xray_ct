@@ -49,6 +49,7 @@ public:
     static Eigen::Vector3f boxIntersect(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
     static float forwardProject(const VolumeBase& volume, const Line3f& ray, Eigen::VectorXf values);
+    
     /**
      * calculates the forwardProjection of the given ray and the given box.
      * @return sum of all contributions of the ray going through the box
@@ -56,7 +57,7 @@ public:
     static float backwardProj(const VolumeBase& box, const Line3f& ray, Eigen::VectorXf& backProj, float projValue){
         //based on "An Efficient and Robust Ray–Box Intersection Algorithm"
         //link:  http://people.csail.mit.edu/amy/papers/box-jgt.pdf
-           const auto boundingBox = box.getBoundingBox();
+        const auto boundingBox = box.getBoundingBox();
         const float tIntersect = boxIntersectHelper(boundingBox, ray);
         
         //The ray doesn't intersect the volume

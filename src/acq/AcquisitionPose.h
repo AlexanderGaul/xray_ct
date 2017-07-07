@@ -46,6 +46,9 @@ public:
 
     int getPixelHorizontal() const;
     int getPixelVertical() const;
+    int getPixelCount() const {
+        return getPixelHorizontal()*getPixelVertical();
+    }
 
     void setCenter(const Eigen::Vector3f& center);
 

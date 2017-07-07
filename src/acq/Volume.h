@@ -14,13 +14,17 @@ protected:
     Eigen::Vector3i _numVoxels;
     
 public:
-    VolumeBase(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp)
-        : _boundingBox {lowerLeft, upperRight},
-          _numVoxels {(_boundingBox.max() - _boundingBox.min()).cwiseQuotient(sp).cast<int>()}
-    {
+    VolumeBase()
+        : VolumeBase {Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), Eigen::Vector3f {1, 1, 1}}{
+            
     }
     
-     Eigen::AlignedBox3f getBoundingBox() const
+    VolumeBase(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp)
+        : _boundingBox {lowerLeft, upperRight},
+          _numVoxels {(_boundingBox.max() - _boundingBox.min()).cwiseQuotient(sp).cast<int>()} {
+    }
+    
+    Eigen::AlignedBox3f getBoundingBox() const
     {
         return _boundingBox;
     }
@@ -69,27 +73,12 @@ private:
     void centerBoundingBox(){
         _boundingBox.translate(-_boundingBox.center());
     }
-
-    float computeMaxEntry()
-    {
-        float max = 0.0;
-        for(int i = 0; i<_content.sizeX(); ++i)
-        {
-         for(int j = 0; j<_content.sizeY(); ++j)
-         {
-             for(int k = 0; k<_content.sizeZ(); ++k)
-             {
-                 if(_content.get(i, j, k) > max)
-                 {
-                     max = _content.get(i,j,k);
-                 }
-             }
-         }
-        }
-        return max;
-    }
     
 public:
+    Volume() : VolumeBase {}, _content {}{
+        
+    }
+    
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp)
         : Volume {lowerLeft, upperRight, sp, Eigen::VectorXf{}}
     {
@@ -97,10 +86,19 @@ public:
     }
     
     template <class Vec>
+    Volume(const VolumeBase& volume, Vec&& content)
+        : VolumeBase {volume}, _content {getNumVoxels(), std::forward<Vec>(content)},
+          _maxEntry {_content.maxEntry()}
+    {
+        centerBoundingBox();
+    }
+    
+    
+    template <class Vec>
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp, Vec&& content)
         : VolumeBase {lowerLeft, upperRight, sp},
           _content (getNumVoxels(), std::forward<Vec>(content)),
-          _maxEntry(computeMaxEntry())
+          _maxEntry(_content.maxEntry())
     {
         centerBoundingBox();
     }
@@ -113,11 +111,13 @@ public:
     void setContent(content_type& content)
     {
         _content = content;
+        _maxEntry = _content.maxEntry();
     }
     
     void setContent(content_type&& content)
     {
         _content = std::move(content);
+        _maxEntry = _content.maxEntry();
     }
 
     /**

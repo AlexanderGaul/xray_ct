@@ -4,45 +4,20 @@
 #include <iostream>
 
 void ResultWidget::recalcProject() {
-    std::vector<std::vector<float>> temp {};
     switch(_widgetStack.currentIndex()){
         case 0:
-            temp = _model->forwardProjectSingle();
+            paint2DVec(_model.getLastProj());
             break;
         case 1:
-            temp = _model->forwardProjectFull();
+            paint2DVec(_model.getProj());
+            break;
+        default:
+            paint2DVec(_model.getLastProj());
             break;
     }
-        
-    if(temp.empty()){
-        //fill the image with one black pixel
-        _image = QImage {1,1, QImage::Format_Indexed8};
-        _image.setColorTable(generateBlackWhiteColorTable());
-        _image.setPixel(0,0,0);
-        return;
-    }
-    int pixelY = temp.size();
-    int pixelX = temp[0].size();
-    
-    //Only resize the image if its actually needed. Otherwise simply override the old image
-    if(pixelY != _image.height() || pixelX != _image.width()){
-        _image = QImage {pixelX, pixelY, QImage::Format_Indexed8};
-        _image.setColorTable(generateBlackWhiteColorTable());
-    }
-    
-    float max = maxPixel(temp);
-    for(int y = 0; y < pixelY; ++y){
-        for (int x = 0; x < pixelX; ++x){
-            //There were some negative values, so to avoid bugs, currValue is at least zero
-            float currValue = std::max(temp.at(y).at(x), 0.0f);
-            int colorVal = 255*currValue/max;
-            _image.setPixel(x, y, colorVal);
-        }
-    }
-    update();
-    }
+}
 
-ResultWidget::ResultWidget(AcquisitionModel* model, QWidget* parent)  
+ResultWidget::ResultWidget(AcquisitionModel& model, QWidget* parent)  
     : QWidget {parent}, _mainLayout {}, _widgetStack{}, 
     _drawWidgetSingle{}, _drawWidgetAll{}, 
     _state {DrawState::Single}, _model {model}, 
@@ -78,9 +53,9 @@ bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
         QWidget& widget = currWidget();
         QSize size = widget.size();
         
-        //ensure that the image is always a rectangle
+        //TODO if the image is not a square it shouldn't be painted as a square
         int drawSize = std::min(widget.width(), widget.height());
-             
+        
         QRect drawRect{0, 0, drawSize, drawSize}; 
         
         QPainter painter {&widget};
@@ -103,14 +78,10 @@ QWidget& ResultWidget::currWidget() {
        }
 }
 
-float ResultWidget::maxPixel(const std::vector< std::vector< float > >& projection) {
+float ResultWidget::maxPixel(const Eigen::VectorXf& projection) {
     float max = std::numeric_limits<float>::min();
-    for(const auto& vec : projection){
-        for(const float f : vec){
-            if(f > max){
-                max = f;
-            }
-        }
+    for(int i = 0; i < projection.size(); ++i){
+        max = projection[i] > max ? projection[i] : max;
     }
     return max;
 }

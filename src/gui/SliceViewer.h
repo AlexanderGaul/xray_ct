@@ -5,8 +5,10 @@
 #include <QObject>
 #include <QSlider>
 #include <QWidget>
+#include <QPushButton>
 
 #include "SliceWidget.h"
+#include "Acquisition.h"
 
 class SliceViewer : public QWidget
 {
@@ -18,13 +20,13 @@ private:
     QGridLayout _sliderLayout;
     QSlider _axisSlider;
     SliceWidget _sWidget;
-
-
+    
+    QPushButton _loadButton;
+    
 public:
 
-    SliceViewer(const Volume& volume)
-        : _sWidget(volume)
-    {
+    SliceViewer() : _layout {}, _controlLayout {}, _statusView {}, _sliderLayout {},
+    _axisSlider {}, _sWidget {}, _loadButton {"Load acquisition"}{
         updateStatus();
         _controlLayout.addWidget(&_statusView);
 
@@ -47,19 +49,32 @@ public:
 
         _layout.addWidget(&_sWidget);
         _layout.addItem(&_controlLayout, 1, 0);
+        _layout.addWidget(&_loadButton, 2, 0);
         setLayout(&_layout);
 
         connect(&_sWidget, &SliceWidget::sliceChanged, this, &SliceViewer::updateStatus);
         connect(&_axisSlider, SIGNAL(valueChanged(int)), &_sWidget, SLOT(updateStatus(int)));
+        connect(&_loadButton, &QPushButton::pressed, this, &SliceViewer::requestAcquisition);
     }
 
-
+    void setAcq(Acquisition&& acq){
+        //TODO set the acquition with the current values from the user
+        _sWidget.setAcq(false, 0.f, 5, std::move(acq));
+    }
+    
+    //on request returns the volume
+    std::shared_ptr<const Volume> getRec(){
+        return _sWidget.getRec();
+    }
+    
+    
 signals:
-
+    //calls this function if you need the acquistion information. it is set through setAcq
+    void requestAcquisition();
+    
 public slots:    
 
-    void updateStatus()
-    {
+    void updateStatus() {
         _statusView.setText(QString("Current slice: "+QString::number(_sWidget.currSlice()+1)+
                                     " of "+QString::number(_sWidget.slices())));
     }

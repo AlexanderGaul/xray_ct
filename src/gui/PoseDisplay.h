@@ -19,12 +19,13 @@ private:
     bool _showRays;
     int _zoom;
     int _axis;
-    AcquisitionModel *_model;
+	AcquisitionModel &_model;
 
 
 public:
-    PoseDisplay(AcquisitionModel *model);
-    PoseDisplay(AcquisitionModel *model, int axis);
+
+	PoseDisplay(AcquisitionModel& model);
+	PoseDisplay(AcquisitionModel& model, int axis);
 
     virtual void paintEvent(QPaintEvent *event);
     

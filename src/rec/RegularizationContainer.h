@@ -11,12 +11,13 @@ class RegularizationContainer : public DataContainer
 private:
     float _lambda;
 public:
-    RegularizationContainer(const Volume& volume, std::vector<AcquisitionPose>& poses, float lambda)
+    
+    RegularizationContainer(const VolumeBase& volume, const std::vector<AcquisitionPose>& poses, float lambda)
         : DataContainer(volume, poses), _lambda {lambda}
     {
     }
     
-    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) override
+    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) const override
     {
         //calculates A^T*A*x
         Eigen::VectorXf res = backwardProj(forwardProj(vector));
