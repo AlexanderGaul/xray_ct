@@ -24,6 +24,9 @@ private:
     std::unique_ptr<DataContainer> _cont;
     //the result of the _reconstruction
     std::shared_ptr<Volume> _reconstruction;
+
+    /// current number of iterations of the conjugate gradient
+    int _iterations = 5;
     
     std::unique_ptr<DataContainer> generateContainer(const VolumeBase& base, bool regularized, float lambda) {
         if(regularized){
@@ -37,26 +40,40 @@ public:
     /*
      * This constructor is used when the poses and the measurements change
      */
-    ReconstructionModel () : _poses {std::make_shared<std::vector<AcquisitionPose>>()}, 
-    _measurements {std::make_shared<Eigen::VectorXf>(0)}, 
-    _cont {std::make_unique<NormalReconstructionContainer>(VolumeBase {}, *_poses)}, 
-    _reconstruction {std::make_shared<Volume>()}{
+    ReconstructionModel () :
+        _poses {std::make_shared<std::vector<AcquisitionPose>>()},
+        _measurements {std::make_shared<Eigen::VectorXf>(0)},
+        _cont {std::make_unique<NormalReconstructionContainer>(VolumeBase {}, *_poses)},
+        _reconstruction {std::make_shared<Volume>()}
+    {
     }
     
     ReconstructionModel (bool regularized, float lambda, int cgIterations,  const VolumeBase& base, 
                     const std::shared_ptr<const std::vector<AcquisitionPose>>& poses, const std::shared_ptr<const Eigen::VectorXf>& measurements)
-    : _poses {poses}, _measurements {measurements}, _cont {generateContainer(base, regularized, lambda)}, 
-    _reconstruction {std::make_shared<Volume>(base, CG::conjugateGradient(cgIterations, *_cont, *_measurements))}
+    :
+                _poses {poses},
+                _measurements {measurements},
+                _cont {generateContainer(base, regularized, lambda)},
+                _reconstruction {std::make_shared<Volume>(base, CG::conjugateGradient(cgIterations, *_cont, *_measurements))}
     {
     }
     
     std::shared_ptr<const Volume> getRec() const{
         return _reconstruction;
-    }
-    
+    }    
     
     const Volume& rec(){
         return *_reconstruction;
+    }
+
+    int iterations() const
+    {
+        return _iterations;
+    }
+
+    void setIterations(int iterations)
+    {
+        _iterations = iterations;
     }
     
 public slots:
@@ -64,7 +81,8 @@ public slots:
     /*
      * This is used when only one of the parameters change.
      */
-    void recalcVolume(bool regularized, int iterations, float lambda){
+    void recalcVolume(bool regularized, float lambda, int iterations){
+        setIterations(iterations);
         _cont = generateContainer(*_reconstruction, regularized, lambda);
         *_reconstruction = Volume {*_reconstruction, CG::conjugateGradient(iterations, *_cont, *_measurements)};
     }

@@ -28,7 +28,11 @@ private:
     
 public:
     
-    VisualizationWidget() : _mainLayout{},_loadFileButton {"Load from file"}, _loadRecButton {"Load acquisition"}{
+    VisualizationWidget() :
+        _mainLayout{},
+        _loadFileButton {"Load from file"},
+        _loadRecButton {"Load acquisition"}
+    {
         _mainLayout.addWidget(&_loadRecButton);
         setLayout(&_mainLayout);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
