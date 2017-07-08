@@ -120,6 +120,11 @@ public:
         _maxEntry = _content.maxEntry();
     }
 
+    void computeMaxEntry()
+    {
+        _maxEntry = _content.maxEntry();
+    }
+
     /**
      * Return the maximum level of brightness.
      * (this is computed via computeMaxEntry(), called from the

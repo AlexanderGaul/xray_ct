@@ -21,25 +21,27 @@ public:
      * @param b - solution vector (forward Projection)
      * @param A
      */
-    static Eigen::VectorXf conjugateGradient(int steps, DataContainer& cont, Eigen::VectorXf b)
+    static Eigen::VectorXf conjugateGradient(int steps, DataContainer& A, Eigen::VectorXf b)
     {
-        //we need A^T*b and not b
-        b = cont.backwardProj(b);
+        // we need A^T*b and not b
+        b = A.backwardProj(b);
         
         /*
          * This is simply a copy of the algorithm mentioned on the slides
          */
-        //init the vector to zero
-        Eigen::VectorXf result = Eigen::VectorXf::Zero(cont.getTotalVoxelCount());
-        Eigen::VectorXf test = cont.mult(result);
-        Eigen::VectorXf r = b - test;
+        // init the vector to zero
+        Eigen::VectorXf x = Eigen::VectorXf::Zero(A.getTotalVoxelCount());
+
+        Eigen::VectorXf Ax = A.mult(x);
+        Eigen::VectorXf r = b - Ax;
         Eigen::VectorXf d = r;
+
         float rtr = r.dot(r);
-        
+
         for(int i = 0; i < steps; ++i){
-            const Eigen::VectorXf q = cont.mult(d);
+            const Eigen::VectorXf q = A.mult(d);
             const float alpha = rtr/d.dot(q);
-            result += alpha * d;
+            x += alpha * d;
             r -= alpha * q;
             
             const float oldRtr = rtr;
@@ -47,6 +49,6 @@ public:
             d = r + (rtr/oldRtr * d);
         }
         
-        return result;
+        return x;
     }
 };

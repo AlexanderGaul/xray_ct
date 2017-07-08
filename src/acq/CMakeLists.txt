@@ -17,6 +17,7 @@ set(ACQ_HDRS
         RayTracing.h
         Vec3D.h
         ForwardProjectionOperator.h
+        definitions.h
         )
 
 add_library(part2_lib_acq ${ACQ_HDRS} ${ACQ_SRCS} )

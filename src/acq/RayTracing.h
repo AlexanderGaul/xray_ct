@@ -9,14 +9,13 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
+#include "AcquisitionPose.h"
+#include "definitions.h"
 #include "Vec3D.h"
 #include "Volume.h"
-#include "AcquisitionPose.h"
 
 class RayTracing
 {
-    using Line3f = Eigen::ParametrizedLine<float, 3>;
-    
     //return -1 if the number is negative otherwise +1
     static int simpSign(float x){
         return std::signbit(x) ? -1 : 1;
