@@ -120,51 +120,83 @@ const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
     }
 
 
-void AcquisitionModel::addSphericalPoses()
+void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float range)
 {
+    _poses->pop_back();
     
-    int count = 5;
+    float distance = M_PI / circles;
     
-    float distance = M_PI / count;
     
     for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
     {
-        addCircularPoses(yRot);
+        int count;
+        float distance;
+        float cosine = cosf(yRot);
+        if(1.f > cosine * equatorialCount)
+        {
+            count = 1;
+        }
+        else
+        {
+            count = static_cast<int>(cosine * equatorialCount);
+        }
+        addCircularPoses(count, yRot, range);
     }
+    emit poseChanged();
 }
 
-void AcquisitionModel::addHalfSphericalPoses()
-{
-    int count = 5;
-    
-    float distance = M_PI / count;
-    
-    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
-    {
-        addCircularPoses(yRot, M_PI);
-    }
-}   
-    
 
-void AcquisitionModel::addCircularPoses(float yAngle, float range)
+
+void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
 {
-    
-    int count = 10;
-    float distance;
-    float cosine = cosf(yAngle);
-    if(1.f / count > cosine)
+    float distance = range;
+    if(count > 1)
     {
-        distance = 3 * M_PI;
+        distance = range / (count);
     }
-    else
+    for(int i = 0; i < count; i++)
     {
-        distance = range / cosine / count;
-    }
-    for(float zRot = 0; zRot < range; zRot += distance)
-    {
-        std::cout << zRot << ", " << yAngle << std::endl;
         AcquisitionPose pose {getBoundingBox()};
-        pose.setRotation(zRot, yAngle);
+        pose.setRotation(distance / 2.f + i * distance, yAngle);
         _poses->push_back(pose);
     }
+    emit poseChanged();
+}
+
+std::pair<int, const Eigen::VectorXf> AcquisitionModel::getLastProj()
+{
+    const AcquisitionPose currAcq = currPoseChecked();
+    const int totalSize = currAcq.getPixelCount();
+    const int offset = _measurements->size() - totalSize;
+    
+    
+    Eigen::VectorXf proj {totalSize};
+    for(int p = 0; p < totalSize; ++p){
+        proj[p] = (*_measurements)[offset + p];
+    }
+    return std::make_pair(currAcq.getPixelVertical(), proj);
+}
+
+void AcquisitionModel::addDefaultPose(){
+    _poses->push_back(AcquisitionPose {getBoundingBox()});
+    
+    updateLastProjection();
+}
+
+void AcquisitionModel::updateProjection(){
+    _measurements = std::make_shared<Eigen::VectorXf>(
+        ForwardProjectionOperator::forwardProj(_volume, *_poses, _volume.content().rawVec()));
+    emit poseChanged();
+}
+
+void AcquisitionModel::updateLastProjection(){
+    const int rayCount = currPoseChecked().getPixelCount();
+    const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
+    const int offset = _measurements->size() - rayCount;
+    assert(rayCount == proj.size());
+    
+    for(int x = 0 ; x < rayCount; ++x) {
+        (*_measurements)[offset + x] = proj[x];
+    }
+    emit poseChanged();
 }

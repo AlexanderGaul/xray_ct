@@ -45,8 +45,6 @@ private:
     QPushButton _savePoseButton;
     QPushButton _deletePoseButton;
     QPushButton _clearButton;
-    
-    QPushButton _sphericalPosesButton;
 
     AcquisitionModel& _model;
 	bool _showRays;
@@ -59,7 +57,7 @@ public:
 public slots:
     
     void generatePoses(){
-        _model.generatePoses(_poseCount1.value(), _poseCount2.value());
+        _model.addSphericalPoses(_poseCount1.value(), _poseCount2.value());
     }
 
 };

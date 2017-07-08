@@ -18,9 +18,9 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     for(unsigned int i = 0; i < _model.getPoses()->size(); i++)
     {
         if(i == _model.getPoses()->size() - 1)
-        { paintPose(painter, (*_model.getPoses())[i], false);}
+        { paintPose(painter, (*_model.getPoses())[i], false, false);}
         else
-        { paintPose(painter, (*_model.getPoses())[i], true); }
+        { paintPose(painter, (*_model.getPoses())[i], true, true); }
     }
     
     //paint the bounding box of the main volume
@@ -56,59 +56,82 @@ void PoseDisplay::paintEvent(QPaintEvent* p_e)
     */
 }
 
-void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity = false)
+void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity = false, bool onlySources = false)
 {
     float x_center = width() * 0.5;
     float y_center = height() * 0.5;
     
     QPen pen;
-    
-    
-    painter.resetTransform();
-    if(lowOpacity)
-    { pen.setColor(QColor(0, 0, 0, 32)); }
-    else
-    { pen.setColor(Qt::black); }
-    painter.setPen(pen);
-    
     const Eigen::Vector2i detectorSize = _model.getDetectorSize();
     const Eigen::Vector3f sourcePos = pose.getSourcePosition();
     
-    
-    // rays on corners are always drawn
-    for(int i = 0; i < detectorSize.x(); i += detectorSize.x() - 1)
+    if(!onlySources)
     {
-        for(int j = 0; j < detectorSize.y(); j += detectorSize.y() - 1)
+        painter.resetTransform();
+        if(lowOpacity)
+        { pen.setColor(QColor(0, 0, 0, 32)); }
+        else
+        { pen.setColor(Qt::black); }
+        painter.setPen(pen);
+        
+        // rays on corners are always drawn
+        for(int i = 0; i < detectorSize.x(); i += detectorSize.x() - 1)
         {
-            Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
-
-                painter.drawLine(
-                    x_center + sourcePos(_xAxis) * _zoom,
-                    y_center - sourcePos(_yAxis) * _zoom,
-                    x_center + pixel(_xAxis) * _zoom,
-                    y_center - pixel(_yAxis) * _zoom);
-        }
-    }
-    
-    if(_showRays)
-    {
-        for(int i = 0; i < detectorSize.x(); i++)
-        {
-            for(int j = 0; j < detectorSize.y(); j++)
+            for(int j = 0; j < detectorSize.y(); j += detectorSize.y() - 1)
             {
                 Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
-                painter.drawLine(
-                    x_center + sourcePos(_xAxis) * _zoom,
-                    y_center - sourcePos(_yAxis) * _zoom,
-                    x_center + pixel(_xAxis) * _zoom,
-                    y_center - pixel(_yAxis) * _zoom);
+
+                    painter.drawLine(
+                        x_center + sourcePos(_xAxis) * _zoom,
+                        y_center - sourcePos(_yAxis) * _zoom,
+                        x_center + pixel(_xAxis) * _zoom,
+                        y_center - pixel(_yAxis) * _zoom);
             }
         }
+        
+        if(_showRays)
+        {
+            for(int i = 0; i < detectorSize.x(); i++)
+            {
+                for(int j = 0; j < detectorSize.y(); j++)
+                {
+                    Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
+                    painter.drawLine(
+                        x_center + sourcePos(_xAxis) * _zoom,
+                        y_center - sourcePos(_yAxis) * _zoom,
+                        x_center + pixel(_xAxis) * _zoom,
+                        y_center - pixel(_yAxis) * _zoom);
+                }
+            }
+        }
+
+        //painter.setBrush(Qt::white);
+
+        //painter.translate(x_center, y_center);
+        
+        painter.resetTransform();
+        if(lowOpacity)
+        { pen.setColor(QColor(0, 0, 255, 32));}
+        else
+        { pen.setColor(Qt::blue); }
+        painter.setPen(pen);
+
+        //painter.scale(zoom_, zoom_);
+        
+        std::array<Eigen::Vector3f, 4> detCorners = pose.getDetectorCorners();
+
+        
+        for(int i = 0; i < 4; i++)
+        {
+            painter.drawLine(
+                x_center + detCorners[i](_xAxis) * _zoom,
+                y_center - detCorners[i](_yAxis) * _zoom,
+                x_center + detCorners[(i + 1) % 4](_xAxis) * _zoom,
+                y_center - detCorners[(i + 1) % 4](_yAxis) * _zoom
+            );
+        }
+        
     }
-
-    //painter.setBrush(Qt::white);
-
-    //painter.translate(x_center, y_center);
 
     pen.setColor(Qt::red);
     if(lowOpacity)
@@ -124,29 +147,6 @@ void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOp
     );
     painter.setPen(pen);
     painter.drawEllipse(-2, -2, 4, 4);
-    
-    
-    painter.resetTransform();
-    if(lowOpacity)
-    { pen.setColor(QColor(0, 0, 255, 32));}
-    else
-    { pen.setColor(Qt::blue); }
-    painter.setPen(pen);
-
-    //painter.scale(zoom_, zoom_);
-    
-    std::array<Eigen::Vector3f, 4> detCorners = pose.getDetectorCorners();
-
-    
-    for(int i = 0; i < 4; i++)
-    {
-        painter.drawLine(
-            x_center + detCorners[i](_xAxis) * _zoom,
-            y_center - detCorners[i](_yAxis) * _zoom,
-            x_center + detCorners[(i + 1) % 4](_xAxis) * _zoom,
-            y_center - detCorners[(i + 1) % 4](_yAxis) * _zoom
-        );
-    }
     
 
 }

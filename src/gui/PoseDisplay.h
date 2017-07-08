@@ -35,7 +35,7 @@ public slots:
     void setZoom(int zoom);
     
 private:
-    void paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity);
+    void paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity, bool onlySources);
 signals:
     void sceneChanged();
 

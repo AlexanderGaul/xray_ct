@@ -12,6 +12,12 @@
 
 class AcquisitionWidget : public QWidget {
     Q_OBJECT
+private:
+    AcquisitionModel _aModel;
+    QHBoxLayout layout;
+    PoseViewer _pose;
+    ResultWidget _res;
+
 public:
     AcquisitionWidget(std::string path)
         : _aModel(path), layout {}, _pose{_aModel}, _res {_aModel}
@@ -41,11 +47,6 @@ public slots:
         QWidget::update();
     }
 
-private:
-    AcquisitionModel _aModel;
-    QHBoxLayout layout;
-    PoseViewer _pose;
-    ResultWidget _res;    
 };
 
 #endif // AQUISITIONWIDGET_H

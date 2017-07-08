@@ -37,16 +37,25 @@ public:
     /*
      * This constructor is used when the poses and the measurements change
      */
-    ReconstructionModel () : _poses {std::make_shared<std::vector<AcquisitionPose>>()}, 
-    _measurements {std::make_shared<Eigen::VectorXf>(0)}, 
-    _cont {std::make_unique<NormalReconstructionContainer>(VolumeBase {}, *_poses)}, 
-    _reconstruction {std::make_shared<Volume>()}{
+    ReconstructionModel () : 
+        _poses {std::make_shared<std::vector<AcquisitionPose>>()}, 
+        _measurements {std::make_shared<Eigen::VectorXf>(0)}, 
+        _cont {std::make_unique<NormalReconstructionContainer>(VolumeBase {}, *_poses)}, 
+        _reconstruction {std::make_shared<Volume>()}
+    {
     }
     
-    ReconstructionModel (bool regularized, float lambda, int cgIterations,  const VolumeBase& base, 
-                    const std::shared_ptr<const std::vector<AcquisitionPose>>& poses, const std::shared_ptr<const Eigen::VectorXf>& measurements)
-    : _poses {poses}, _measurements {measurements}, _cont {generateContainer(base, regularized, lambda)}, 
-    _reconstruction {std::make_shared<Volume>(base, CG::conjugateGradient(cgIterations, *_cont, *_measurements))}
+    ReconstructionModel (
+        bool regularized, 
+        float lambda, 
+        int cgIterations,  
+        const VolumeBase& base, 
+        const std::shared_ptr<const std::vector<AcquisitionPose>>& poses, 
+        const std::shared_ptr<const Eigen::VectorXf>& measurements)
+    :   _poses {poses}, 
+        _measurements {measurements}, 
+        _cont {generateContainer(base, regularized, lambda)}, 
+        _reconstruction {std::make_shared<Volume>(base, CG::conjugateGradient(cgIterations, *_cont, *_measurements))}
     {
     }
     

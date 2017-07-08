@@ -60,8 +60,8 @@ public:
     void setRotation(Eigen::AngleAxisf rot);
     void setRotation(float globalZ, float localY = 0);
     
-    void setRotationLocalY(float localY);
     void setRotationGlobalZ(float globalZ);
+    void setRotationLocalY(float localY);
     
     void addRotationGlobalZ(float rotZ);
     void addRotationLocalY(float rotY);

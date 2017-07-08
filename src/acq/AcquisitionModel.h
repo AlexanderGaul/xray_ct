@@ -50,18 +50,15 @@ public:
      * See AcquisitionPose for documentation.
      */
     void updateRotation(RotationAxis axis, float angle);
-    
     /**
      * Returns the corners of the detector in the following order:
      * UpperLeft, LowerLeft, LowerRight, UpperRight
      */
     std::array<Eigen::Vector3f, 4> getDetector() const;
-
     Eigen::Vector2i getDetectorSize() const;
-
     Eigen::Vector3f getSourcePosition() const;
-    
     Eigen::Vector3f getPixelCenter(int i, int j) const;
+    
     
     /*
      * returns the bouding Box of the volume
@@ -78,68 +75,18 @@ public:
      * Deletes all stored poses
      */
     void clearPoses();
-    
     /*
      * Deletes the current Pose. If its the last one reset it to the default pose.
      */
     void deletePose();
-    
     /*
      * Saves the current pose, so that a new one can be defined by the user
      */
     void savePose();
     
     
-
     std::shared_ptr<std::vector<AcquisitionPose>> getPoses()
-    {
-        return _poses;
-    }
-    /*
-     * Is used for the pose generation
-     * 
-     * The same as below only that there are now to rotation axis. So for every possible rotation state
-     * around the first axis there are count2 rotations states around the second axis, so that
-     * in the end there are count1*count2 generated Poses.
-     */
-    
-    void generatePoses(int count1, int count2){
-        _poses->pop_back();
-        float angleX = 2.f * M_PI / count1;
-        float angleZ = 2.f * M_PI / count2;
-        
-        for(int i = 0; i < count1; ++i){
-            for(int p = 0; p < count2; ++p){
-                AcquisitionPose pose {_volume.getBoundingBox()};
-                pose.setRotation(i*angleX, p*angleZ);
-                _poses->push_back(std::move(pose));
-            }
-        }
-        
-        updateProjection();
-    }
-    
-    
-    /*
-     * 
-     * 
-     * There is one defined rotation axis (currently only the X-axis)
-     * 
-     * The full rotation of 2*PI is diveded into count1 parts. So that for the i-th of the count1 pose
-     * its rotation is defined as i*2*PI/count1 around the defined axis.
-     */
-    
-    void generatePoses(int count1){
-        _poses->pop_back();
-        float angleX = 2.f * M_PI / count1;
-        
-        for(int i = 0; i < count1; ++i){
-            AcquisitionPose pose {_volume.getBoundingBox()};
-            pose.setRotation(i*angleX);
-            _poses->push_back(std::move(pose));
-        }
-        updateProjection();
-    }
+    { return _poses; }
     
     
     /**
@@ -148,30 +95,13 @@ public:
      * @return
      */
     const Volume& volume() const
-    {
-        return _volume;
-    }
+    { return _volume; }
     
 
-    void addSphericalPoses();
-    void addHalfSphericalPoses();
-    void addCircularPoses(float, float = 2.f * M_PI);
+    void addSphericalPoses(int circles, int equatorialCount, float range = 2.f * M_PI);
+    private: void addCircularPoses(int count, float angle, float range = 2.f * M_PI);
 
-    /*
-     * returns only the last projection
-     */
-    std::pair<int, const Eigen::VectorXf> getLastProj() {
-        const AcquisitionPose currAcq = currPoseChecked();
-        const int totalSize = currAcq.getPixelCount();
-        const int offset = _measurements->size() - totalSize;
-        
-        
-        Eigen::VectorXf proj {totalSize};
-        for(int p = 0; p < totalSize; ++p){
-            proj[p] = (*_measurements)[offset + p];
-        }
-        return std::make_pair(currAcq.getPixelVertical(), proj);
-    }
+public:
     
     /*
      * returns a pair of the number of rows (=rays) in the _measurements arrey
@@ -179,12 +109,19 @@ public:
      * This may not be the safest way to acess the vector for painting it but
      * probably the fastest.
      * 
+     * ?? return number of poses, not number of rows
+     * 
      * TODO right now the Projection vector is copied unecessarily but a refernce
      * didn't work. Shouldn't be a problem most of the time; can be fixed later
      */
     std::pair<int, const Eigen::VectorXf> getProj() {
         return std::make_pair(_poses->size(), *_measurements); 
     }
+    /*
+     * returns only the last projection
+     */
+    std::pair<int, const Eigen::VectorXf> getLastProj();
+    
     
     const Eigen::VectorXf& getProjection(){
         return *_measurements;
@@ -206,36 +143,19 @@ private:
     /*
      * adds a new default AcquisitionPose
      */
-    void addDefaultPose(){
-        _poses->push_back(AcquisitionPose {getBoundingBox()});
-        
-        updateLastProjection();
-    }
+    void addDefaultPose();
     
     /**
      * Should be called when new poses were added
      * Updates the _measurements vector
      */
-    void updateProjection(){
-        _measurements = std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(_volume, *_poses, _volume.content().rawVec()));
-        emit poseChanged();
-    }
+    void updateProjection();
     
     /*
      * This is somewaht useless currently. I will use it for optimisation later.
      * Just use updateProjection for now instead
      */
-    void updateLastProjection(){
-        const int rayCount = currPoseChecked().getPixelCount();
-        const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
-        const int offset = _measurements->size() - rayCount;
-        assert(rayCount == proj.size());
-        
-        for(int x = 0 ; x < rayCount; ++x) {
-            (*_measurements)[offset + x] = proj[x];
-        }
-        emit poseChanged();
-    }
+    void updateLastProjection();
     
     /*
      * The pose that is shown on the screen and which can be modified, is the last pose
