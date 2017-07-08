@@ -138,6 +138,90 @@ public:
     {
         return _maxEntry;
     }
+    
+    float getVoxel(Eigen::Vector3i pos)
+    {
+        return _content.rawVec()[coordinateToIndex(pos)];
+    }
+    float getVoxel(int x, int y, int z)
+    {
+        return getVoxel(Eigen::Vector3i(x, y, z));
+    }
+    /*
+     * trillinear interpolation with surrounding voxels
+     * returns zero if outside volume
+     * extrapolates trilinearly if outside voxel centers
+     * 
+     * THIS CODE HAS NEITHER BEEN TESTED NOR REVIEWED
+     * HANDLE WITH CARE
+     */
+    float getVoxelLinear(Eigen::Vector3f position)
+    {
+        Eigen::Vector3f relPos = position - _boundingBox.min();
+        
+        if(position.x() > _boundingBox.max().x()
+        || position.y() > _boundingBox.max().y()
+        || position.z() > _boundingBox.max().z())
+        {
+            return 0;
+        }
+        if(position.x() < 0
+        || position.y() < 0
+        || position.z() < 0)
+        {
+            return 0;
+        }
+        
+        Eigen::Vector3f spacing = getSpacing();
+        Eigen::Vector3f halfVoxel = spacing * 0.5f;
+        
+        
+        Eigen::Vector3f voxelPos = (relPos - halfVoxel).cwiseQuotient(spacing);
+        
+        // index of voxel centers surrounding the position
+        Eigen::Vector3i minVoxel = voxelPos.cast<int>();
+        Eigen::Vector3i maxVoxel = minVoxel.cast<int>() + Eigen::Vector3i(1, 1, 1);
+        
+        // in case of rounding errors?
+        for(int i = 0; i < 3; i++)
+        {
+            if(minVoxel(i) < 0)
+            { minVoxel(i) = 0; }
+            if(maxVoxel(i) > getNumVoxels()(i) - 1)
+            { maxVoxel(i) = getNumVoxels()(i) - 1; }
+        }
+        
+        // relative position between surrounding voxel centers
+        voxelPos = voxelPos - minVoxel.cast<float>();
+        
+        Eigen::Vector4f firstValues {
+            getVoxel(minVoxel),
+            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(0, 0, 1)),
+            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1))
+        };
+        Eigen::Vector4f secondValues {
+            getVoxel(maxVoxel - Eigen::Vector3i(0, 1, 1)),
+            getVoxel(maxVoxel - Eigen::Vector3i(0, 0, 1)),
+            getVoxel(maxVoxel - Eigen::Vector3i(0, 1, 0)),
+            getVoxel(maxVoxel)
+        };
+        
+        Eigen::Vector4f interpX = firstValues + voxelPos.x() * (secondValues - firstValues);
+        
+        Eigen::Vector2f interpXY {
+            interpX(0) + voxelPos.y() * (interpX(1) - interpX(0)),
+            interpX(2) + voxelPos.y() * (interpX(3) - interpX(2))
+        };
+        
+        float interpXYZ = interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
+
+        return interpXYZ;
+    }
+    float getVoxelLinear(float x, float y, float z)
+    {
+        return getVoxelLinear(Eigen::Vector3f(x, y, z));
+    }
 
 };
 
