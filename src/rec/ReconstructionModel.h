@@ -24,9 +24,6 @@ private:
     std::unique_ptr<DataContainer> _cont;
     //the result of the _reconstruction
     std::shared_ptr<Volume> _reconstruction;
-
-    /// current number of iterations of the conjugate gradient
-    int _iterations = 5;
     
     std::unique_ptr<DataContainer> generateContainer(const VolumeBase& base, bool regularized, float lambda) {
         if(regularized){
@@ -65,16 +62,6 @@ public:
     const Volume& rec(){
         return *_reconstruction;
     }
-
-    int iterations() const
-    {
-        return _iterations;
-    }
-
-    void setIterations(int iterations)
-    {
-        _iterations = iterations;
-    }
     
 public slots:
     
@@ -82,7 +69,6 @@ public slots:
      * This is used when only one of the parameters change.
      */
     void recalcVolume(bool regularized, float lambda, int iterations){
-        setIterations(iterations);
         _cont = generateContainer(*_reconstruction, regularized, lambda);
         *_reconstruction = Volume {*_reconstruction, CG::conjugateGradient(iterations, *_cont, *_measurements)};
     }

@@ -172,21 +172,10 @@ public:
         return _model.getRec();
     }
 
-    int iterations()
-    {
-        return _model.iterations();
-    }
-
 signals:
     void sliceChanged();
 
 public slots:
-
-    void setIterations(int iterations)
-    {
-        _model.setIterations(iterations);
-        repaint();
-    }
 
     void updateStatus(int newStatus)
     {

@@ -23,6 +23,8 @@ private:
     QSlider _axisSlider;
     SliceWidget _sWidget;
 
+    QPushButton _loadButton;
+
     QHBoxLayout _iterationLayout;
     QLabel _iterationLabel;
     QSlider _iterationSlider;
@@ -30,8 +32,8 @@ private:
     QHBoxLayout _regLayout;
     QCheckBox _regCheckBox;
     QTextEdit _regLambda;
-    
-    QPushButton _loadButton;
+
+    QPushButton _updateButton;
 
     bool valid(QString text)
     {
@@ -42,7 +44,9 @@ private:
 public:
 
     SliceViewer() : _layout {}, _controlLayout {}, _statusView {}, _sliderLayout {},
-    _axisSlider {}, _sWidget {}, _loadButton {"Load acquisition"}{
+    _axisSlider {}, _sWidget {}, _loadButton {"Load acquisition"}, _iterationLayout{},
+    _iterationLabel{}, _iterationSlider{}, _regLayout{}, _regCheckBox{}, _regLambda{},
+    _updateButton{"Update reconstruction"}{
         updateStatus();
         _controlLayout.addWidget(&_statusView);
 
@@ -70,7 +74,8 @@ public:
         _iterationLayout.addWidget(&_iterationLabel);
         _iterationSlider.setRange(1, 10);
         _iterationSlider.setOrientation(Qt::Horizontal);
-        _iterationSlider.setValue(_sWidget.iterations());
+        //TODO: declare 5 as constant
+        _iterationSlider.setValue(5);
         _iterationLayout.addWidget(&_iterationSlider);
 
         _layout.addItem(&_iterationLayout, 3, 0);
@@ -80,6 +85,10 @@ public:
         _regLambda.setText("0.0");
         _regLayout.addWidget(&_regLambda);
         _layout.addItem(&_regLayout, 4, 0);
+
+        _updateButton.setEnabled(false);
+        _layout.addWidget(&_updateButton, 5, 0);
+
         setLayout(&_layout);
 
         connect(&_sWidget, &SliceWidget::sliceChanged, this, &SliceViewer::updateStatus);
@@ -87,11 +96,13 @@ public:
         connect(&_loadButton, &QPushButton::pressed, this, &SliceViewer::requestAcquisition);
 
         connect(&_iterationSlider, &QSlider::valueChanged, this, &SliceViewer::updateStatus);
-        connect(&_iterationSlider, &QSlider::valueChanged, this, &SliceViewer::updateReconstruction);
-
         connect(&_regCheckBox, &QCheckBox::stateChanged, this, &SliceViewer::updateRegText);
-        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &SliceViewer::updateReconstruction);
-        connect(&_regLambda, &QTextEdit::textChanged, this, &SliceViewer::updateReconstruction);
+
+        connect(&_iterationSlider, &QSlider::valueChanged, this, &SliceViewer::enableUpdate);
+        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &SliceViewer::enableUpdate);
+        connect(&_regLambda, &QTextEdit::textChanged, this, &SliceViewer::enableUpdate);
+
+        connect(&_updateButton, &QPushButton::pressed, this, &SliceViewer::updateReconstruction);
     }
 
     void setAcq(Acquisition&& acq){
@@ -131,7 +142,7 @@ public slots:
     void updateStatus() {
         _statusView.setText(QString("Current slice: "+QString::number(_sWidget.currSlice()+1)+
                                     " of "+QString::number(_sWidget.slices())));
-        _iterationLabel.setText(QString("Iterations: "+QString::number(_sWidget.iterations())));
+        _iterationLabel.setText(QString("Iterations: "+QString::number(_iterationSlider.value())));
     }
 
     void updateReconstruction()
@@ -142,6 +153,18 @@ public slots:
             _sWidget.recParamChanged(_regCheckBox.isChecked(),
                                      lambdaText.toFloat(),
                                      _iterationSlider.value());
+            _updateButton.setEnabled(false);
         }
+    }
+
+    /**
+     * This slot makes it possible to update the reconstruction.
+     * This method is called after the reconstruction parameters
+     * were changed.
+     * @brief enableUpdate
+     */
+    void enableUpdate()
+    {
+        _updateButton.setEnabled(true);
     }
 };
