@@ -1,6 +1,7 @@
 #ifndef VEC3D_H
 #define VEC3D_H
 
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 
@@ -166,7 +167,7 @@ public:
     float maxEntry() {
         float max = std::numeric_limits<float>::min();
         for(int i = 0; i < totalSize(); ++i) {
-            max = _content[i] > max ? _content[i] : max;
+            max = std::abs(_content[i]) > std::abs(max) ? std::abs(_content[i]) : max;
         }
         return max;
     }

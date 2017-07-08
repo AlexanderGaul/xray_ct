@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -51,8 +52,7 @@ public:
             {
                 for(int j = 0; j<content.sizeY(); ++j)
                 {
-                    int curr = (content.get(i,j,_currSlice)) * colorCoeff;
-
+                    int curr = std::abs(content.get(i,j,_currSlice)) * colorCoeff;
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
                 }
@@ -67,7 +67,7 @@ public:
             {
                 for(int j = 0; j<content.sizeZ(); ++j)
                 {
-                    int curr = (content.get(i,_currSlice,j)) * colorCoeff;
+                    int curr = std::abs(content.get(i,_currSlice,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
@@ -83,7 +83,7 @@ public:
             {
                 for(int j = 0; j<content.sizeZ(); ++j)
                 {
-                    int curr = (content.get(_currSlice,i,j)) * colorCoeff;
+                    int curr = std::abs(content.get(_currSlice,i,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
