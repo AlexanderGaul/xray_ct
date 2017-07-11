@@ -85,7 +85,9 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
 
     const Eigen::Vector3f voxel {volume.getSpacing()};
     const Eigen::Vector3i maxVoxel {volume.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
-          Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction)};
+
+    const Eigen::Vector3f tDelta  = Eigen::Vector3f{voxel.cwiseQuotient(direction)}.cwiseAbs();
+
     const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
     
     Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
@@ -99,11 +101,7 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
             pos(i) = maxVoxel(i);
         }
     }
-    /*
-    if(inPoint.z() > 0 && inPoint.x() > 0 && inPoint.y() > 0)
-    {std::cout << inPoint << std::endl;}
-    std::cout << "....." << std::endl;
-    */
+
     
     //calculate fraction
 
@@ -115,14 +113,16 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     
     //intersection point relative to initially intersected voxel
     const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
+    
     //the above in relative distance to the next hit boundary
     const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
+
     
-    tDelta = tDelta.cwiseAbs();
     //Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f{1, 1, 1} - relativeIntersectFrac)};
     
+    Eigen::Vector3f tMax = relativeIntersectFrac.cwiseProduct(tDelta).cwiseAbs();
     // componentwise distance to next voxel in respective direction weighted with the direction of the ray
-    Eigen::Vector3f tMax {tDelta.cwiseProduct(relativeIntersectFrac)};
+    //Eigen::Vector3f tMax {tDelta.cwiseProduct(relativeIntersectFrac)};
     
     
     float acc = 0;
@@ -133,7 +133,10 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     
 
     for(;;) {
-        acc += values[volume.coordinateToIndex(pos)];
+        if(values[volume.coordinateToIndex(pos)] > 5)
+        { acc += 20; }
+        else
+            acc += values[volume.coordinateToIndex(pos)];
 
         if(tMax.x() < tMax.y()) {
             if(tMax.x() < tMax.z()) {
@@ -141,21 +144,14 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
                 if(pos.x() < 0 || pos.x() > maxVoxel.x()) {
                     return acc;
                 }
-                
-                tMax.y() -= tMax.x();
-                tMax.z() -= tMax.x();
-                tMax.x() = tDelta.x();
-                //tMax.x() += tDelta.x();
+                tMax.x() += tDelta.x();
             } else {
                 pos.z() += step.z();
                 if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
                     return acc;
                 }
                 
-                tMax.y() -= tMax.z();
-                tMax.x() -= tMax.z();
-                tMax.z() = tDelta.z();
-                //tMax.z() += tDelta.z();
+                tMax.z() += tDelta.z();
             }
         } else  {
             if(tMax.y() < tMax.z()) {
@@ -164,19 +160,13 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
                     return acc;
                 }
                 
-                tMax.x() -= tMax.y();
-                tMax.z() -= tMax.y();
-                tMax.y() = tDelta.y();
-                //tMax.y() += tDelta.y();
+                tMax.y() += tDelta.y();
             } else  {
                 pos.z() +=  step.z();
                 if(pos.z() < 0 || pos.z() > maxVoxel.z()) {
                     return acc;
                 }
-                tMax.y() -= tMax.z();
-                tMax.x() -= tMax.z();
-                tMax.z() = tDelta.z();
-                //tMax.z() += tDelta.z();
+                tMax.z() += tDelta.z();
             }
         }
     }       
