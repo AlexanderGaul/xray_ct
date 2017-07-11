@@ -42,9 +42,9 @@ TransferFunction::TransferFunction(std::vector<LinearPiece> pieces)
 QColor TransferFunction::classify(float intensity)
 {
     QColor color {0, 0, 0, 0};
-    for(auto it =  _pieces.begin(); it != _pieces.end(); it++)
+    for(std::vector<LinearPiece>::iterator it =  _pieces.begin(); it != _pieces.end(); it++)
     {
-        QColor color = it->apply(intensity);
+        color = it->apply(intensity);
         if(color.alpha() > 0)
         {
             return color;

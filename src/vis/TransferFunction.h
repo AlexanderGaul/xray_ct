@@ -2,6 +2,7 @@
 
 
 #include <QColor>
+#include <vector>
 
 enum class ColorMixing : bool {
     Blend,
