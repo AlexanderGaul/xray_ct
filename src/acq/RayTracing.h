@@ -69,7 +69,7 @@ public:
         
         const Eigen::Vector3f voxel {box.getSpacing()};
         const Eigen::Vector3i maxVoxel {box.getNumVoxels() - Eigen::Vector3i {1, 1, 1}};
-        const Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction)};
+        const Eigen::Vector3f tDelta {voxel.cwiseQuotient(direction).cwiseAbs()};
         const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
         Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
         
@@ -84,8 +84,9 @@ public:
         const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
         //the above in relative distance to the next hit boundary
         const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
-    
-        Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
+        
+        Eigen::Vector3f tMax = relativeIntersectFrac.cwiseProduct(tDelta).cwiseAbs();
+        //Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
         
         float acc = 0;
         if(pos.x() > maxVoxel.x() || pos.y() > maxVoxel.y() || pos.z() > maxVoxel.z())

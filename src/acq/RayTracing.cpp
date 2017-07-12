@@ -133,11 +133,9 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     
 
     for(;;) {
-        if(values[volume.coordinateToIndex(pos)] > 5)
-        { acc += 20; }
-        else
-            acc += values[volume.coordinateToIndex(pos)];
-
+        
+        acc += values[volume.coordinateToIndex(pos)];
+        
         if(tMax.x() < tMax.y()) {
             if(tMax.x() < tMax.z()) {
                 pos.x() += step.x();
