@@ -17,11 +17,13 @@
     return proj;
 }
 
-Eigen::VectorXf ForwardProjectionOperator::forwardProj(const VolumeBase& vol, const std::vector<AcquisitionPose>& poses, const Eigen::VectorXf& values){
+Eigen::VectorXf ForwardProjectionOperator::forwardProj(const VolumeBase& vol, const std::vector<AcquisitionPose>& poses, const Eigen::VectorXf& values)
+{
     Eigen::VectorXf proj {(int)poses.size()*poses[0].getPixelHorizontal()*poses[0].getPixelVertical()};
     int poseCount = poses.size();
     int verticalPixels = poses[0].getPixelVertical();
     int horizontalPixels = poses[0].getPixelHorizontal();
+    
     for(int p = 0; p < poseCount;++p){
         for(int y = 0; y < verticalPixels; ++y){
             for(int x = 0; x < horizontalPixels; ++x){

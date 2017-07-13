@@ -146,6 +146,7 @@ void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float
         }
         addCircularPoses(count, yRot, range);
     }
+    updateProjection();
     emit poseChanged();
 }
 
@@ -164,6 +165,7 @@ void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
         pose.setRotation(distance / 2.f + i * distance, yAngle);
         _poses->push_back(pose);
     }
+    updateProjection();
     emit poseChanged();
 }
 
@@ -190,7 +192,8 @@ void AcquisitionModel::addDefaultPose(){
 void AcquisitionModel::updateProjection(){
     _measurements = std::make_shared<Eigen::VectorXf>(
         ForwardProjectionOperator::forwardProj(_volume, *_poses, _volume.content().rawVec()));
-    emit poseChanged();
+    // TODO is this necessary??
+    //emit poseChanged();
 }
 
 void AcquisitionModel::updateLastProjection(){

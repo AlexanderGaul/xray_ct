@@ -70,7 +70,8 @@ public slots:
     /*
      * This is used when only one of the parameters change.
      */
-    void recalcVolume(bool regularized, float lambda, int iterations){
+    void recalcVolume(bool regularized, float lambda, int iterations)
+    {
         _cont = generateContainer(*_reconstruction, regularized, lambda);
         *_reconstruction = Volume {*_reconstruction, CG::conjugateGradient(iterations, *_cont, *_measurements)};
     }
