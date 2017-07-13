@@ -24,11 +24,6 @@ public:
           _numVoxels {(_boundingBox.max() - _boundingBox.min()).cwiseQuotient(sp).cast<int>()} {
     }
     
-    VolumeBase(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3i numVoxels)
-        :
-        _boundingBox {lowerLeft, upperRight},
-        _numVoxels {numVoxels}
-    {}
     
     Eigen::AlignedBox3f getBoundingBox() const
     {
@@ -91,15 +86,6 @@ public:
         centerBoundingBox();
     }
     
-    /*
-    Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp, Eigen::VectorXf content)
-        : VolumeBase {lowerLeft, upperRight, sp},
-          _content (getNumVoxels(), content),
-          _maxEntry(_content.maxEntry())
-    {
-        
-    }
-    */
     
     template <class Vec>
     Volume(const VolumeBase& volume, Vec&& content)
@@ -120,17 +106,7 @@ public:
         centerBoundingBox();
     }
     
-    /*
-    template <class Vec>
-    Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3i numVoxels, Vec&& content)
-        :
-        VolumeBase {lowerLeft, upperRight, numVoxels},
-        _content (getNumVoxels(), std::forward<Vec>(content)),
-        _maxEntry(_content.maxEntry())
-    {
-        centerBoundingBox();
-    }
-    */
+
     
     const content_type& content() const
     {
