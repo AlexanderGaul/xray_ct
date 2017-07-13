@@ -1,4 +1,5 @@
 #include "ForwardProjectionOperator.h"
+#include <iostream>
 
 
  Eigen::VectorXf ForwardProjectionOperator::forwardProj (const Volume& vol, const AcquisitionPose& pose)

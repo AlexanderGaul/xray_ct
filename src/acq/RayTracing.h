@@ -73,6 +73,15 @@ public:
         const Eigen::Vector3f inPoint {ray.pointAt(tIntersect)};
         Eigen::Vector3i pos { (inPoint - boundingBox.min()).cwiseQuotient(voxel).cast<int>() };
         
+        // rounding errors can cause the position to be outside the volume
+        for(int i = 0; i < 3; i++)
+        {
+            if(pos(i) > maxVoxel(i))
+            {
+                pos(i) = maxVoxel(i);
+            }
+        }
+        
         //calculate fraction
         
         //calculate the boundaries of a voxel in the direction of the ray
@@ -81,11 +90,13 @@ public:
         const float boundZ = step.z() <= 0 ? 0 : voxel.z();
         const Eigen::Vector3f bounds {boundX, boundY, boundZ};
         //intersection point relative to initially intersected voxel
-        const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
+        const Eigen::Vector3f relativeIntersect {inPoint - boundingBox.min() - pos.cast<float>().cwiseProduct(voxel)};
         //the above in relative distance to the next hit boundary
-        const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
+        //const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
+        const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseAbs()};
         
-        Eigen::Vector3f tMax = relativeIntersectFrac.cwiseProduct(tDelta).cwiseAbs();
+        Eigen::Vector3f tMax = relativeIntersectFrac.cwiseQuotient(direction).cwiseAbs();
+        //Eigen::Vector3f tMax = relativeIntersectFrac.cwiseProduct(tDelta).cwiseAbs();
         //Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f {1, 1, 1} - relativeIntersectFrac)};
         
         float acc = 0;

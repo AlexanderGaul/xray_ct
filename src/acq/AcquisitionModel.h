@@ -31,7 +31,7 @@ class AcquisitionModel : public QObject
 {
     Q_OBJECT
 public:
-
+    AcquisitionModel();
     /**
      * @brief AcquisitionModel. Creates an acquisition model and loads
      * an EDF image from the given path.

@@ -112,15 +112,15 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     const Eigen::Vector3f bounds {boundX, boundY, boundZ};
     
     //intersection point relative to initially intersected voxel
-    const Eigen::Vector3f relativeIntersect {inPoint - pos.cast<float>().cwiseProduct(voxel)};
+    const Eigen::Vector3f relativeIntersect {inPoint - boundingBox.min() - pos.cast<float>().cwiseProduct(voxel)};
     
     //the above in relative distance to the next hit boundary
-    const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
-
+    //const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseQuotient(voxel).cwiseAbs()};
+    const Eigen::Vector3f relativeIntersectFrac {(bounds - relativeIntersect).cwiseAbs()};
     
     //Eigen::Vector3f tMax {tDelta.cwiseProduct(Eigen::Vector3f{1, 1, 1} - relativeIntersectFrac)};
     
-    Eigen::Vector3f tMax = relativeIntersectFrac.cwiseProduct(tDelta).cwiseAbs();
+    Eigen::Vector3f tMax = relativeIntersectFrac.cwiseQuotient(direction).cwiseAbs();
     // componentwise distance to next voxel in respective direction weighted with the direction of the ray
     //Eigen::Vector3f tMax {tDelta.cwiseProduct(relativeIntersectFrac)};
     
@@ -130,7 +130,6 @@ float RayTracing::forwardProject(const VolumeBase& volume, const Line3f& ray, Ei
     {
         return acc;
     }
-    
 
     for(;;) {
         

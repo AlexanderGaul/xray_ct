@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 
 #include "AcquisitionModel.h"
 
@@ -18,12 +19,41 @@ bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
     return true;
 }
 
+// was used for testing
+/*
+Eigen::VectorXf getTestVolume()
+{
+    Eigen::VectorXf content(2);
+    float value = 10;
+    for(int i = 0; i < 2; i++)
+    {
+        content[i] = value;
+    }
+    return content;
+}
+
+AcquisitionModel::AcquisitionModel(std::string path) 
+    :
+    _filled {true},
+    _volume {
+        Eigen::Vector3f(-0.1, -0.1,-0.1), 
+        Eigen::Vector3f(0.1, 0.1, 0.1), 
+        Eigen::Vector3f(0.2, 0.2, 0.1),
+        getTestVolume()
+    },
+    _poses { std::make_shared<std::vector<AcquisitionPose>>( std::vector<AcquisitionPose> {_volume.getBoundingBox()})}, 
+    _measurements {std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(volume(), currPoseChecked()))}
+{
+}
+*/
+
 AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)}, 
     _poses { std::make_shared<std::vector<AcquisitionPose>>( std::vector<AcquisitionPose> {_volume.getBoundingBox()})}, 
     _measurements {std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(volume(), currPoseChecked()))}
 {
 }
+
 
 void AcquisitionModel::loadImage(std::string path)
 {
