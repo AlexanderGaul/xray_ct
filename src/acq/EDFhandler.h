@@ -16,13 +16,15 @@ public:
      * \param[in] filename - filename of the EDF file to be read
      * \return volume containing the data
      */
-    static Volume read(const std::string& filename);
+    static
+    Volume read(const std::string& filename);
 
     /* \brief write out a Volume into an EDF file
      * \param[in] filename - filename of the EDF file to be written
      * \param[in] vol      - volume to be written
      */
-    static void write(const std::string& filename, const Volume& vol);
+    static
+    void write(const std::string& filename, const Volume& vol);
 
 private:
     static constexpr auto TYPE_FLOAT = "FloatValue";
