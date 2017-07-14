@@ -6,5 +6,6 @@ void VisualizationWidget::changeColor()
     if ( newColor != _visModel.color() )
     {
         _visModel.setColor( newColor );
+        updateColorLabel();
     }
 }
