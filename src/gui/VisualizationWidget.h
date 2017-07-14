@@ -54,6 +54,7 @@ private:
 public:
     
     VisualizationWidget() :
+        _visModel {},
         _mainLayout {},
         _menuLayout {},
         _loadFileButton {"Load from file"},
@@ -61,8 +62,8 @@ public:
         _colorLayout {},
         _colorLabel {},
         _selectColorButton {"Select color"},
-        _mprWidget {},
-        _dvrWidget {}
+        _mprWidget {_visModel},
+        _dvrWidget {_visModel}
     {
         updateColorLabel();
         _colorLayout.addWidget(&_colorLabel);
