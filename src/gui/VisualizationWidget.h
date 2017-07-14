@@ -4,18 +4,22 @@
 #include <memory>
 #include <iostream>
 
-#include <QObject>
-#include <QWidget>
-#include <QPushButton>
+#include <QColorDialog>
 #include <QGridLayout>
+#include <QObject>
+#include <QPushButton>
+#include <QWidget>
 
-#include "SelectColorButton.h"
+#include "VisualizationModel.h"
 #include "Volume.h"
 
 class VisualizationWidget : public QWidget
 {
     Q_OBJECT
 private:
+    ///manages all data related to visualization
+    VisualizationModel _visModel;
+
     ///all layout items for visulisation are composed in the main layout
     QGridLayout _mainLayout;
     ///loads the Volume from a file
@@ -23,7 +27,7 @@ private:
     ///loads the Volume from the ReconstructionPose
     QPushButton _loadRecButton;
     ///opens a dialog to choose the color for visualization
-    SelectColorButton _selectColorButton;
+    QPushButton _selectColorButton;
     
     void loadFromFile(){
         
@@ -42,7 +46,7 @@ public:
         _mainLayout.addWidget(&_loadRecButton, 3, 0);
         setLayout(&_mainLayout);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
-        connect(&_selectColorButton, &QPushButton::pressed, &_selectColorButton, &SelectColorButton::changeColor);
+        connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
     }
     
     void setRec(const std::shared_ptr<const Volume>& vol){
@@ -54,7 +58,8 @@ signals:
     //emit this event if you want the volume from the requisition. It is set through a call of setRec
     void requestRecVolume();
     
-    
+public slots:
+    void changeColor();
 };
 
 #endif // VISUALIZATIONWIDGET_H
