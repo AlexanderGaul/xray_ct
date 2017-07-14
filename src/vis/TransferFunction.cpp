@@ -14,15 +14,26 @@ TransferFunction::LinearPiece::LinearPiece(float intensity0, float intensity1, i
     _rgb(rgb)
 {}
 
-QColor TransferFunction::LinearPiece::apply(float intensity)
+QColor TransferFunction::LinearPiece::apply(float intensity) const
 {
-    if(_intensity0 <= intensity && intensity <= _intensity1)
+    if(intensity < _intensity0)
     {
+        // no opacity
         QColor color {_rgb};
-        int opacity = static_cast<int>(_opacity0 + (_opacity1 - _opacity0) * (intensity - _intensity0) / (_intensity1 - _intensity0));
-        color.setAlpha(std::max(std::min(opacity, 255), 0));
+        color.setAlpha(0);
         return color;
     }
+    if(intensity > _intensity1)
+    {
+        // full opacity
+        QColor color {_rgb};
+        color.setAlpha(255);
+        return color;
+    }
+    QColor color {_rgb};
+    int opacity = static_cast<int>(_opacity0 + (_opacity1 - _opacity0) * (intensity - _intensity0) / (_intensity1 - _intensity0));
+    color.setAlpha(std::max(std::min(opacity, 255), 0));
+    return color;
 }
 
 
@@ -39,10 +50,10 @@ TransferFunction::TransferFunction(std::vector<LinearPiece> pieces)
     _pieces(pieces)
 {}
 
-QColor TransferFunction::classify(float intensity)
+QColor TransferFunction::classify(float intensity) const
 {
     QColor color {0, 0, 0, 0};
-    for(std::vector<LinearPiece>::iterator it =  _pieces.begin(); it != _pieces.end(); it++)
+    for(std::vector<LinearPiece>::const_iterator it =  _pieces.begin(); it != _pieces.end(); it++)
     {
         color = it->apply(intensity);
         if(color.alpha() > 0)

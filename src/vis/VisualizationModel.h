@@ -2,6 +2,7 @@
 
 #include <QColor>
 
+#include "TransferFunction.h"
 #include "Volume.h"
 
 /**
@@ -19,10 +20,13 @@ private:
 
     Volume _volume;
 
+    TransferFunction _transferFunction;
+
 public:
     VisualizationModel()
         : _color { QColor::fromRgb(0, 0, 0)}, // black
-          _volume {}
+          _volume {},
+          _transferFunction {}
     {        
     }
 
@@ -44,5 +48,15 @@ public:
     const Volume& volume() const
     {
         return _volume;
+    }
+
+    void setTransferFunction(TransferFunction transferFunction)
+    {
+        _transferFunction = transferFunction;
+    }
+
+    const TransferFunction& transferFunction() const
+    {
+        return _transferFunction;
     }
 };

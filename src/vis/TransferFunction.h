@@ -35,7 +35,7 @@ public:
         LinearPiece();
         LinearPiece(float intensity0, float intensity1, int opacity0, int opacity1, QColor rgb);
         
-        QColor apply(float intensity);
+        QColor apply(float intensity) const;
     };
     
 private:
@@ -46,7 +46,7 @@ public:
     TransferFunction(LinearPiece function);
     TransferFunction(std::vector<LinearPiece> pieces);
     
-    QColor classify(float intensity);
+    QColor classify(float intensity) const;
     
     void addPiece(LinearPiece function);
     std::vector<LinearPiece>& getPieces();
