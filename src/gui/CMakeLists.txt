@@ -7,6 +7,7 @@ set(GUI_SRCS
         PoseViewer.cpp
         PoseDisplay.cpp
         ResultWidget.cpp
+        SelectColorButton.cpp
         SliceWidget.cpp
         ReconstructionViewer.cpp
         VisualizationWidget.cpp
@@ -17,6 +18,7 @@ set(GUI_HDRS
         PoseViewer.h
         PoseDisplay.h
         ResultWidget.h
+        SelectColorButton.h
         SliceWidget.h
         ReconstructionViewer.h
         VisualizationWidget.h
