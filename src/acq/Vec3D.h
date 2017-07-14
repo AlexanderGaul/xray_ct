@@ -56,15 +56,13 @@ private:
 public:
     
     Vec3D () : _sizes{size_vector_type::Zero()}, _content {} {    }
-    
+
     Vec3D (index_type sizeX, index_type sizeY, index_type sizeZ, const vector_type& vec)
     : Vec3D {size_vector_type {sizeX, sizeY, sizeZ}, vec} {
-        
     }
-    
+
     Vec3D (index_type sizeX, index_type sizeY, index_type sizeZ, vector_type&& vec)
-    : Vec3D {size_vector_type {sizeX, sizeY, sizeZ}, std::move(vec)} {
-        
+    : Vec3D {size_vector_type {sizeX, sizeY, sizeZ}, std::move(vec)} {        
     }
     
     Vec3D (Eigen::Vector3i sizeDims, const vector_type& vec)

@@ -57,7 +57,8 @@ set(PART2_TEST_SOURCES
         test/test_CG.cpp
         test/test_RayTracing.cpp
         test/test_SinogramGeneration.cpp
-    )
+        test/test_Volume.cpp
+        )
 # create test executable
 add_executable(part2_test ${PART2_TEST_SOURCES})
 target_link_libraries(part2_test

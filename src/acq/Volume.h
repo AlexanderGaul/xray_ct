@@ -74,6 +74,19 @@ private:
     void centerBoundingBox(){
         _boundingBox.translate(-_boundingBox.center());
     }
+
+    bool validPosition(Eigen::Vector3f& position) const
+    {
+        if(position.x() > _boundingBox.max().x()
+            || position.y() > _boundingBox.max().y()
+            || position.z() > _boundingBox.max().z()
+            || position.x() < 0
+            || position.y() < 0
+            || position.z() < 0)
+        {
+            return false;
+        }
+    }
     
 public:
     Volume() : VolumeBase {}, _content {}{
@@ -86,7 +99,6 @@ public:
         centerBoundingBox();
     }
     
-    
     template <class Vec>
     Volume(const VolumeBase& volume, Vec&& content)
         : VolumeBase {volume}, _content {getNumVoxels(), std::forward<Vec>(content)},
@@ -94,8 +106,6 @@ public:
     {
         centerBoundingBox();
     }
-    
-    
     
     template <class Vec>
     Volume(Eigen::Vector3f lowerLeft, Eigen::Vector3f upperRight, Eigen::Vector3f sp, Vec&& content)
@@ -105,8 +115,6 @@ public:
     {
         centerBoundingBox();
     }
-    
-
     
     const content_type& content() const
     {
@@ -144,14 +152,16 @@ public:
         return _maxEntry;
     }
     
-    float getVoxel(Eigen::Vector3i pos)
+    float getVoxel(Eigen::Vector3i pos) const
     {
         return _content.rawVec()[coordinateToIndex(pos)];
     }
-    float getVoxel(int x, int y, int z)
+
+    float getVoxel(int x, int y, int z) const
     {
         return getVoxel(Eigen::Vector3i(x, y, z));
     }
+
     /*
      * trillinear interpolation with surrounding voxels
      * returns zero if outside volume
@@ -160,21 +170,13 @@ public:
      * THIS CODE HAS NEITHER BEEN TESTED NOR REVIEWED
      * HANDLE WITH CARE
      */
-    float getVoxelLinear(Eigen::Vector3f position)
+    float getVoxelLinear(Eigen::Vector3f position) const
     {
         Eigen::Vector3f relPos = position - _boundingBox.min();
         
-        if(position.x() > _boundingBox.max().x()
-        || position.y() > _boundingBox.max().y()
-        || position.z() > _boundingBox.max().z())
+        if(!validPosition(position))
         {
-            return 0;
-        }
-        if(position.x() < 0
-        || position.y() < 0
-        || position.z() < 0)
-        {
-            return 0;
+            return false;
         }
         
         Eigen::Vector3f spacing = getSpacing();
@@ -223,7 +225,8 @@ public:
 
         return interpXYZ;
     }
-    float getVoxelLinear(float x, float y, float z)
+
+    float getVoxelLinear(float x, float y, float z) const
     {
         return getVoxelLinear(Eigen::Vector3f(x, y, z));
     }
