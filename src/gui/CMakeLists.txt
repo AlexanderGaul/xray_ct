@@ -4,21 +4,25 @@ cmake_minimum_required(VERSION 3.5.1)
 set(GUI_SRCS
         MainWindow.cpp
         AcquisitionWidget.cpp
+        DVRWidget.cpp
+        MPRWidget.cpp
         PoseViewer.cpp
         PoseDisplay.cpp
+        ReconstructionViewer.cpp
         ResultWidget.cpp
         SliceWidget.cpp
-        ReconstructionViewer.cpp
         VisualizationWidget.cpp
         )
 set(GUI_HDRS
-        MainWindow.h
+        MainWindow.h        
         AcquisitionWidget.h
+        DVRWidget.h
+        MPRWidget.h
         PoseViewer.h
         PoseDisplay.h
+        ReconstructionViewer.h
         ResultWidget.h
         SliceWidget.h
-        ReconstructionViewer.h
         VisualizationWidget.h
         )
 

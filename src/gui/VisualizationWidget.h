@@ -11,6 +11,8 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include "DVRWidget.h"
+#include "MPRWidget.h"
 #include "VisualizationModel.h"
 #include "Volume.h"
 
@@ -23,6 +25,8 @@ private:
 
     ///all layout items for visulisation are composed in the main layout
     QGridLayout _mainLayout;
+    ///manages all menu items
+    QVBoxLayout _menuLayout;
     ///loads the Volume from a file
     QPushButton _loadFileButton;    
     ///loads the Volume from the ReconstructionPose
@@ -33,6 +37,11 @@ private:
     QLabel _colorLabel;
     ///opens a dialog to choose the color for visualization
     QPushButton _selectColorButton;
+
+    ///renders the 2D MPR visualization
+    MPRWidget _mprWidget;
+    ///paints the direct volume rendering (DVR)
+    DVRWidget _dvrWidget;
     
     void loadFromFile(){
         
@@ -46,18 +55,28 @@ private:
 public:
     
     VisualizationWidget() :
-        _mainLayout{},
+        _mainLayout {},
+        _menuLayout {},
         _loadFileButton {"Load from file"},
         _loadRecButton {"Load acquisition"},
+        _colorLayout {},
+        _colorLabel {},
+        _mprWidget {},
+        _dvrWidget {},
         _selectColorButton {"Select color"}
     {
         updateColorLabel();
         _colorLayout.addWidget(&_colorLabel);
         _colorLayout.addWidget(&_selectColorButton);
-        _mainLayout.addItem(&_colorLayout, 1, 0);
+        _menuLayout.addItem(&_colorLayout);
 
-        _mainLayout.addWidget(&_loadFileButton, 2, 0);
-        _mainLayout.addWidget(&_loadRecButton, 3, 0);
+        _menuLayout.addWidget(&_loadFileButton);
+        _menuLayout.addWidget(&_loadRecButton);
+
+        _mainLayout.addItem(&_menuLayout, 0, 0);
+
+        _mainLayout.addWidget(&_mprWidget, 0, 1);
+        _mainLayout.addWidget(&_dvrWidget, 0, 2);
         setLayout(&_mainLayout);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
         connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
