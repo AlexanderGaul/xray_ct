@@ -1,5 +1,7 @@
 #include "catch.hpp"
 
+#include <iostream>
+
 #include <Eigen/Eigen>
 
 #include "Volume.h"
@@ -29,7 +31,30 @@ TEST_CASE("test volume creation")
     Eigen::Vector3f upperRight(2, 2, 2);
     Eigen::Vector3f dimSpacing(1, 1, 1);
 
+    Eigen::AlignedBox<float, 3> bb;
+    bb.max().z();
+
     Volume vol(lowerLeft, upperRight, dimSpacing, std::move(m));
 
-    int x = 1;
+    SECTION("trilinear interpolation test")
+    {
+        // go through one non-int line of the volume
+        // and check to known values
+        Eigen::VectorXf result(11);
+        for(int i = 0; i<11; ++i)
+        {
+            // after ten steps 3/8 is reached
+            // this has to happen in equal intervals
+            result(i) = 3.0/80.0*i;
+        }
+
+        for(int i = 0; i<=10; ++i)
+        {
+            Eigen::Vector3f pos(0.1*i, 0.1*i, 0.1*i);
+            float f = vol.getVoxelLinear(pos);
+            std::cout << f << std::endl;
+
+            REQUIRE(f == Approx(result(i)));
+        }
+    }
 }

@@ -86,6 +86,7 @@ private:
         {
             return false;
         }
+        return true;
     }
     
 public:
@@ -162,44 +163,42 @@ public:
         return getVoxel(Eigen::Vector3i(x, y, z));
     }
 
-    /*
-     * trillinear interpolation with surrounding voxels
+    /**
+     * Trillinear interpolation with surrounding voxels
      * returns zero if outside volume
      * extrapolates trilinearly if outside voxel centers
-     * 
-     * THIS CODE HAS NEITHER BEEN TESTED NOR REVIEWED
-     * HANDLE WITH CARE
+     *
+     * Tested in test_Volume.cpp.
+     *
+     * Handle special case of integer index:
+     * Go down to the next lower voxel and interpolate this
+     * voxel. No additional computational effort
+     * or handling required.
+     *
+     * @brief getVoxelLinear
+     * @param position
+     * @return
      */
     float getVoxelLinear(Eigen::Vector3f position) const
     {
-        Eigen::Vector3f relPos = position - _boundingBox.min();
-        
         if(!validPosition(position))
         {
-            return false;
+            return -1.0;
         }
-        
-        Eigen::Vector3f spacing = getSpacing();
-        Eigen::Vector3f halfVoxel = spacing * 0.5f;
-        
-        
-        Eigen::Vector3f voxelPos = (relPos - halfVoxel).cwiseQuotient(spacing);
-        
+
         // index of voxel centers surrounding the position
-        Eigen::Vector3i minVoxel = voxelPos.cast<int>();
-        Eigen::Vector3i maxVoxel = minVoxel.cast<int>() + Eigen::Vector3i(1, 1, 1);
-        
-        // in case of rounding errors?
-        for(int i = 0; i < 3; i++)
+        Eigen::Vector3i minVoxel = position.cast<int>();
+        for(int i = 0; i<3; ++i)
         {
-            if(minVoxel(i) < 0)
-            { minVoxel(i) = 0; }
-            if(maxVoxel(i) > getNumVoxels()(i) - 1)
-            { maxVoxel(i) = getNumVoxels()(i) - 1; }
+            if(minVoxel[i] > 0 && minVoxel[i] - position[i] >= -0.0001)
+            {
+                minVoxel[i]--;
+            }
         }
-        
+        Eigen::Vector3i maxVoxel = minVoxel.cast<int>() + Eigen::Vector3i(1, 1, 1);
+
         // relative position between surrounding voxel centers
-        voxelPos = voxelPos - minVoxel.cast<float>();
+        Eigen::Vector3f voxelPos = position;
         
         Eigen::Vector4f firstValues {
             getVoxel(minVoxel),
@@ -221,11 +220,23 @@ public:
             interpX(2) + voxelPos.y() * (interpX(3) - interpX(2))
         };
         
-        float interpXYZ = interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
-
-        return interpXYZ;
+        return interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
     }
 
+    /**
+     * Performs trilinear interpolation for arbitrary
+     * (maybe non-integer) indices x, y, and z.
+     *
+     * Internally creates a Eigen::Vector to call the real
+     * implementation of trilinear interpolation.
+     * @brief getVoxelLinear
+     * @param x the x coordinate to be interpolated
+     * @param y the y coordinate to be interpolated
+     * @param z the z coordinate to be interpolated
+     * @return The value at the (non-integer) coordinate specified
+     * by the three input floats. It is computed using trilinear
+     * interpolation between the surrounding voxels.
+     */
     float getVoxelLinear(float x, float y, float z) const
     {
         return getVoxelLinear(Eigen::Vector3f(x, y, z));
