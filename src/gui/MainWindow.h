@@ -11,7 +11,7 @@
 
 #include "AcquisitionWidget.h"
 #include "PoseViewer.h"
-#include "SliceViewer.h"
+#include "ReconstructionViewer.h"
 #include "VisualizationWidget.h"
 
 class MainWindow : public QMainWindow {
@@ -25,7 +25,7 @@ public:
         tabWidget->addTab(&_vWidget, "Visualization");
         setCentralWidget(tabWidget);
         
-        connect(&_rWidget, &SliceViewer::requestAcquisition, this, &MainWindow::requestedAquisition);
+        connect(&_rWidget, &ReconstructionViewer::requestAcquisition, this, &MainWindow::requestedAquisition);
         connect(&_vWidget, &VisualizationWidget::requestRecVolume, this, &MainWindow::requestedReconstruction);
     }
 
@@ -41,7 +41,7 @@ private slots:
     
 private:
     AcquisitionWidget _aWidget;
-    SliceViewer _rWidget;
+    ReconstructionViewer _rWidget;
     VisualizationWidget _vWidget;
 };
 

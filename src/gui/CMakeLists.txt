@@ -8,7 +8,7 @@ set(GUI_SRCS
         PoseDisplay.cpp
         ResultWidget.cpp
         SliceWidget.cpp
-        SliceViewer.cpp
+        ReconstructionViewer.cpp
         VisualizationWidget.cpp
         )
 set(GUI_HDRS
@@ -18,7 +18,7 @@ set(GUI_HDRS
         PoseDisplay.h
         ResultWidget.h
         SliceWidget.h
-        SliceViewer.h
+        ReconstructionViewer.h
         VisualizationWidget.h
         )
 

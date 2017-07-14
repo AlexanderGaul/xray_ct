@@ -12,7 +12,7 @@
 #include "SliceWidget.h"
 #include "Acquisition.h"
 
-class SliceViewer : public QWidget
+class ReconstructionViewer : public QWidget
 {
     Q_OBJECT
 private:
@@ -43,7 +43,7 @@ private:
     
 public:
 
-    SliceViewer() : _layout {}, _controlLayout {}, _statusView {}, _sliderLayout {},
+    ReconstructionViewer() : _layout {}, _controlLayout {}, _statusView {}, _sliderLayout {},
     _axisSlider {}, _sWidget {}, _loadButton {"Load acquisition"}, _iterationLayout{},
     _iterationLabel{}, _iterationSlider{}, _regLayout{}, _regCheckBox{}, _regLambda{},
     _updateButton{"Update reconstruction"}{
@@ -91,18 +91,18 @@ public:
 
         setLayout(&_layout);
 
-        connect(&_sWidget, &SliceWidget::sliceChanged, this, &SliceViewer::updateStatus);
+        connect(&_sWidget, &SliceWidget::sliceChanged, this, &ReconstructionViewer::updateStatus);
         connect(&_axisSlider, &QSlider::valueChanged, &_sWidget, &SliceWidget::updateStatus);
-        connect(&_loadButton, &QPushButton::pressed, this, &SliceViewer::requestAcquisition);
+        connect(&_loadButton, &QPushButton::pressed, this, &ReconstructionViewer::requestAcquisition);
 
-        connect(&_iterationSlider, &QSlider::valueChanged, this, &SliceViewer::updateStatus);
-        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &SliceViewer::updateRegText);
+        connect(&_iterationSlider, &QSlider::valueChanged, this, &ReconstructionViewer::updateStatus);
+        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &ReconstructionViewer::updateRegText);
 
-        connect(&_iterationSlider, &QSlider::valueChanged, this, &SliceViewer::enableUpdate);
-        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &SliceViewer::enableUpdate);
-        connect(&_regLambda, &QTextEdit::textChanged, this, &SliceViewer::enableUpdate);
+        connect(&_iterationSlider, &QSlider::valueChanged, this, &ReconstructionViewer::enableUpdate);
+        connect(&_regCheckBox, &QCheckBox::stateChanged, this, &ReconstructionViewer::enableUpdate);
+        connect(&_regLambda, &QTextEdit::textChanged, this, &ReconstructionViewer::enableUpdate);
 
-        connect(&_updateButton, &QPushButton::pressed, this, &SliceViewer::updateReconstruction);
+        connect(&_updateButton, &QPushButton::pressed, this, &ReconstructionViewer::updateReconstruction);
     }
 
     void setAcq(Acquisition&& acq){
