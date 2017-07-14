@@ -9,6 +9,14 @@ enum class ColorMixing : bool {
     Overlay
 };
 
+/**
+ * Implementation of simple ramp transfer function.
+ *
+ * A transfer function is able to map a given intensity
+ * to a color.
+ * These color gets more opaque at higher intensity values.
+ * @brief The TransferFunction class
+ */
 class TransferFunction
 {
 public:
