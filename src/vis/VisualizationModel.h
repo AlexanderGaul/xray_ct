@@ -2,6 +2,8 @@
 
 #include <QColor>
 
+#include "Volume.h"
+
 /**
  * The visualization model manages the current configuration
  * of the visualization.
@@ -15,10 +17,13 @@ class VisualizationModel
 private:
     QColor _color;
 
+    Volume _volume;
+
 public:
     VisualizationModel()
-    {
-        _color = QColor::fromRgb(0, 0, 0); // black
+        : _color { QColor::fromRgb(0, 0, 0)}, // black
+          _volume {}
+    {        
     }
 
     void setColor(QColor color)
@@ -29,5 +34,15 @@ public:
     const QColor& color() const
     {
         return _color;
+    }
+
+    void setVolume(Volume volume)
+    {
+        _volume = volume;
+    }
+
+    const Volume& volume() const
+    {
+        return _volume;
     }
 };

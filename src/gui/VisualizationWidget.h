@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <QColorDialog>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QLabel>
 #include <QObject>
@@ -12,6 +13,7 @@
 #include <QWidget>
 
 #include "DVRWidget.h"
+#include "EDFhandler.h"
 #include "MPRWidget.h"
 #include "VisualizationModel.h"
 #include "Volume.h"
@@ -42,10 +44,7 @@ private:
     MPRWidget _mprWidget;
     ///paints the direct volume rendering (DVR)
     DVRWidget _dvrWidget;
-    
-    void loadFromFile(){
-        
-    }
+
 
     void updateColorLabel()
     {
@@ -58,12 +57,12 @@ public:
         _mainLayout {},
         _menuLayout {},
         _loadFileButton {"Load from file"},
-        _loadRecButton {"Load acquisition"},
+        _loadRecButton {"Load reconstruction"},
         _colorLayout {},
         _colorLabel {},
+        _selectColorButton {"Select color"},
         _mprWidget {},
-        _dvrWidget {},
-        _selectColorButton {"Select color"}
+        _dvrWidget {}
     {
         updateColorLabel();
         _colorLayout.addWidget(&_colorLabel);
@@ -78,13 +77,14 @@ public:
         _mainLayout.addWidget(&_mprWidget, 0, 1);
         _mainLayout.addWidget(&_dvrWidget, 0, 2);
         setLayout(&_mainLayout);
+
+        connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
         connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
     }
     
     void setRec(const std::shared_ptr<const Volume>& vol){
-        //TODO do some real stuff here
-        std::cout << "Did it! " << vol->getNumVoxels() << std::endl; 
+        _visModel.setVolume(*vol);
     }
     
 signals:
@@ -93,6 +93,20 @@ signals:
     
 public slots:
     void changeColor();
+
+    void loadFromFile(){
+        QFileDialog dialog(this);
+        dialog.setFileMode(QFileDialog::AnyFile);
+        dialog.setNameFilter(tr("Medical image data (*.edf)"));
+        QStringList fileNames;
+        if (dialog.exec())
+        {
+            fileNames = dialog.selectedFiles();
+            QString selection = fileNames.at(0);
+
+            _visModel.setVolume(EDFHandler::read(selection.toStdString()));
+        }
+    }
 };
 
 #endif // VISUALIZATIONWIDGET_H
