@@ -61,23 +61,35 @@ public:
     }
 
 public slots:
+    /**
+     * Sets the granularity of the mpr widget.
+     * Currently, the granularity slider can be adjusted
+     * to values from 1 to 10, which are then scaled to values
+     * of 10, 20, ..., 100 inside this method.
+     * @brief setGranularity
+     * @param granularity
+     */
     void setGranularity(int granularity)
     {
-        _mprModel.setGranularity(granularity);
+        _mprModel.setGranularity(granularity*10);
+        repaint();
     }
 
     void setT1(Eigen::Vector3f position)
     {
         _mprModel.setT1(position);
+        repaint();
     }
 
     void setT2(Eigen::Vector3f position)
     {
         _mprModel.setT2(position);
+        repaint();
     }
 
     void setT3(Eigen::Vector3f position)
     {
         _mprModel.setT3(position);
+        repaint();
     }
 };

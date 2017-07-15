@@ -1,11 +1,7 @@
 #include "TransferFunction.h"
 #include <algorithm>
 
-
-TransferFunction::LinearPiece::LinearPiece() :
-    LinearPiece(0, 100, 0, 255, QColor(255, 255, 255))
-{}
-TransferFunction::LinearPiece::LinearPiece(float intensity0, float intensity1, int opacity0, int opacity1, QColor rgb) 
+TransferFunction::LinearPiece::LinearPiece(float intensity0, float intensity1, int opacity0, int opacity1, QColor rgb)
     :
     _intensity0(intensity0),
     _intensity1(intensity1),
@@ -36,11 +32,6 @@ QColor TransferFunction::LinearPiece::apply(float intensity) const
     return color;
 }
 
-
-TransferFunction::TransferFunction()
-{
-    _pieces.push_back(LinearPiece());
-}
 TransferFunction::TransferFunction(LinearPiece function)
 {
     _pieces.push_back(function);

@@ -32,17 +32,25 @@ public:
         QColor _rgb;
     
     public:
-        LinearPiece();
         LinearPiece(float intensity0, float intensity1, int opacity0, int opacity1, QColor rgb);
         
         QColor apply(float intensity) const;
+
+        void setColor(QColor color)
+        {
+            _rgb = color;
+        }
+
+        QColor color() const
+        {
+            return _rgb;
+        }
     };
     
 private:
     std::vector<LinearPiece> _pieces;
 
 public:
-    TransferFunction();
     TransferFunction(LinearPiece function);
     TransferFunction(std::vector<LinearPiece> pieces);
     
@@ -50,4 +58,14 @@ public:
     
     void addPiece(LinearPiece function);
     std::vector<LinearPiece>& getPieces();
+
+    void setColor(int index, QColor color)
+    {
+        _pieces[index].setColor(color);
+    }
+
+    QColor color(int index) const
+    {
+        _pieces[index].color();
+    }
 };

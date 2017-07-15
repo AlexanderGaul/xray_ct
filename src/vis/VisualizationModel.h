@@ -23,16 +23,17 @@ private:
     TransferFunction _transferFunction;
 
 public:
-    VisualizationModel()
-        : _color { QColor::fromRgb(0, 0, 0)}, // black
+    VisualizationModel(TransferFunction transferFunction)
+        : _color { QColor::fromRgb(255, 255, 255)}, //white
           _volume {},
-          _transferFunction {}
+          _transferFunction {transferFunction}
     {        
     }
 
     void setColor(QColor color)
     {
         _color = color;
+        _transferFunction.setColor(0, color);
     }
 
     const QColor& color() const

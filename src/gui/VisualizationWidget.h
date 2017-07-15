@@ -56,18 +56,18 @@ private:
 
     void updateMPRWidget()
     {
-        _mprWidget.setT1(Eigen::Vector3f(7,0,0));
+        _mprWidget.setT1(Eigen::Vector3f(5,0,0));
         // zero based -> decrement it!
         int y = _visModel.volume().getNumVoxels()[1]-1;
         int z = _visModel.volume().getNumVoxels()[2]-1;
-        _mprWidget.setT2(Eigen::Vector3f(7,y,0));
-        _mprWidget.setT3(Eigen::Vector3f(7,y,z));
+        _mprWidget.setT2(Eigen::Vector3f(5,y,0));
+        _mprWidget.setT3(Eigen::Vector3f(5,y,z));
     }
     
 public:
     
     VisualizationWidget() :
-        _visModel {},
+        _visModel {TransferFunction(TransferFunction::LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
         _mainLayout {},
         _menuLayout {},
         _loadFileButton {"Load from file"},
@@ -84,7 +84,7 @@ public:
         _colorLayout.addWidget(&_selectColorButton);
         _menuLayout.addItem(&_colorLayout);
 
-        _granularitySlider.setRange(1, 100);
+        _granularitySlider.setRange(1, 10);
         _granularitySlider.setOrientation(Qt::Horizontal);
         _granularitySlider.setMaximumWidth(200);
         _menuLayout.addWidget(&_granularitySlider);
