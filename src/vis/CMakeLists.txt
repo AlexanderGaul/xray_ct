@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # specifiy visualization source files
 set(VIS_SRCS
+        DVRModel.cpp
         MPRModel.cpp
         TransferFunction.cpp
         VisualizationModel.cpp
         )
 set(VIS_HDRS
+        DVRModel.h
         MPRModel.h
         TransferFunction.h
         VisualizationModel.h

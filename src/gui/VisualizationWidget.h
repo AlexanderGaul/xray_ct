@@ -72,6 +72,17 @@ private:
         _mprWidget.setT2(Eigen::Vector3f(x,y,0));
         _mprWidget.setT3(Eigen::Vector3f(x,y,z));
     }
+
+    /**
+     * Reset the DRW widget to its default position and
+     * calibrate the camera for a new volume.
+     * @brief updateDRWWidget
+     */
+    void updateDVRWidget()
+    {
+        _dvrWidget.setAngle(0.0);
+        _dvrWidget.calibrateCamera();
+    }
     
 public:
     
@@ -117,6 +128,7 @@ public:
     void setRec(const std::shared_ptr<const Volume>& vol){
         _visModel.setVolume(*vol);
         updateMPRWidget();
+        updateDVRWidget();
     }
     
 signals:
@@ -144,6 +156,7 @@ public slots:
 
             _visModel.setVolume(EDFHandler::read(selection.toStdString()));
             updateMPRWidget();
+            updateDVRWidget();
         }
     }
 };
