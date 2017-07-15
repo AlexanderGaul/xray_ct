@@ -1,6 +1,7 @@
 #ifndef VOLUME_H
 #define VOLUME_H
 
+#include <cmath>
 #include <string>
 #include <utility>
 
@@ -195,11 +196,21 @@ public:
                 minVoxel[i]--;
             }
         }
-        Eigen::Vector3i maxVoxel = minVoxel.cast<int>() + Eigen::Vector3i(1, 1, 1);
 
         // relative position between surrounding voxel centers
-        Eigen::Vector3f voxelPos = position;
-        
+        Eigen::Vector3f voxelPos(3);
+        for(int i = 0; i<3; ++i)
+        {
+            if(minVoxel(i) == 0)
+            {
+                voxelPos(i) = position(i);
+            }
+            else
+            {
+                voxelPos(i) = fmod(position(i),minVoxel(i));
+            }
+        }
+
         Eigen::Vector4f firstValues {
             getVoxel(minVoxel),
             getVoxel(minVoxel + Eigen::Vector3i(0, 1, 0)),
@@ -207,10 +218,10 @@ public:
             getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1))
         };
         Eigen::Vector4f secondValues {
-            getVoxel(maxVoxel - Eigen::Vector3i(0, 1, 1)),
-            getVoxel(maxVoxel - Eigen::Vector3i(0, 0, 1)),
-            getVoxel(maxVoxel - Eigen::Vector3i(0, 1, 0)),
-            getVoxel(maxVoxel)
+            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(1, 1, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 1)),
+            getVoxel(minVoxel + Eigen::Vector3i(1,1,1))
         };
         
         Eigen::Vector4f interpX = firstValues + voxelPos.x() * (secondValues - firstValues);
@@ -220,7 +231,12 @@ public:
             interpX(2) + voxelPos.y() * (interpX(3) - interpX(2))
         };
         
-        return interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
+        float interpXYZ = interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
+        if(interpXYZ < -0.5)
+        {
+            int asdfasdfadaf = 7;
+        }
+        return interpXYZ;
     }
 
     /**
