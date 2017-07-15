@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QObject>
 #include <QPushButton>
+#include <QSlider>
 #include <QWidget>
 
 #include "DVRWidget.h"
@@ -39,6 +40,8 @@ private:
     QLabel _colorLabel;
     ///opens a dialog to choose the color for visualization
     QPushButton _selectColorButton;
+    ///choose the granularity of the 2D MPR
+    QSlider _granularitySlider;
 
     ///renders the 2D MPR visualization
     MPRWidget _mprWidget;
@@ -49,6 +52,16 @@ private:
     void updateColorLabel()
     {
         _colorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
+    }
+
+    void updateMPRWidget()
+    {
+        _mprWidget.setT1(Eigen::Vector3f(7,0,0));
+        // zero based -> decrement it!
+        int y = _visModel.volume().getNumVoxels()[1]-1;
+        int z = _visModel.volume().getNumVoxels()[2]-1;
+        _mprWidget.setT2(Eigen::Vector3f(7,y,0));
+        _mprWidget.setT3(Eigen::Vector3f(7,y,z));
     }
     
 public:
@@ -62,6 +75,7 @@ public:
         _colorLayout {},
         _colorLabel {},
         _selectColorButton {"Select color"},
+        _granularitySlider {},
         _mprWidget {_visModel},
         _dvrWidget {_visModel}
     {
@@ -70,15 +84,22 @@ public:
         _colorLayout.addWidget(&_selectColorButton);
         _menuLayout.addItem(&_colorLayout);
 
+        _granularitySlider.setRange(1, 100);
+        _granularitySlider.setOrientation(Qt::Horizontal);
+        _granularitySlider.setMaximumWidth(200);
+        _menuLayout.addWidget(&_granularitySlider);
+
         _menuLayout.addWidget(&_loadFileButton);
         _menuLayout.addWidget(&_loadRecButton);
-
         _mainLayout.addItem(&_menuLayout, 0, 0);
 
         _mainLayout.addWidget(&_mprWidget, 0, 1);
         _mainLayout.addWidget(&_dvrWidget, 0, 2);
+
+        _mprWidget.setMinimumHeight(150);
         setLayout(&_mainLayout);
 
+        connect(&_granularitySlider, &QSlider::valueChanged, &_mprWidget, &MPRWidget::setGranularity);
         connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
         connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
@@ -86,6 +107,7 @@ public:
     
     void setRec(const std::shared_ptr<const Volume>& vol){
         _visModel.setVolume(*vol);
+        updateMPRWidget();
     }
     
 signals:
@@ -106,6 +128,7 @@ public slots:
             QString selection = fileNames.at(0);
 
             _visModel.setVolume(EDFHandler::read(selection.toStdString()));
+            updateMPRWidget();
         }
     }
 };

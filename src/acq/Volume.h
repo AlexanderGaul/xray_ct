@@ -77,9 +77,9 @@ private:
 
     bool validPosition(Eigen::Vector3f& position) const
     {
-        if(position.x() > _boundingBox.max().x()
-            || position.y() > _boundingBox.max().y()
-            || position.z() > _boundingBox.max().z()
+        if(position.x() > getNumVoxels()[0]
+            || position.y() > getNumVoxels()[1]
+            || position.z() > getNumVoxels()[2]
             || position.x() < 0
             || position.y() < 0
             || position.z() < 0)
@@ -155,7 +155,7 @@ public:
     
     float getVoxel(Eigen::Vector3i pos) const
     {
-        return _content.rawVec()[coordinateToIndex(pos)];
+        return _content.rawVec()(coordinateToIndex(pos));
     }
 
     float getVoxel(int x, int y, int z) const

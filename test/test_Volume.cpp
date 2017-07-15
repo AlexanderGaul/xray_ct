@@ -4,6 +4,7 @@
 
 #include <Eigen/Eigen>
 
+#include "EDFhandler.h"
 #include "Volume.h"
 
 using M=Eigen::VectorXf;
@@ -55,6 +56,31 @@ TEST_CASE("test volume creation")
             std::cout << f << std::endl;
 
             REQUIRE(f == Approx(result(i)));
+        }
+    }
+
+    SECTION("coordinate to index test")
+    {
+        // handle special case of zero position
+        Eigen::Vector3i position(0,0,0);
+        int x = vol.coordinateToIndex(position);
+        REQUIRE(x == 0);
+    }
+
+    SECTION("test readout of real image data")
+    {
+        Volume vol = EDFHandler::read("/home/coding55/dev/part2-team6/volumes/box.edf");
+        for(int i = 0; i<vol.getNumVoxels()[0]; ++i)
+        {
+            for(int j = 0; j<vol.getNumVoxels()[1]; ++j)
+            {
+                for(int k = 0; k<vol.getNumVoxels()[2]; ++k)
+                {
+                    int index =  vol.content().getIndex(Eigen::Vector3i(i,j,k));
+                    std::cout << "(" << i << "," << j << "," << k << ")"
+                              << vol.content().rawVec()(index) << std::endl;
+                }
+            }
         }
     }
 }

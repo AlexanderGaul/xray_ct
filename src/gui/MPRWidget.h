@@ -7,6 +7,7 @@
 #include <QPen>
 #include <QWidget>
 
+#include "MPRModel.h"
 #include "VisualizationModel.h"
 
 class MPRWidget : public QWidget
@@ -14,44 +15,69 @@ class MPRWidget : public QWidget
     Q_OBJECT
 
 private:
-    const VisualizationModel& _model;
+    const VisualizationModel& _visModel;
+    MPRModel _mprModel;
 
 public:
-    MPRWidget(const VisualizationModel& model)
-        : _model(model)
+    MPRWidget(const VisualizationModel& visModel)
+        : _visModel {visModel},
+          _mprModel {}
     {
+        resize(500, 500);
     }
 
     void paintEvent(QPaintEvent* p_e)
     {
-        QPainter painter(this);
-        QPen pen;
-        pen.setColor(QColor::fromRgb(0, 0, 0));
-        painter.setPen(pen);
-
-        Eigen::Vector3f t1(0.0, 0.0, 0.0);
-        Eigen::Vector3f t2(0.0, 0.0, 9.0);
-        Eigen::Vector3f t3(0.0, 9.0, 9.0);
-
-        int steps = 50;
-        int tileWidth = 10;
-
-        Eigen::Vector3f d1 = t2-t1;
-        d1 /= steps;
-        Eigen::Vector3f d2 = t3-t1;
-        d2 /= steps;
-
-        for(int i = 0; i<=steps; ++i)
+        if(_visModel.volume().getTotalVoxelCount() == 0)
         {
-            Eigen::Vector3f curr = t1 + d2 * i;
-            for(int j = 0; j<=steps; ++j)
+            return; // no data yet
+        }
+        int steps = _mprModel.granularity();
+        QPainter painter(this);
+        // set background
+        painter.fillRect(0,0, width(), height(), Qt::black);
+
+        int tileWidth = std::min(width(), height());
+        tileWidth /= steps;
+
+        Eigen::Vector3f d1 = _mprModel.t2() - _mprModel.t1();
+        d1 /= (steps);
+        Eigen::Vector3f d2 = _mprModel.t3() - _mprModel.t2();
+        d2 /= (steps);
+
+        for(int i = 0; i<steps; ++i)
+        {
+            Eigen::Vector3f curr = _mprModel.t1() + d2 * i;
+            for(int j = 0; j<steps; ++j)
             {
-                float intensity = _model.volume().getVoxelLinear(curr);
-                QColor color = _model.transferFunction().classify(intensity);
-                pen.setColor(color);
-                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth), Qt::SolidPattern);
+                float intensity = _visModel.volume().getVoxelLinear(curr);
+                if(intensity < 0) intensity = 0;
+                QColor color = _visModel.transferFunction().classify(intensity);
+
+                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth), color);
                 curr += d1;
             }
         }
+    }
+
+public slots:
+    void setGranularity(int granularity)
+    {
+        _mprModel.setGranularity(granularity);
+    }
+
+    void setT1(Eigen::Vector3f position)
+    {
+        _mprModel.setT1(position);
+    }
+
+    void setT2(Eigen::Vector3f position)
+    {
+        _mprModel.setT2(position);
+    }
+
+    void setT3(Eigen::Vector3f position)
+    {
+        _mprModel.setT3(position);
     }
 };
