@@ -232,10 +232,7 @@ public:
         };
         
         float interpXYZ = interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
-        if(interpXYZ < -0.5)
-        {
-            int asdfasdfadaf = 7;
-        }
+
         return interpXYZ;
     }
 
