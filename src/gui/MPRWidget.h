@@ -19,46 +19,24 @@ private:
     MPRModel _mprModel;
 
 public:
-    MPRWidget(const VisualizationModel& visModel)
-        : _visModel {visModel},
-          _mprModel {}
-    {
-        resize(500, 500);
-    }
+    /**
+     * Creates a new MPRWidget and sets up
+     * the corresponding model classes.
+     * Some data specific for MPR is contained inside
+     * of the special MPRModel.
+     * @brief MPRWidget
+     * @param visModel
+     */
+    MPRWidget(const VisualizationModel& visModel);
 
-    void paintEvent(QPaintEvent* p_e)
-    {
-        if(_visModel.volume().getTotalVoxelCount() == 0)
-        {
-            return; // no data yet
-        }
-        int steps = _mprModel.granularity();
-        QPainter painter(this);
-        // set background
-        painter.fillRect(0,0, width(), height(), Qt::black);
-
-        int tileWidth = std::min(width(), height());
-        tileWidth /= steps;
-
-        Eigen::Vector3f d1 = _mprModel.t2() - _mprModel.t1();
-        d1 /= (steps);
-        Eigen::Vector3f d2 = _mprModel.t3() - _mprModel.t2();
-        d2 /= (steps);
-
-        for(int i = 0; i<steps; ++i)
-        {
-            Eigen::Vector3f curr = _mprModel.t1() + d2 * i;
-            for(int j = 0; j<steps; ++j)
-            {
-                float intensity = _visModel.volume().getVoxelLinear(curr);
-                if(intensity < 0) intensity = 0;
-                QColor color = _visModel.transferFunction().classify(intensity);
-
-                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth), color);
-                curr += d1;
-            }
-        }
-    }
+    /**
+     * This method is called to paint the MPR on the
+     * screen, every time the size of the window changes
+     * or the repaint() method was called.
+     * @brief paintEvent
+     * @param p_e - PaintEvent, not used for MPR
+     */
+    void paintEvent(QPaintEvent* p_e) override;
 
 public slots:
     /**
@@ -69,27 +47,26 @@ public slots:
      * @brief setGranularity
      * @param granularity
      */
-    void setGranularity(int granularity)
-    {
-        _mprModel.setGranularity(granularity*10);
-        repaint();
-    }
+    void setGranularity(int granularity);
 
-    void setT1(Eigen::Vector3f position)
-    {
-        _mprModel.setT1(position);
-        repaint();
-    }
+    /**
+     * Sets the first point describing the 2D plane of MPR.
+     * @brief setT1
+     * @param position - position of the first point
+     */
+    void setT1(Eigen::Vector3f position);
 
-    void setT2(Eigen::Vector3f position)
-    {
-        _mprModel.setT2(position);
-        repaint();
-    }
+    /**
+     * Sets the second point describing the 2D plane of MPR.
+     * @brief setT2
+     * @param position - position of the second point
+     */
+    void setT2(Eigen::Vector3f position);
 
-    void setT3(Eigen::Vector3f position)
-    {
-        _mprModel.setT3(position);
-        repaint();
-    }
+    /**
+     * Sets the third point describing the 2D plane of MPR.
+     * @brief setT3
+     * @param position - position of the third point
+     */
+    void setT3(Eigen::Vector3f position);
 };

@@ -27,4 +27,4 @@ set(GUI_HDRS
         )
 
 add_library(part2_lib_gui ${GUI_HDRS} ${GUI_SRCS} )
-target_link_libraries(part2_lib_gui Qt5::Widgets)
+target_link_libraries(part2_lib_gui part2_lib_vis Qt5::Widgets)

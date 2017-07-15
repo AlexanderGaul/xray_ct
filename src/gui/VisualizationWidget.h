@@ -19,6 +19,14 @@
 #include "VisualizationModel.h"
 #include "Volume.h"
 
+/**
+ * Widget to configure and execute visualization algorithms.
+ *
+ * Possible algorithms:
+ *  2D-MPR (multiple planar reconstruction)
+ *  3D-DVR (direct volume rendering)
+ * @brief The VisualizationWidget class
+ */
 class VisualizationWidget : public QWidget
 {
     Q_OBJECT
@@ -56,12 +64,13 @@ private:
 
     void updateMPRWidget()
     {
-        _mprWidget.setT1(Eigen::Vector3f(5,0,0));
         // zero based -> decrement it!
+        int x = _visModel.volume().getNumVoxels()[0]-1;
         int y = _visModel.volume().getNumVoxels()[1]-1;
         int z = _visModel.volume().getNumVoxels()[2]-1;
-        _mprWidget.setT2(Eigen::Vector3f(5,y,0));
-        _mprWidget.setT3(Eigen::Vector3f(5,y,z));
+        _mprWidget.setT1(Eigen::Vector3f(0,0,0));
+        _mprWidget.setT2(Eigen::Vector3f(x,y,0));
+        _mprWidget.setT3(Eigen::Vector3f(x,y,z));
     }
     
 public:
@@ -117,6 +126,12 @@ signals:
 public slots:
     void changeColor();
 
+    /**
+     * Loads a 3D medical image file into a Volume.
+     *
+     * After that, the visualization widgets are reset to the default viewpoints.
+     * @brief loadFromFile
+     */
     void loadFromFile(){
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::AnyFile);
