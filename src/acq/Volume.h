@@ -255,6 +255,27 @@ public:
         return getVoxelLinear(Eigen::Vector3f(x, y, z));
     }
 
+    float getVoxelLinearPhysical(float x, float y, float z) const
+    {
+        return getVoxelLinearPhysical(Eigen::Vector3f(x,y,z));
+    }
+
+    float getVoxelLinearPhysical(Eigen::Vector3f position) const
+    {
+        Eigen::Vector3f blf = _boundingBox.corner(Eigen::AlignedBox3f::BottomLeftFloor);
+        position(0) -= blf(0);
+        position(1) -= blf(1);
+        position(2) -= blf(2);
+
+        Eigen::Vector3f spacing = getSpacing();
+        position(0) /= spacing(0);
+        position(1) /= spacing(1);
+        position(2) /= spacing(2);
+
+        position -= Eigen::Vector3f(1,1,1);
+
+        return getVoxelLinear(position);
+    }
 };
 
 #endif // VOLUME_H
