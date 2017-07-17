@@ -74,6 +74,23 @@ private:
         return center + direction;
     }
 
+    Position normalize(Position x)
+    {
+        float sum = 0.0;
+        for(int i = 0; i<x.rows(); ++i)
+        {
+            sum += std::abs(x(i));
+        }
+        if(sum > 0)
+        {
+            for(int i = 0; i<x.rows(); ++i)
+            {
+                x(i) /= sum;
+            }
+        }
+        return x;
+    }
+
 public:
     DVRWidget(const VisualizationModel& visModel)
         : _visModel {visModel},
@@ -89,53 +106,79 @@ public:
         }
         QPainter painter(this);
         painter.fillRect(0, 0, width(), height(), QColor::fromRgb(0,0,0));
-        Eigen::AlignedBox3f box = _visModel.volume().getBoundingBox();
 
-        // get direction
-        Direction direction(std::cos(_dvrModel.angle()),std::sin(_dvrModel.angle()),0);
+        const Volume& vol = _visModel.volume();
+        Eigen::AlignedBox3f box = vol.getBoundingBox();
+
+        float angle = _dvrModel.angle();
+        int resolution = _dvrModel.resolution();
+
+        // get direction vector between volume center and detector center
+        Direction direction(std::cos(angle),std::sin(angle),0);
         // normalize direction
-        float sum = 0.0;
-        for(int i = 0; i<direction.rows(); ++i)
+        direction = normalize(direction);
+        // compute direction vector between detector and volume
+        Direction correction = direction;
+        for(int i = 0; i<3; ++i)
         {
-            sum += std::abs(direction(i));
-        }
-        if(sum > 0)
-        {
-            for(int i = 0; i<direction.rows(); ++i)
+            if(std::abs(correction(i)) > 0.0001)
             {
-                direction(i) /= sum;
+                correction(i) = -correction(i);
             }
         }
-        Position pos = _dvrModel.position();
-        Direction correction = Direction(-direction(0), direction(1), 0);
-        float size = _visModel.volume().getNumVoxels()[0] *
-                        _visModel.volume().getSpacing()[0];
-        Position better = pos-(correction*size*0.5);
-        Line3f ray(better, direction);
+        // get physical size of one pixel
+        float sizePixelX = vol.getNumVoxels()[0] *
+                        vol.getSpacing()[0] / resolution;
+        float sizePixelZ = vol.getNumVoxels()[2] *
+                        vol.getSpacing()[2] / resolution;
 
-        int steps = 100;
-        float stepSize = size/steps;
-        int tileWidth = 10;
-        for(int i = 0; i<_dvrModel.resolution(); ++i)
+        // calculate position of pixel most down and left in camera
+        Position better = _dvrModel.position();
+        better(0) -= std::sin(angle)*sizePixelX*0.5*resolution;
+        better(1) -= std::cos(angle)*sizePixelX*0.5*resolution;
+        better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
+
+        std::cout << "##########" << std::endl;
+
+        for(int i = 0; i<=resolution; ++i)
         {
-            better += correction;
-            Eigen::Vector3f intersect = RayTracing::boxIntersect(box, ray);
-            for(int j = 0; j<_dvrModel.resolution(); ++j)
+            Position tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
+            for(int j = 0; j<=resolution; ++j)
             {
-                float max = 0.0;
-                for(int k = 0; k<steps; ++k)
-                {
-                    float value = _visModel.volume().getVoxelLinear(intersect);
-                    if(value == -1) break; //end of volume reached
 
-                    max = value > max ? value : max;
-                    intersect += stepSize * direction;
-                }
-                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth),
-                                 _visModel.transferFunction().classify(max));
-                std::cout << max << std::endl;
+                Line3f ray(tmp, correction);
+
+                // intersection between current pixel and volume
+                Eigen::Vector3f intersect = RayTracing::boxIntersect(box, ray);
+                std::cout << intersect(0) << ","<<intersect(1)<<","<<intersect(2)<<std::endl;
+
+                // update pixel position
+                tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
             }
         }
+
+//        int steps = 100;
+//        float stepSize = size/steps;
+//        int tileWidth = 10;
+//        for(int i = 0; i<_dvrModel.resolution(); ++i)
+//        {
+//            better += correction;
+//            for(int j = 0; j<_dvrModel.resolution(); ++j)
+//            {
+//                float max = 0.0;
+//                for(int k = 0; k<steps; ++k)
+//                {
+//                    float value = _visModel.volume().getVoxelLinear(intersect);
+//                    if(value == -1) break; //end of volume reached
+
+//                    max = value > max ? value : max;
+//                    intersect += stepSize * direction;
+//                }
+//                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth),
+//                                 _visModel.transferFunction().classify(max));
+//                std::cout << max << std::endl;
+//            }
+//        }
     }
 
     void setAngle(float alpha)
