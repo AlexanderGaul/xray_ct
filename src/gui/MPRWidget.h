@@ -38,6 +38,12 @@ public:
      */
     void paintEvent(QPaintEvent* p_e) override;
 
+    void updateT4()
+    {
+        Eigen::Vector3f t4 = _mprModel.t1() + (_mprModel.t2() - _mprModel.t1()) + (_mprModel.t3() - _mprModel.t1());
+        _mprModel.setT4(t4);
+    }
+
 public slots:
     /**
      * Sets the granularity of the mpr widget.
@@ -69,4 +75,24 @@ public slots:
      * @param position - position of the third point
      */
     void setT3(Eigen::Vector3f position);
+
+    Eigen::Vector3f t1() const
+    {
+        return _mprModel.t1();
+    }
+
+    Eigen::Vector3f t2() const
+    {
+        return _mprModel.t2();
+    }
+
+    Eigen::Vector3f t3() const
+    {
+        return _mprModel.t3();
+    }
+
+    Eigen::Vector3f t4() const
+    {
+        return _mprModel.t4();
+    }
 };

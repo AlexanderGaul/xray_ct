@@ -12,7 +12,9 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
     {
         return; // no data yet
     }
-    int steps = _mprModel.granularity();
+    // for a good rendering, sample each real pixel of the cut plane with 10*10*10 voxels
+    int sampling = 10;
+    int steps = _visModel.volume().getNumVoxels()[0]*sampling;
     QPainter painter(this);
     // set background
     painter.fillRect(0,0, width(), height(), Qt::black);
