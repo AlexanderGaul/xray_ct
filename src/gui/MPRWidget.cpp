@@ -14,10 +14,10 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
         painter.drawText(width()/2, height()/2, "Error: No data loaded!");
         return; // no data or invalid shape
     }
-    if(!_visModel.volume().validPosition(_mprModel.t1()) ||
-            !_visModel.volume().validPosition(_mprModel.t2()) ||
-            !_visModel.volume().validPosition(_mprModel.t3()) ||
-            !_visModel.volume().validPosition(_mprModel.t4()))
+    if(!_visModel.volume().validInnerPosition(_mprModel.t1()) ||
+            !_visModel.volume().validInnerPosition(_mprModel.t2()) ||
+            !_visModel.volume().validInnerPosition(_mprModel.t3()) ||
+            !_visModel.volume().validInnerPosition(_mprModel.t4()))
     {
         painter.drawText(width()/2, height()/2, "Error: Invalid plane configured!");
         return;
@@ -55,7 +55,7 @@ void MPRWidget::updateT4()
 {
     Eigen::Vector3f t4 = _mprModel.t1() +
             (_mprModel.t2() - _mprModel.t1()) +
-            (_mprModel.t3() - _mprModel.t1());
+            (_mprModel.t3() - _mprModel.t2());
     _mprModel.setT4(t4);
 }
 

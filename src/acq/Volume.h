@@ -118,6 +118,21 @@ public:
         return true;
     }
 
+    bool validInnerPosition(const Eigen::Vector3f& position) const
+    {
+        Eigen::Vector3f enhanced = position + Eigen::Vector3f(1,1,1);
+        if(enhanced.x() > getNumVoxels()[0]
+            || enhanced.y() > getNumVoxels()[1]
+            || enhanced.z() > getNumVoxels()[2]
+            || position.x() < 0
+            || position.y() < 0
+            || position.z() < 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
     
     const content_type& content() const
     {

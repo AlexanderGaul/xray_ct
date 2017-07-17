@@ -215,6 +215,8 @@ public:
         for(int i = 0; i<4; ++i)
         {
             _coordinateLayout.itemAtPosition(3,i)->widget()->setEnabled(false);
+            if(i>0) // only spinboxes!
+                static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(3,i)->widget())->setRange(-1000000000, 1000000000);
         }
         updateCoordinates();
 
