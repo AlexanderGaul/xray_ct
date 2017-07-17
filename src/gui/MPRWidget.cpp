@@ -82,3 +82,24 @@ void MPRWidget::setT3(Eigen::Vector3f position)
     _mprModel.setT3(position);
     repaint();
 }
+
+
+Eigen::Vector3f MPRWidget::t1() const
+{
+    return _mprModel.t1();
+}
+
+Eigen::Vector3f MPRWidget::t2() const
+{
+    return _mprModel.t2();
+}
+
+Eigen::Vector3f MPRWidget::t3() const
+{
+    return _mprModel.t3();
+}
+
+Eigen::Vector3f MPRWidget::t4() const
+{
+    return _mprModel.t4();
+}

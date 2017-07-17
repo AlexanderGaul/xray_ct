@@ -78,23 +78,41 @@ public slots:
      */
     void setT3(Eigen::Vector3f position);
 
-    Eigen::Vector3f t1() const
-    {
-        return _mprModel.t1();
-    }
+    /**
+     * Gets the first position which determines the
+     * cutting plane.
+     * Delegates further to model.
+     * @brief t1
+     * @return
+     */
+    Eigen::Vector3f t1() const;
 
-    Eigen::Vector3f t2() const
-    {
-        return _mprModel.t2();
-    }
+    /**
+     * Gets the second position which determines the
+     * cutting plane.
+     * Delegates further to model.
+     * @brief t2
+     * @return
+     */
+    Eigen::Vector3f t2() const;
 
-    Eigen::Vector3f t3() const
-    {
-        return _mprModel.t3();
-    }
+    /**
+     * Gets the third position which determines the
+     * cutting plane.
+     * Delegates further to model.
+     * @brief t3
+     * @return
+     */
+    Eigen::Vector3f t3() const;
 
-    Eigen::Vector3f t4() const
-    {
-        return _mprModel.t4();
-    }
+    /**
+     * Gets the control position which determines the
+     * cutting plane and is used to check
+     * if the cutting plane is valid (does not
+     * exceed the volume).
+     * Delegates further to model.
+     * @brief t4
+     * @return
+     */
+    Eigen::Vector3f t4() const;
 };
