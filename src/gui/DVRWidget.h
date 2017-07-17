@@ -94,7 +94,7 @@ private:
 public:
     DVRWidget(const VisualizationModel& visModel)
         : _visModel {visModel},
-          _dvrModel {0, 5, calculateCameraPosition(_visModel.volume())}
+          _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume())}
     {
     }
 
@@ -121,6 +121,7 @@ public:
         direction = normalize(direction);
         // compute direction vector between detector and volume
         Direction correction = direction;
+        // small negative values cause numerical instability...
         for(int i = 0; i<3; ++i)
         {
             if(std::abs(correction(i)) > 0.0001)
@@ -177,35 +178,16 @@ public:
                 tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
             }
         }
-
-//        int steps = 100;
-//        float stepSize = size/steps;
-//        int tileWidth = 10;
-//        for(int i = 0; i<_dvrModel.resolution(); ++i)
-//        {
-//            better += correction;
-//            for(int j = 0; j<_dvrModel.resolution(); ++j)
-//            {
-//                float max = 0.0;
-//                for(int k = 0; k<steps; ++k)
-//                {
-//                    float value = _visModel.volume().getVoxelLinear(intersect);
-//                    if(value == -1) break; //end of volume reached
-
-//                    max = value > max ? value : max;
-//                    intersect += stepSize * direction;
-//                }
-//                painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth),
-//                                 _visModel.transferFunction().classify(max));
-//                std::cout << max << std::endl;
-//            }
-//        }
     }
 
     void setAngle(float angle)
     {
-        _dvrModel.setAngle(angle);
-        repaint();
+        if(angle != _dvrModel.angle())
+        {
+            _dvrModel.setAngle(angle);
+            calibrateCamera();
+            repaint();
+        }
     }
 
     void calibrateCamera()

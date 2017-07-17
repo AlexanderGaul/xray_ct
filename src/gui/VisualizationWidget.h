@@ -232,7 +232,7 @@ public slots:
         _dvrAngleSpinBox.setValue(angle);
         _dvrAngleSlider.setValue(angle);
 
-        float radianAngle = (angle%360)/180.0;
+        float radianAngle = (angle*M_PI)/180.0;
         _dvrWidget.setAngle(radianAngle);
     }
 
