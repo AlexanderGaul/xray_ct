@@ -202,9 +202,10 @@ public:
 //        }
     }
 
-    void setAngle(float alpha)
+    void setAngle(float angle)
     {
-        _dvrModel.setAngle(alpha);
+        _dvrModel.setAngle(angle);
+        repaint();
     }
 
     void calibrateCamera()

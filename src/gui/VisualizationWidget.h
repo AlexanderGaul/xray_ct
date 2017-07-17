@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QPushButton>
 #include <QSlider>
+#include <QSpinBox>
 #include <QWidget>
 
 #include "DVRWidget.h"
@@ -50,6 +51,26 @@ private:
     QPushButton _selectColorButton;
     ///choose the granularity of the 2D MPR
     QSlider _granularitySlider;
+    ///manages configuration of DVR
+    QVBoxLayout _dvrLayout;
+    ///display description of DVR
+    QLabel _dvrTitleLabel;
+    ///manages label config of DVR
+    QHBoxLayout _dvrAngleLayout;
+    ///info text regarding angle for DVR
+    QLabel _dvrAngleLabel;
+    ///choose a suitable angle for DVR
+    QSlider _dvrAngleSlider;
+    ///display current angle (in degrees)
+    QSpinBox _dvrAngleSpinBox;
+    ///manages step width config of DVR
+    QHBoxLayout _dvrStepWidthLayout;
+    ///info text regarding angle for DVR
+    QLabel _dvrStepWidthLabel;
+    ///choose a suitable step width
+    QSlider _dvrStepWidthSlider;
+    ///display current step width
+    QSpinBox _dvrStepWidthSpinBox;
 
     ///renders the 2D MPR visualization
     MPRWidget _mprWidget;
@@ -96,6 +117,16 @@ public:
         _colorLabel {},
         _selectColorButton {"Select color"},
         _granularitySlider {},
+        _dvrLayout {},
+        _dvrTitleLabel {"DVR (direct volume rendering) configuration:"},
+        _dvrAngleLayout {},
+        _dvrAngleLabel {"Angle: "},
+        _dvrAngleSlider {},
+        _dvrAngleSpinBox {},
+        _dvrStepWidthLayout {},
+        _dvrStepWidthLabel {"Step width: "},
+        _dvrStepWidthSlider {},
+        _dvrStepWidthSpinBox {},
         _mprWidget {_visModel},
         _dvrWidget {_visModel}
     {
@@ -109,6 +140,31 @@ public:
         _granularitySlider.setMaximumWidth(200);
         _menuLayout.addWidget(&_granularitySlider);
 
+        _dvrAngleLayout.addWidget(&_dvrAngleLabel);
+        _dvrAngleSlider.setRange(1,360);
+        _dvrAngleSlider.setOrientation(Qt::Horizontal);
+        _dvrAngleLayout.addWidget(&_dvrAngleSlider);
+        _dvrAngleSpinBox.setRange(1,360);
+        _dvrAngleLayout.addWidget(&_dvrAngleSpinBox);
+        _dvrAngleLabel.setMaximumWidth(200);
+        _dvrAngleSlider.setMaximumWidth(200);
+        _dvrAngleSpinBox.setMaximumWidth(200);
+
+        _dvrStepWidthLayout.addWidget(&_dvrStepWidthLabel);
+        _dvrStepWidthSlider.setRange(1,100);
+        _dvrStepWidthSlider.setOrientation(Qt::Horizontal);
+        _dvrStepWidthLayout.addWidget(&_dvrStepWidthSlider);
+        _dvrStepWidthLayout.addWidget(&_dvrStepWidthSpinBox);
+        _dvrStepWidthLabel.setMaximumWidth(200);
+        _dvrStepWidthSlider.setMaximumWidth(200);
+        _dvrStepWidthSpinBox.setMaximumWidth(200);
+
+        _dvrLayout.addWidget(&_dvrTitleLabel);
+        _dvrLayout.addItem(&_dvrAngleLayout);
+        _dvrLayout.addItem(&_dvrStepWidthLayout);
+
+        _menuLayout.addItem(&_dvrLayout);
+
         _menuLayout.addWidget(&_loadFileButton);
         _menuLayout.addWidget(&_loadRecButton);
         _mainLayout.addItem(&_menuLayout, 0, 0);
@@ -120,6 +176,11 @@ public:
         setLayout(&_mainLayout);
 
         connect(&_granularitySlider, &QSlider::valueChanged, &_mprWidget, &MPRWidget::setGranularity);
+        connect(&_dvrAngleSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRAngle);
+        // cast necessary because spinbox has also valueChanged(QString) signal
+        connect(&_dvrAngleSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRAngle);
+        connect(&_dvrStepWidthSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRStepWidth);
+        connect(&_dvrStepWidthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRStepWidth);
         connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
         connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
         connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
@@ -158,6 +219,36 @@ public slots:
             updateMPRWidget();
             updateDVRWidget();
         }
+    }
+
+    /**
+     * Updates the angle for DVR.
+     * The angle is given in degrees.
+     * @brief updateDVRAngle
+     * @param angle
+     */
+    void updateDVRAngle(int angle)
+    {
+        _dvrAngleSpinBox.setValue(angle);
+        _dvrAngleSlider.setValue(angle);
+
+        float radianAngle = (angle%360)/180.0;
+        _dvrWidget.setAngle(radianAngle);
+    }
+
+    /**
+     * Updates the step width for DVR.
+     * TODO: specify criteria for step width
+     * CURRENTLY NOT USED BY DVR WIDGET!!!
+     * @brief updateDVRStepWidth
+     * @param stepWidth
+     */
+    void updateDVRStepWidth(int stepWidth)
+    {
+        _dvrStepWidthSpinBox.setValue(stepWidth);
+        _dvrStepWidthSlider.setValue(stepWidth);
+
+        //TODO: update value in dvr widget
     }
 };
 
