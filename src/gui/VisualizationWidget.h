@@ -241,10 +241,10 @@ public:
                     this, &VisualizationWidget::updateT1X);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(0,2)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT1X);
+                    this, &VisualizationWidget::updateT1Y);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(0,3)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT1X);
+                    this, &VisualizationWidget::updateT1Z);
 
         // t2 signal-slot functions
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(1,1)->widget()),
@@ -252,10 +252,10 @@ public:
                     this, &VisualizationWidget::updateT2X);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(1,2)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT2X);
+                    this, &VisualizationWidget::updateT2Y);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(1,3)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT2X);
+                    this, &VisualizationWidget::updateT2Z);
 
         // t3 signal-slot functions
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(2,1)->widget()),
@@ -263,10 +263,10 @@ public:
                     this, &VisualizationWidget::updateT3X);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(2,2)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT3X);
+                    this, &VisualizationWidget::updateT3Y);
         connect(static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(2,3)->widget()),
                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                    this, &VisualizationWidget::updateT3X);
+                    this, &VisualizationWidget::updateT3Z);
 
 
         connect(&_dvrAngleSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRAngle);
