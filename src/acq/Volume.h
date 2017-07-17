@@ -76,20 +76,6 @@ private:
         _boundingBox.translate(-_boundingBox.center());
     }
 
-    bool validPosition(Eigen::Vector3f& position) const
-    {
-        if(position.x() > getNumVoxels()[0]
-            || position.y() > getNumVoxels()[1]
-            || position.z() > getNumVoxels()[2]
-            || position.x() < 0
-            || position.y() < 0
-            || position.z() < 0)
-        {
-            return false;
-        }
-        return true;
-    }
-    
 public:
     Volume() : VolumeBase {}, _content {}{
         
@@ -117,6 +103,21 @@ public:
     {
         centerBoundingBox();
     }
+
+    bool validPosition(const Eigen::Vector3f& position) const
+    {
+        if(position.x() > getNumVoxels()[0]
+            || position.y() > getNumVoxels()[1]
+            || position.z() > getNumVoxels()[2]
+            || position.x() < 0
+            || position.y() < 0
+            || position.z() < 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
     
     const content_type& content() const
     {

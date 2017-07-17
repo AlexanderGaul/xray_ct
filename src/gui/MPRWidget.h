@@ -38,11 +38,13 @@ public:
      */
     void paintEvent(QPaintEvent* p_e) override;
 
-    void updateT4()
-    {
-        Eigen::Vector3f t4 = _mprModel.t1() + (_mprModel.t2() - _mprModel.t1()) + (_mprModel.t3() - _mprModel.t1());
-        _mprModel.setT4(t4);
-    }
+    /**
+     * Updates the fourth coordinate of the plane which
+     * is precomputed and completely determined
+     * by the three user defined points.
+     * @brief updateT4
+     */
+    void updateT4();
 
 public slots:
     /**

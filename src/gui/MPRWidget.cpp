@@ -8,14 +8,23 @@ MPRWidget::MPRWidget(const VisualizationModel& visModel)
 
 void MPRWidget::paintEvent(QPaintEvent* p_e)
 {
+    QPainter painter(this);
     if(_visModel.volume().getTotalVoxelCount() == 0)
     {
-        return; // no data yet
+        painter.drawText(width()/2, height()/2, "Error: No data loaded!");
+        return; // no data or invalid shape
+    }
+    if(!_visModel.volume().validPosition(_mprModel.t1()) ||
+            !_visModel.volume().validPosition(_mprModel.t2()) ||
+            !_visModel.volume().validPosition(_mprModel.t3()) ||
+            !_visModel.volume().validPosition(_mprModel.t4()))
+    {
+        painter.drawText(width()/2, height()/2, "Error: Invalid plane configured!");
+        return;
     }
     // for a good rendering, sample each real pixel of the cut plane with 10*10*10 voxels
     int sampling = 10;
     int steps = _visModel.volume().getNumVoxels()[0]*sampling;
-    QPainter painter(this);
     // set background
     painter.fillRect(0,0, width(), height(), Qt::black);
 
@@ -40,6 +49,14 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
             curr += d1;
         }
     }
+}
+
+void MPRWidget::updateT4()
+{
+    Eigen::Vector3f t4 = _mprModel.t1() +
+            (_mprModel.t2() - _mprModel.t1()) +
+            (_mprModel.t3() - _mprModel.t1());
+    _mprModel.setT4(t4);
 }
 
 void MPRWidget::setGranularity(int granularity)

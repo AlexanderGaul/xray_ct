@@ -54,6 +54,8 @@ private:
     QVBoxLayout _mprLayout;
     ///displays title of MPR
     QLabel _mprTitleLabel;
+    ///shows the dimensions of the volume on screen
+    QLabel _volumeInfoLabel;
     ///layout for entering coordinates
     QGridLayout _coordinateLayout;
     ///manages configuration of DVR
@@ -88,15 +90,35 @@ private:
         _colorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
     }
 
-    void updateMPRWidget()
+    void updateVolumeInfo()
     {
-        // zero based -> decrement it!
-        int x = _visModel.volume().getNumVoxels()[0]-1;
-        int y = _visModel.volume().getNumVoxels()[1]-1;
-        int z = _visModel.volume().getNumVoxels()[2]-1;
-        _mprWidget.setT1(Eigen::Vector3f(0,0,0));
-        _mprWidget.setT2(Eigen::Vector3f(x,y,0));
-        _mprWidget.setT3(Eigen::Vector3f(x,y,z));
+        Eigen::Vector3i size = _visModel.volume().getNumVoxels();
+        int x = size[0], y = size[1], z = size[2];
+        _volumeInfoLabel.setText("Volume size: ("+QString::number(x)+","+QString::number(y)+","+QString::number(z)+")");
+    }
+
+    void setLimit(int x, int y, int limit)
+    {
+        static_cast<QSpinBox*>(_coordinateLayout.itemAtPosition(x, y)->widget())->setRange(0,limit-1);
+    }
+
+    void updateCoordinateLimits()
+    {
+        Eigen::Vector3i size = _visModel.volume().getNumVoxels();
+        for(int i = 0; i<3; ++i)
+        {
+            for(int j = 0; j<3; ++j)
+            {
+                setLimit((j+1),(i+1),size[i]);
+            }
+        }
+    }
+
+    void updateVolumeChanged()
+    {
+        updateDVRWidget();
+        updateVolumeInfo();
+        updateCoordinateLimits();
     }
 
     /**
@@ -149,6 +171,7 @@ public:
         _selectColorButton {"Select color"},
         _mprLayout {},
         _mprTitleLabel {"MPR (mulit planar reconstruction) configuration:"},
+        _volumeInfoLabel {},
         _coordinateLayout{},
         _dvrLayout {},
         _dvrTitleLabel {"DVR (direct volume rendering) configuration:"},
@@ -193,9 +216,11 @@ public:
         {
             _coordinateLayout.itemAtPosition(3,i)->widget()->setEnabled(false);
         }
+        updateCoordinates();
 
         _mprTitleLabel.setMaximumHeight(50);
         _mprLayout.addWidget(&_mprTitleLabel);
+        _mprLayout.addWidget(&_volumeInfoLabel);
         _mprLayout.addItem(&_coordinateLayout);
 
         _menuLayout.addItem(&_mprLayout);
@@ -281,8 +306,7 @@ public:
     
     void setRec(const std::shared_ptr<const Volume>& vol){
         _visModel.setVolume(*vol);
-        updateMPRWidget();
-        updateDVRWidget();
+        updateVolumeChanged();
     }
     
 signals:
@@ -309,8 +333,7 @@ public slots:
             QString selection = fileNames.at(0);
 
             _visModel.setVolume(EDFHandler::read(selection.toStdString()));
-            updateMPRWidget();
-            updateDVRWidget();
+            updateVolumeChanged();
         }
     }
 
