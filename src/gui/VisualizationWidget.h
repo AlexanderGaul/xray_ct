@@ -78,20 +78,50 @@ private:
     QSlider _dvrStepWidthSlider;
     ///display current step width
     QSpinBox _dvrStepWidthSpinBox;
-
     ///renders the 2D MPR visualization
     MPRWidget _mprWidget;
     ///paints the direct volume rendering (DVR)
     DVRWidget _dvrWidget;
 
+    /**
+     * Updates (colors) the color label
+     * to show the user the currently used
+     * transfer function color.
+     * @brief updateColorLabel
+     */
     void updateColorLabel();
 
+    /**
+     *  Updates the info label which
+     *  displays the current volume size.
+     */
     void updateVolumeInfo();
 
+    /**
+     * Sets the range limit of a certain spinbox inside
+     * the coordinate input layout.
+     * The spinbox gets the range [0,limit].
+     * @brief setLimit
+     * @param x - determines index of Point (from 0 to 3)
+     * @param y - determines dimension where the limit is set
+     * (x = 1, y = 2, or z = 3)
+     * @param limit
+     */
     void setLimit(int x, int y, int limit);
 
+    /**
+     * Helper method, updates the limits
+     * for entering coordinates according to
+     * the current volume size.
+     * @brief updateCoordinateLimits
+     */
     void updateCoordinateLimits();
 
+    /**
+     * Helper method, called after change of volume data.
+     * Updates the user interface accordingly.
+     * @brief updateVolumeChanged
+     */
     void updateVolumeChanged();
 
     /**
@@ -107,20 +137,54 @@ private:
      */
     void updateT4();
 
+    /**
+     * Updates on-screen value to given coordinate.
+     * Index parameter is used to access the spinboxes inside
+     * the coordinate grid layout.
+     * @brief setCoordinate
+     * @param index - index of point to be updated (can vary between 0 and 3, inclusive).
+     * @param coordinate
+     */
     void setCoordinate(int index, Eigen::Vector3f coordinate);
 
+    /**
+     * Updates the coordinates of the control point T4
+     * and additionally updates on-screen values of T1,T2,T3
+     * @brief updateCoordinates
+     */
     void updateCoordinates();
     
 public:    
+    /**
+     * Construct a new Visualization Widget and setup
+     * the whole user interface.
+     * @brief VisualizationWidget
+     */
     VisualizationWidget();
     
+    /**
+     * Updates the current volume.
+     * This method makes it possible to load reconstruction
+     * results into the visualization widget.
+     * @brief setRec
+     * @param vol - shared pointer to reference to new volume.
+     */
     void setRec(const std::shared_ptr<const Volume>& vol);
     
 signals:
-    //emit this event if you want the volume from the requisition. It is set through a call of setRec
+    /**
+     * emit this event if you want the volume from the requisition. It is set through a call of setRec.
+     */
     void requestRecVolume();
     
 public slots:
+    /**
+     * Change color of transfer function.
+     *
+     * Currently: Only onse transfer function for both MPR and DVR
+     * TODO: Change!!!
+     * @brief changeColor
+     */
     void changeColor();
 
     /**

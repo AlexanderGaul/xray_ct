@@ -24,7 +24,7 @@ void VisualizationWidget::updateCoordinateLimits()
     {
         for(int j = 0; j<3; ++j)
         {
-            setLimit((j+1),(i+1),size[i]);
+            setLimit(j,(i+1),size[i]);
         }
     }
 }
