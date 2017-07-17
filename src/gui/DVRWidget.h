@@ -69,7 +69,7 @@ private:
                         volume.getSpacing()[0];
         for(int i = 0; i<3; ++i)
         {
-            direction(i) *= 1.5*size;
+            direction(i) *= 2*size;
         }
         return center + direction;
     }
@@ -94,7 +94,7 @@ private:
 public:
     DVRWidget(const VisualizationModel& visModel)
         : _visModel {visModel},
-          _dvrModel {0.0, 5, calculateCameraPosition(_visModel.volume())}
+          _dvrModel {0, 5, calculateCameraPosition(_visModel.volume())}
     {
     }
 
@@ -112,6 +112,8 @@ public:
 
         float angle = _dvrModel.angle();
         int resolution = _dvrModel.resolution();
+        int steps = 100;
+        int tileWidth = std::min(width(), height()) / resolution;
 
         // get direction vector between volume center and detector center
         Direction direction(std::cos(angle),std::sin(angle),0);
@@ -145,13 +147,32 @@ public:
             Position tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
             for(int j = 0; j<=resolution; ++j)
             {
-
                 Line3f ray(tmp, correction);
 
                 // intersection between current pixel and volume
                 Eigen::Vector3f intersect = RayTracing::boxIntersect(box, ray);
-                std::cout << intersect(0) << ","<<intersect(1)<<","<<intersect(2)<<std::endl;
+                std::cout << tmp(0) << ","<<tmp(1)<<","<<tmp(2)<<std::endl;
 
+                // do MIP (maximum intensity projection)
+                float max = 0.0;
+                // NaN check (NaN are odd in comparison and will not execute inner block)
+                if(intersect(0) == intersect(0))
+                {
+                    for(int i = 0; i<steps; ++i)
+                    {
+                        // calculate intensity using trilinear interpolation
+                        float intensity = vol.getVoxelLinearPhysical(intersect);
+                        if(intensity > max)
+                        {
+                            max = intensity;
+                        }
+                        intersect += (sizePixelX/steps) * correction;
+                    }
+                    std::cout << max << std::endl;
+                }
+                // paint measured volume
+                QColor color = _visModel.transferFunction().classify(max);
+                painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
                 // update pixel position
                 tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
             }
