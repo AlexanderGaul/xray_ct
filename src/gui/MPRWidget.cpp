@@ -14,10 +14,10 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
         painter.drawText(width()/2, height()/2, "Error: No data loaded!");
         return; // no data or invalid shape
     }
-    if(!_visModel.volume().validInnerPosition(_mprModel.t1()) ||
-            !_visModel.volume().validInnerPosition(_mprModel.t2()) ||
-            !_visModel.volume().validInnerPosition(_mprModel.t3()) ||
-            !_visModel.volume().validInnerPosition(_mprModel.t4()))
+    if(!_visModel.volume().validPosition(_mprModel.t1()) ||
+            !_visModel.volume().validPosition(_mprModel.t2()) ||
+            !_visModel.volume().validPosition(_mprModel.t3()) ||
+            !_visModel.volume().validPosition(_mprModel.t4()))
     {
         painter.drawText(width()/2, height()/2, "Error: Invalid plane configured!");
         return;
@@ -41,7 +41,11 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
         Eigen::Vector3f curr = _mprModel.t1() + d2 * i;
         for(int j = 0; j<steps; ++j)
         {
-            float intensity = _visModel.volume().getVoxelLinear(curr);
+            float intensity = -1;
+            if(_visModel.volume().validInnerPosition(curr))
+            {
+                intensity = _visModel.volume().getVoxelLinear(curr);
+            }
             if(intensity < 0) intensity = 0;
             QColor color = _mprModel.transferFunction().classify(intensity);
 
@@ -55,8 +59,8 @@ void MPRWidget::updateT4()
 {
     Eigen::Vector3f t4 = _mprModel.t1() +
             (_mprModel.t2() - _mprModel.t1()) +
-            (_mprModel.t3() - _mprModel.t2());
-    _mprModel.setT4(t4);
+            (_mprModel.t3() - _mprModel.t1());
+    _mprModel.setT4(Eigen::Vector3f(1,1,1));
 }
 
 void MPRWidget::setGranularity(int granularity)
