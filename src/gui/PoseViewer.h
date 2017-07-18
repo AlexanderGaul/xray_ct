@@ -7,6 +7,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QLabel>
 // #include <QScrollArea>
 
 
@@ -20,7 +21,7 @@ class PoseViewer : public QWidget
 private:
     QGridLayout _layout;
     QGridLayout _viewsLayout;
-	QGridLayout _layoutBoxes;
+	QHBoxLayout _layoutBoxes;
     QHBoxLayout _layoutButtons;
     QHBoxLayout _generatorLayout;
     
