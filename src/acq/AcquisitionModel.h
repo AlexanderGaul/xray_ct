@@ -1,4 +1,3 @@
-#pragma once
 #ifndef ACQUISITIONMODEL_H
 #define ACQUISITIONMODEL_H
 

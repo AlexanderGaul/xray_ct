@@ -3,8 +3,10 @@
 
 #include <array>
 #include <vector>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+
 #include <QObject>
 
 class AcquisitionPose

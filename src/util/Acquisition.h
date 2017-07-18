@@ -1,4 +1,3 @@
- 
 #ifndef ACQUISITION_H
 #define ACQUISITION_H
 
