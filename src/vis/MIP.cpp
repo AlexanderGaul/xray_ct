@@ -6,6 +6,13 @@ float MIP::calculateMIP(const Volume& vol, Eigen::Vector3f pos, Eigen::Vector3f 
                     vol.getSpacing()[0];
     int steps = sizeX/stepSize;
 
+    for(int i = 0; i<3; ++i)
+    {
+        if(std::abs(direction(i)) < 0.0001)
+        {
+            direction(i) = 0;
+        }
+    }
     Line3f ray(pos, direction);
     // intersection between current pixel and volume
     Eigen::Vector3f intersect = RayTracing::boxIntersect(vol.getBoundingBox(), ray);

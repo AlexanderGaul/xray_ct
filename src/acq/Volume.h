@@ -203,6 +203,11 @@ public:
             return -1.0;
         }
 
+        if(!validInnerPosition(position))
+        {
+            return getVoxel(position.cast<int>());
+        }
+
         // index of voxel centers surrounding the position
         Eigen::Vector3i minVoxel = position.cast<int>();
         for(int i = 0; i<3; ++i)
@@ -287,8 +292,6 @@ public:
         position(0) /= spacing(0);
         position(1) /= spacing(1);
         position(2) /= spacing(2);
-
-        position -= Eigen::Vector3f(1,1,1);
 
         return getVoxelLinear(position);
     }

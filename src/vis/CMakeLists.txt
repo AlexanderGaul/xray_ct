@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # specifiy visualization source files
 set(VIS_SRCS
+        DVRCamera.cpp
         DVRModel.cpp
         LinearPiece.cpp
         MIP.cpp
@@ -9,7 +10,8 @@ set(VIS_SRCS
         TransferFunction.cpp
         VisualizationModel.cpp
         )
-set(VIS_HDRS
+set(VIS_HDRS    
+        DVRCamera.h
         DVRModel.h
         LinearPiece.h
         MIP.h

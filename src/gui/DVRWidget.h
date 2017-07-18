@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QWidget>
 
+#include "DVRCamera.h"
 #include "DVRModel.h"
 #include "MIP.h"
 #include "RayTracing.h"
@@ -24,14 +25,9 @@ class DVRWidget : public QWidget
 {
     Q_OBJECT
 private:
-    ///internal constant defining the volume used is empty
-    int EMPTY = 0;
-    ///internal constant defining the volume used is not empty
-    int FILLED = 1;
-
     const VisualizationModel& _visModel;
     DVRModel _dvrModel;
-    int _mode;
+    DVRCamera _dvrCamera;
 
     /**
      * Calculates the camera position.
