@@ -45,6 +45,7 @@ void VisualizationWidget::updateDVRWidget()
 {
     _dvrWidget.setAngle(0.0);
     _dvrWidget.calibrateCamera();
+    _dvrWidget.setColorRange(0, _visModel.volume().maxEntry());
 }
 
 /**

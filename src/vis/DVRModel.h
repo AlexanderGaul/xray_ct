@@ -89,6 +89,11 @@ public:
     {
         return _stepSize;
     }
+
+    void setColorRange(float from, float to)
+    {
+        _transferFunction.setRange(0, from, to);
+    }
 };
 
 #endif // DVRMODEL_H

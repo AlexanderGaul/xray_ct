@@ -72,20 +72,14 @@ public:
      */
     void calibrateCamera();
 
-    void setColor(QColor color)
-    {
-        _dvrModel.setColor(color);
-    }
+    void setColor(QColor color);
 
-    QColor color() const
-    {
-        return _dvrModel.color();
-    }
+    QColor color() const;
 
-    void setStepSize(float stepSize)
-    {
-        _dvrModel.setStepSize(stepSize);
-        repaint();
+    void setStepSize(float stepSize);
 
+    void setColorRange(float from, float to)
+    {
+        _dvrModel.setColorRange(from, to);
     }
 };

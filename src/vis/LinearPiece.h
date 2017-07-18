@@ -27,4 +27,14 @@ public:
     {
         return _rgb;
     }
+
+    void setIntensity0(float intensity0)
+    {
+        _intensity0 = intensity0;
+    }
+
+    void setIntensity1(float intensity1)
+    {
+        _intensity1 = intensity1;
+    }
 };

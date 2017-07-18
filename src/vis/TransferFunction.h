@@ -43,4 +43,10 @@ public:
     {
         return _pieces[index].color();
     }
+
+    void setRange(int index, float from, float to)
+    {
+        _pieces[index].setIntensity0(from);
+        _pieces[index].setIntensity1(to);
+    }
 };

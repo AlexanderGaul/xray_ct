@@ -52,11 +52,12 @@ DVRWidget::DVRWidget(const VisualizationModel& visModel)
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
 {
+    QPainter painter(this);
     if(_visModel.volume().getTotalVoxelCount() == 0)
     {
+        painter.drawText(width()/2, height()/2, "Error: No data loaded!");
         return;
     }
-    QPainter painter(this);
     painter.fillRect(0, 0, width(), height(), QColor::fromRgb(0,0,0));
 
     const Volume& vol = _visModel.volume();
@@ -154,4 +155,20 @@ void DVRWidget::setAngle(float angle)
 void DVRWidget::calibrateCamera()
 {
     _dvrModel.setPosition(calculateCameraPosition(_visModel.volume()));
+}
+
+void DVRWidget::setColor(QColor color)
+{
+    _dvrModel.setColor(color);
+}
+
+QColor DVRWidget::color() const
+{
+    return _dvrModel.color();
+}
+
+void DVRWidget::setStepSize(float stepSize)
+{
+    _dvrModel.setStepSize(stepSize);
+    repaint();
 }
