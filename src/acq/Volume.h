@@ -107,8 +107,8 @@ public:
     bool validPosition(const Eigen::Vector3f& position) const
     {
         if(position.x() > getNumVoxels()[0]
-            || position.y() > getNumVoxels()[1]
-            || position.z() > getNumVoxels()[2]
+            || position.y() >= getNumVoxels()[1]
+            || position.z() >= getNumVoxels()[2]
             || position.x() < 0
             || position.y() < 0
             || position.z() < 0)
@@ -203,19 +203,23 @@ public:
             return -1.0;
         }
 
+        /*
         if(!validInnerPosition(position))
         {
             return getVoxel(position.cast<int>());
         }
+        */
 
         // index of voxel centers surrounding the position
+        position = position - Eigen::Vector3f(0.5, 0.5, 0.5);
         Eigen::Vector3i minVoxel = position.cast<int>();
-        for(int i = 0; i<3; ++i)
+        
+        for(int i = 0; i < 3; i++)
         {
-            if(minVoxel[i] > 0 && minVoxel[i] - position[i] >= -0.0001)
-            {
-                minVoxel[i]--;
-            }
+            if(minVoxel(i) < 0)
+            { minVoxel(i) = 0; }
+            if(minVoxel(i) > getNumVoxels()(i) - 2)
+            { minVoxel(i) = getNumVoxels()(i) - 2; }
         }
 
         // relative position between surrounding voxel centers

@@ -7,6 +7,7 @@ set(UTIL_SRCS
 set(UTIL_HDRS
         Timer.h
         Acquisition.h
+        DebugStuff.h
         )
 
 add_library(part2_lib_util ${UTIL_HDRS} ${UTIL_SRCS} )

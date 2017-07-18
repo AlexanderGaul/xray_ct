@@ -130,6 +130,7 @@ void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float
     
     float distance = M_PI / circles;
     
+    _poses->reserve(circles * equatorialCount);
     
     for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
     {
@@ -150,8 +151,6 @@ void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float
     emit poseChanged();
 }
 
-
-
 void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
 {
     float distance = range;
@@ -165,8 +164,6 @@ void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
         pose.setRotation(distance / 2.f + i * distance, yAngle);
         _poses->push_back(pose);
     }
-    updateProjection();
-    emit poseChanged();
 }
 
 std::pair<int, const Eigen::VectorXf> AcquisitionModel::getLastProj()

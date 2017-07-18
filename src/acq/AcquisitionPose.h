@@ -3,8 +3,10 @@
 
 #include <array>
 #include <vector>
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+
 #include <QObject>
 
 class AcquisitionPose
@@ -34,7 +36,7 @@ private:
 
 public:
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
-        : AcquisitionPose(boundingBox.diagonal().norm()*1.5f, 0.8f, 0.8f, 5, 5) {
+        : AcquisitionPose(boundingBox.diagonal().norm()*1.5f, 0.8f, 0.8f, 20, 20) {
             
         }
 
