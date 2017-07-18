@@ -115,4 +115,9 @@ public slots:
      * @return
      */
     Eigen::Vector3f t4() const;
+
+    void setColor(QColor color)
+    {
+        _mprModel.setColor(color);
+    }
 };

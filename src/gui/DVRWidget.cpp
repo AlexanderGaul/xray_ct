@@ -45,7 +45,8 @@ Eigen::Vector3f DVRWidget::normalize(Eigen::Vector3f x)
 
 DVRWidget::DVRWidget(const VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume())}
+      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()),
+                 TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))}
 {
 }
 
@@ -123,7 +124,7 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                 std::cout << max << std::endl;
             }
             // paint measured volume
-            QColor color = _visModel.transferFunction().classify(max);
+            QColor color = _dvrModel.transferFunction().classify(max);
             painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
             // update pixel position
             tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);

@@ -45,11 +45,11 @@ private:
     ///loads the Volume from the ReconstructionPose
     QPushButton _loadRecButton;
     ///manages the color-choosing related widgets
-    QHBoxLayout _colorLayout;
+    QHBoxLayout _mprColorLayout;
     ///displays the current color
-    QLabel _colorLabel;
+    QLabel _mprColorLabel;
     ///opens a dialog to choose the color for visualization
-    QPushButton _selectColorButton;
+    QPushButton _mprSelectColorButton;
     ///manages the MPR configuration
     QVBoxLayout _mprLayout;
     ///displays title of MPR
@@ -179,13 +179,11 @@ signals:
     
 public slots:
     /**
-     * Change color of transfer function.
+     * Change color of transfer function of MPR.
      *
-     * Currently: Only onse transfer function for both MPR and DVR
-     * TODO: Change!!!
-     * @brief changeColor
+     * @brief mprChangeColor
      */
-    void changeColor();
+    void mprChangeColor();
 
     /**
      * Loads a 3D medical image file into a Volume.

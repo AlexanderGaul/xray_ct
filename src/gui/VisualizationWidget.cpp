@@ -2,7 +2,7 @@
 
 void VisualizationWidget::updateColorLabel()
 {
-    _colorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
+    _mprColorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
 }
 
 void VisualizationWidget::updateVolumeInfo()
@@ -69,14 +69,14 @@ void VisualizationWidget::updateCoordinates()
 }
 
 VisualizationWidget::VisualizationWidget() :
-    _visModel {TransferFunction(TransferFunction::LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
+    _visModel {},
     _mainLayout {},
     _menuLayout {},
     _loadFileButton {"Load from file"},
     _loadRecButton {"Load reconstruction"},
-    _colorLayout {},
-    _colorLabel {},
-    _selectColorButton {"Select color"},
+    _mprColorLayout {},
+    _mprColorLabel {},
+    _mprSelectColorButton {"Select color"},
     _mprLayout {},
     _mprTitleLabel {"MPR (mulit planar reconstruction) configuration:"},
     _volumeInfoLabel {},
@@ -95,9 +95,9 @@ VisualizationWidget::VisualizationWidget() :
     _dvrWidget {_visModel}
 {
     updateColorLabel();
-    _colorLayout.addWidget(&_colorLabel);
-    _colorLayout.addWidget(&_selectColorButton);
-    _menuLayout.addItem(&_colorLayout);
+    _mprColorLayout.addWidget(&_mprColorLabel);
+    _mprColorLayout.addWidget(&_mprSelectColorButton);
+    _mprLayout.addItem(&_mprColorLayout);
 
     _coordinateLayout.addWidget(new QLabel("Point 1"), 0, 0);
     _coordinateLayout.addWidget(new QSpinBox, 0, 1);
@@ -211,7 +211,7 @@ VisualizationWidget::VisualizationWidget() :
     connect(&_dvrStepWidthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRStepWidth);
     connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
     connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
-    connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
+    connect(&_mprSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::mprChangeColor);
 }
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
@@ -219,12 +219,13 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
     updateVolumeChanged();
 }
 
-void VisualizationWidget::changeColor()
+void VisualizationWidget::mprChangeColor()
 {
     QColor newColor = QColorDialog::getColor(_visModel.color(),parentWidget());
     if ( newColor != _visModel.color() )
     {
         _visModel.setColor( newColor );
+        _mprWidget.setColor( newColor );
         updateColorLabel();
     }
 }

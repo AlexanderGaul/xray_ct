@@ -4,6 +4,8 @@
 
 #include <Eigen/Eigen>
 
+#include "TransferFunction.h"
+
 class DVRModel
 {
 private:
@@ -14,11 +16,15 @@ private:
     int _resolution;
     /// specifies the position of the camera
     Eigen::Vector3f _position;
+
+    TransferFunction _transferFunction;
 public:
-    DVRModel(float angle, int resolution, Eigen::Vector3f position)
+    DVRModel(float angle, int resolution, Eigen::Vector3f position,
+             TransferFunction transferFunction)
         : _angle(angle),
           _resolution(resolution),
-          _position {position}
+          _position {position},
+          _transferFunction {transferFunction}
     {
     }
 
@@ -45,6 +51,21 @@ public:
     void setPosition(Eigen::Vector3f position)
     {
         _position = position;
+    }
+
+    void setTransferFunction(TransferFunction transferFunction)
+    {
+        _transferFunction = transferFunction;
+    }
+
+    const TransferFunction& transferFunction() const
+    {
+        return _transferFunction;
+    }
+
+    void setColor(QColor color)
+    {
+        _transferFunction.setColor(0, color);
     }
 };
 

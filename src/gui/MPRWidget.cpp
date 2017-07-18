@@ -43,7 +43,7 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
         {
             float intensity = _visModel.volume().getVoxelLinear(curr);
             if(intensity < 0) intensity = 0;
-            QColor color = _visModel.transferFunction().classify(intensity);
+            QColor color = _mprModel.transferFunction().classify(intensity);
 
             painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth), color);
             curr += d1;

@@ -71,4 +71,9 @@ public:
      * @brief calibrateCamera
      */
     void calibrateCamera();
+
+    void setColor(QColor color)
+    {
+        _dvrModel.setColor(color);
+    }
 };
