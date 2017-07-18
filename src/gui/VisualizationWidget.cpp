@@ -94,11 +94,6 @@ VisualizationWidget::VisualizationWidget() :
     _mprWidget {_visModel},
     _dvrWidget {_visModel}
 {
-    updateColorLabel();
-    _mprColorLayout.addWidget(&_mprColorLabel);
-    _mprColorLayout.addWidget(&_mprSelectColorButton);
-    _mprLayout.addItem(&_mprColorLayout);
-
     _coordinateLayout.addWidget(new QLabel("Point 1"), 0, 0);
     _coordinateLayout.addWidget(new QSpinBox, 0, 1);
     _coordinateLayout.addWidget(new QSpinBox, 0, 2);
@@ -129,6 +124,10 @@ VisualizationWidget::VisualizationWidget() :
     updateCoordinates();
 
     _mprTitleLabel.setMaximumHeight(50);
+    updateColorLabel();
+    _mprColorLayout.addWidget(&_mprColorLabel);
+    _mprColorLayout.addWidget(&_mprSelectColorButton);
+    _mprLayout.addItem(&_mprColorLayout);
     _mprLayout.addWidget(&_mprTitleLabel);
     _mprLayout.addWidget(&_volumeInfoLabel);
     _mprLayout.addItem(&_coordinateLayout);
