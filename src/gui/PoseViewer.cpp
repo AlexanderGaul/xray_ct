@@ -18,6 +18,8 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _clearButton {"Clear all poses"},
      _model {model}
 {
+    QLabel* raysLabel = new QLabel("Show Rays");
+    QLabel* zoomLabel = new QLabel("Zoom");
 
     _zoomBox.setMinimum(1);
     _zoomBox.setMaximum(1000);
@@ -27,8 +29,15 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _viewsLayout.addWidget(&_poseDisplay2, 1, 1);
     _viewsLayout.addWidget(&_poseDisplay3, 1, 0);
     
-    _layoutBoxes.addWidget(&_raysBox, 0, 0);
-    _layoutBoxes.addWidget(&_zoomBox, 0, 1);
+    //_zoomBox.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    raysLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    zoomLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    
+    //_zoomBox.setAlignment(Qt::AlignLeft);
+    _layoutBoxes.addWidget(raysLabel);
+    _layoutBoxes.addWidget(&_raysBox);
+    _layoutBoxes.addWidget(zoomLabel);
+    _layoutBoxes.addWidget(&_zoomBox);
     _layoutBoxes.setAlignment(Qt::AlignLeft);
     
     _layout.addLayout(&_viewsLayout, 0, 0);
@@ -40,7 +49,14 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _layoutButtons.addWidget(&_clearButton);
     _layout.addLayout(&_layoutButtons, 3, 0);
     
+    QLabel* countLabel1 = new QLabel("Circles");
+    countLabel1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QLabel* countLabel2 = new QLabel("Max Poses per Circle");
+    countLabel2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    
+    _generatorLayout.addWidget(countLabel1);
     _generatorLayout.addWidget(&_poseCount1);
+    _generatorLayout.addWidget(countLabel2);
     _generatorLayout.addWidget(&_poseCount2);
     _generatorLayout.addWidget(&_generatePosesButton);
     
