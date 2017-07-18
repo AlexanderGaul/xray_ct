@@ -172,3 +172,8 @@ void DVRWidget::setStepSize(float stepSize)
     _dvrModel.setStepSize(stepSize);
     repaint();
 }
+
+void DVRWidget::setColorRange(float from, float to)
+{
+    _dvrModel.setColorRange(from, to);
+}

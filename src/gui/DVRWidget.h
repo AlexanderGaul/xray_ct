@@ -78,8 +78,5 @@ public:
 
     void setStepSize(float stepSize);
 
-    void setColorRange(float from, float to)
-    {
-        _dvrModel.setColorRange(from, to);
-    }
+    void setColorRange(float from, float to);
 };
