@@ -87,8 +87,9 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                     vol.getSpacing()[2] / resolution;
     float stepSize = _dvrModel.stepSize();
     if(stepSize == 0)
-    {
-        stepSize = 0.5;
+    {        
+        painter.drawText(width()/2, height()/2, "Error: DVR not possible with step size = 0!");
+        return;
     }
     stepSize /= 100;
     int steps = sizePixelX/stepSize;
