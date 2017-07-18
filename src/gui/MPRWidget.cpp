@@ -107,3 +107,13 @@ Eigen::Vector3f MPRWidget::t4() const
 {
     return _mprModel.t4();
 }
+
+void MPRWidget::setColor(QColor color)
+{
+    _mprModel.setColor(color);
+}
+
+QColor MPRWidget::color() const
+{
+    return _mprModel.color();
+}
