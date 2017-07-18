@@ -85,16 +85,15 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                     vol.getSpacing()[0] / resolution;
     float sizePixelZ = vol.getNumVoxels()[2] *
                     vol.getSpacing()[2] / resolution;
-    float stepSize = _dvrModel.stepSize();
-    if(stepSize == 0)
+    float stepSizeLength = _dvrModel.stepSize();
+    if(stepSizeLength == 0)
     {        
         painter.drawText(width()/2, height()/2, "Error: DVR not possible with step size = 0!");
         return;
     }
-    stepSize /= 100;
-    int steps = sizePixelX/stepSize;
+    stepSizeLength /= 100;
 
-    float reso = std::min(sizePixelX, sizePixelZ) / stepSize;
+    float reso = std::min(sizePixelX, sizePixelZ) / stepSizeLength;
 
     int tileWidth = std::min(width(), height()) / reso;
 
@@ -104,38 +103,19 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
     better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
 
-    std::cout << "##########" << std::endl;
-
+    MIP mip;
     for(int i = 0; i<=reso; ++i)
     {
         Eigen::Vector3f tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
         for(int j = 0; j<=reso; ++j)
         {
-            Line3f ray(tmp, correction);
-
-            // intersection between current pixel and volume
-            Eigen::Vector3f intersect = RayTracing::boxIntersect(box, ray);
-            std::cout << tmp(0) << ","<<tmp(1)<<","<<tmp(2)<<std::endl;
-
-            // do MIP (maximum intensity projection)
-            float max = 0.0;
-            // NaN check (NaN are odd in comparison and will not execute inner block)
-            if(intersect(0) == intersect(0))
-            {
-                for(int i = 0; i<steps; ++i)
-                {
-                    // calculate intensity using trilinear interpolation
-                    float intensity = vol.getVoxelLinearPhysical(intersect);
-                    if(intensity > max)
-                    {
-                        max = intensity;
-                    }
-                    intersect += (stepSize) * correction;
-                }
-                std::cout << max << std::endl;
-            }
+            float mipValue = mip.calculateMIP(
+                        vol,
+                        tmp,
+                        correction,
+                        stepSizeLength);
             // paint measured volume
-            QColor color = _dvrModel.transferFunction().classify(max);
+            QColor color = _dvrModel.transferFunction().classify(mipValue);
             painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
             // update pixel position
             tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);

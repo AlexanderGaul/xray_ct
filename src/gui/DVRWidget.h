@@ -8,8 +8,9 @@
 #include <QWidget>
 
 #include "DVRModel.h"
-#include "VisualizationModel.h"
+#include "MIP.h"
 #include "RayTracing.h"
+#include "VisualizationModel.h"
 #include "Volume.h"
 
 /**
