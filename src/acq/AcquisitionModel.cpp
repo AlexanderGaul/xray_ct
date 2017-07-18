@@ -163,8 +163,6 @@ void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
         AcquisitionPose pose {getBoundingBox()};
         pose.setRotation(distance / 2.f + i * distance, yAngle);
         _poses->push_back(pose);
-        updateProjection();
-        emit poseChanged();
     }
 }
 

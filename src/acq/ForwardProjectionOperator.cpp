@@ -1,7 +1,6 @@
 #include "ForwardProjectionOperator.h"
 #include <iostream>
 
-
  Eigen::VectorXf ForwardProjectionOperator::forwardProj (const Volume& vol, const AcquisitionPose& pose)
 {
     const int verticalPixels = pose.getPixelVertical();
@@ -24,6 +23,7 @@ Eigen::VectorXf ForwardProjectionOperator::forwardProj(const VolumeBase& vol, co
     int verticalPixels = poses[0].getPixelVertical();
     int horizontalPixels = poses[0].getPixelHorizontal();
     
+    #pragma omp parallel for
     for(int p = 0; p < poseCount;++p){
         for(int y = 0; y < verticalPixels; ++y){
             for(int x = 0; x < horizontalPixels; ++x){
@@ -32,5 +32,6 @@ Eigen::VectorXf ForwardProjectionOperator::forwardProj(const VolumeBase& vol, co
             }
         }
     }
+    
     return proj;
 }
