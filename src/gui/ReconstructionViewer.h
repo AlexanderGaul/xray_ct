@@ -74,7 +74,7 @@ public:
         _layout.addWidget(&_loadButton, 2, 0);
 
         _iterationLayout.addWidget(&_iterationLabel);
-        _iterationSlider.setRange(1, 10);
+        _iterationSlider.setRange(1, 100);
         _iterationSlider.setOrientation(Qt::Horizontal);
         //TODO: declare 5 as constant
         _iterationSlider.setValue(5);

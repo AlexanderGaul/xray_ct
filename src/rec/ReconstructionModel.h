@@ -55,7 +55,8 @@ private:
             return Eigen::VectorXf::Zero(_measurements->size());
         } else {
             auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-            static std::mt19937 gen {seed};
+            //TODO
+            static std::mt19937 gen {1};
             static std::normal_distribution<float> dist {};
             
             Eigen::VectorXf noiseVec {_measurements->size()};
