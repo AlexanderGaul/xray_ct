@@ -18,23 +18,11 @@ public:
 
     QColor apply(float intensity) const;
 
-    void setColor(QColor color)
-    {
-        _rgb = color;
-    }
+    void setColor(QColor color);
 
-    QColor color() const
-    {
-        return _rgb;
-    }
+    QColor color() const;
 
-    void setIntensity0(float intensity0)
-    {
-        _intensity0 = intensity0;
-    }
+    void setIntensity0(float intensity0);
 
-    void setIntensity1(float intensity1)
-    {
-        _intensity1 = intensity1;
-    }
+    void setIntensity1(float intensity1);
 };

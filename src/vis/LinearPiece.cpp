@@ -30,3 +30,23 @@ QColor LinearPiece::apply(float intensity) const
     color.setAlpha(std::max(std::min(opacity, 255), 0));
     return color;
 }
+
+void LinearPiece::setColor(QColor color)
+{
+    _rgb = color;
+}
+
+QColor LinearPiece::color() const
+{
+    return _rgb;
+}
+
+void LinearPiece::setIntensity0(float intensity0)
+{
+    _intensity0 = intensity0;
+}
+
+void LinearPiece::setIntensity1(float intensity1)
+{
+    _intensity1 = intensity1;
+}
