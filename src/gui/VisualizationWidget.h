@@ -44,11 +44,11 @@ private:
     QPushButton _loadFileButton;    
     ///loads the Volume from the ReconstructionPose
     QPushButton _loadRecButton;
-    ///manages the color-choosing related widgets
+    ///manages the color-choosing related widgets for mpr
     QHBoxLayout _mprColorLayout;
-    ///displays the current color
+    ///displays the current color for mpr
     QLabel _mprColorLabel;
-    ///opens a dialog to choose the color for visualization
+    ///opens a dialog to choose the color for visualization for mpr
     QPushButton _mprSelectColorButton;
     ///manages the MPR configuration
     QVBoxLayout _mprLayout;
@@ -60,6 +60,12 @@ private:
     QGridLayout _coordinateLayout;
     ///manages configuration of DVR
     QVBoxLayout _dvrLayout;
+    ///manages the color-choosing related widgets for dvr
+    QHBoxLayout _dvrColorLayout;
+    ///displays the current color for dvr
+    QLabel _dvrColorLabel;
+    ///opens a dialog to choose the color for visualization for dvr
+    QPushButton _dvrSelectColorButton;
     ///display description of DVR
     QLabel _dvrTitleLabel;
     ///manages label config of DVR
@@ -86,10 +92,18 @@ private:
     /**
      * Updates (colors) the color label
      * to show the user the currently used
-     * transfer function color.
+     * transfer function color for MPR.
      * @brief updateColorLabel
      */
-    void updateColorLabel();
+    void mprUpdateColorLabel();
+
+    /**
+     * Updates (colors) the color label
+     * to show the user the currently used
+     * transfer function color for DVR.
+     * @brief updateColorLabel
+     */
+    void dvrUpdateColorLabel();
 
     /**
      *  Updates the info label which
@@ -184,6 +198,13 @@ public slots:
      * @brief mprChangeColor
      */
     void mprChangeColor();
+
+    /**
+     * Change color of transfer function of DVR.
+     *
+     * @brief dvrChangeColor
+     */
+    void dvrChangeColor();
 
     /**
      * Loads a 3D medical image file into a Volume.

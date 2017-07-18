@@ -76,4 +76,9 @@ public:
     {
         _dvrModel.setColor(color);
     }
+
+    QColor color() const
+    {
+        return _dvrModel.color();
+    }
 };

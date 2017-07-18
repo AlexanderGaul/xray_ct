@@ -18,13 +18,16 @@ private:
     Eigen::Vector3f _position;
 
     TransferFunction _transferFunction;
+
+    QColor _color;
 public:
     DVRModel(float angle, int resolution, Eigen::Vector3f position,
              TransferFunction transferFunction)
         : _angle(angle),
           _resolution(resolution),
           _position {position},
-          _transferFunction {transferFunction}
+          _transferFunction {transferFunction},
+          _color(transferFunction.color(0))
     {
     }
 
@@ -63,9 +66,16 @@ public:
         return _transferFunction;
     }
 
+
     void setColor(QColor color)
     {
+        _color = color;
         _transferFunction.setColor(0, color);
+    }
+
+    const QColor& color() const
+    {
+        return _color;
     }
 };
 

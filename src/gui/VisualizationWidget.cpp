@@ -1,8 +1,13 @@
 #include "VisualizationWidget.h"
 
-void VisualizationWidget::updateColorLabel()
+void VisualizationWidget::mprUpdateColorLabel()
 {
-    _mprColorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
+    _mprColorLabel.setStyleSheet( "background-color: " + _mprWidget.color().name() );
+}
+
+void VisualizationWidget::dvrUpdateColorLabel()
+{
+    _dvrColorLabel.setStyleSheet( "background-color: " + _dvrWidget.color().name() );
 }
 
 void VisualizationWidget::updateVolumeInfo()
@@ -76,12 +81,15 @@ VisualizationWidget::VisualizationWidget() :
     _loadRecButton {"Load reconstruction"},
     _mprColorLayout {},
     _mprColorLabel {},
-    _mprSelectColorButton {"Select color"},
+    _mprSelectColorButton {"Select color for MPR"},
     _mprLayout {},
     _mprTitleLabel {"MPR (mulit planar reconstruction) configuration:"},
     _volumeInfoLabel {},
     _coordinateLayout{},
     _dvrLayout {},
+    _dvrColorLayout {},
+    _dvrColorLabel {},
+    _dvrSelectColorButton {"Select color for DVR"},
     _dvrTitleLabel {"DVR (direct volume rendering) configuration:"},
     _dvrAngleLayout {},
     _dvrAngleLabel {"Angle: "},
@@ -124,7 +132,7 @@ VisualizationWidget::VisualizationWidget() :
     updateCoordinates();
 
     _mprTitleLabel.setMaximumHeight(50);
-    updateColorLabel();
+    mprUpdateColorLabel();
     _mprColorLayout.addWidget(&_mprColorLabel);
     _mprColorLayout.addWidget(&_mprSelectColorButton);
     _mprLayout.addItem(&_mprColorLayout);
@@ -133,6 +141,10 @@ VisualizationWidget::VisualizationWidget() :
     _mprLayout.addItem(&_coordinateLayout);
 
     _menuLayout.addItem(&_mprLayout);
+
+    dvrUpdateColorLabel();
+    _dvrColorLayout.addWidget(&_dvrColorLabel);
+    _dvrColorLayout.addWidget(&_dvrSelectColorButton);
 
     _dvrAngleLayout.addWidget(&_dvrAngleLabel);
     _dvrAngleSlider.setRange(1,360);
@@ -154,6 +166,7 @@ VisualizationWidget::VisualizationWidget() :
     _dvrStepWidthSpinBox.setMaximumWidth(200);
 
     _dvrLayout.addWidget(&_dvrTitleLabel);
+    _mprLayout.addItem(&_dvrColorLayout);
     _dvrLayout.addItem(&_dvrAngleLayout);
     _dvrLayout.addItem(&_dvrStepWidthLayout);
 
@@ -211,6 +224,7 @@ VisualizationWidget::VisualizationWidget() :
     connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
     connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
     connect(&_mprSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::mprChangeColor);
+    connect(&_dvrSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::dvrChangeColor);
 }
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
@@ -220,12 +234,21 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
 
 void VisualizationWidget::mprChangeColor()
 {
-    QColor newColor = QColorDialog::getColor(_visModel.color(),parentWidget());
-    if ( newColor != _visModel.color() )
+    QColor newColor = QColorDialog::getColor(_mprWidget.color(),parentWidget());
+    if ( newColor != _mprWidget.color() )
     {
-        _visModel.setColor( newColor );
         _mprWidget.setColor( newColor );
-        updateColorLabel();
+        mprUpdateColorLabel();
+    }
+}
+
+void VisualizationWidget::dvrChangeColor()
+{
+    QColor newColor = QColorDialog::getColor(_dvrWidget.color(),parentWidget());
+    if ( newColor != _dvrWidget.color() )
+    {
+        _dvrWidget.setColor( newColor );
+        dvrUpdateColorLabel();
     }
 }
 

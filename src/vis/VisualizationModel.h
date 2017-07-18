@@ -27,16 +27,6 @@ public:
     {        
     }
 
-    void setColor(QColor color)
-    {
-        _color = color;
-    }
-
-    const QColor& color() const
-    {
-        return _color;
-    }
-
     void setVolume(Volume volume)
     {
         _volume = volume;

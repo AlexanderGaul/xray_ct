@@ -120,4 +120,9 @@ public slots:
     {
         _mprModel.setColor(color);
     }
+
+    QColor color() const
+    {
+        return _mprModel.color();
+    }
 };

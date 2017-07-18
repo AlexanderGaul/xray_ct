@@ -24,6 +24,8 @@ private:
 
     TransferFunction _transferFunction;
 
+    QColor _color;
+
 public:
     MPRModel();
 
@@ -53,9 +55,16 @@ public:
         return _transferFunction;
     }
 
+
     void setColor(QColor color)
     {
+        _color = color;
         _transferFunction.setColor(0, color);
+    }
+
+    const QColor& color() const
+    {
+        return _color;
     }
 };
 

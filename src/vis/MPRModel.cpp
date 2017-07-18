@@ -6,7 +6,8 @@ MPRModel::MPRModel()
       _t2(Position(1,0,0)),
       _t3(Position(0,1,0)),
       _t4(Position(-1,-1,-1)),
-      _transferFunction(TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255))))
+      _transferFunction(TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))),
+      _color(QColor::fromRgb(255,255,255))
 {
 }
 
@@ -17,7 +18,8 @@ MPRModel::MPRModel(int granularity, Position t1, Position t2, Position t3,
       _t2(t2),
       _t3(t3),
       _t4(Position(-1,-1,-1)),
-      _transferFunction(transferFunction)
+      _transferFunction(transferFunction),
+      _color(transferFunction.color(0))
 {
 }
 
