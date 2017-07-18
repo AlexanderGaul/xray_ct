@@ -1,8 +1,9 @@
 #ifndef VISUALIZATIONWIDGET_H
 #define VISUALIZATIONWIDGET_H
 
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <vector>
 
 #include <QColorDialog>
 #include <QFileDialog>
@@ -43,16 +44,28 @@ private:
     QPushButton _loadFileButton;    
     ///loads the Volume from the ReconstructionPose
     QPushButton _loadRecButton;
-    ///manages the color-choosing related widgets
-    QHBoxLayout _colorLayout;
-    ///displays the current color
-    QLabel _colorLabel;
-    ///opens a dialog to choose the color for visualization
-    QPushButton _selectColorButton;
-    ///choose the granularity of the 2D MPR
-    QSlider _granularitySlider;
+    ///manages the color-choosing related widgets for mpr
+    QHBoxLayout _mprColorLayout;
+    ///displays the current color for mpr
+    QLabel _mprColorLabel;
+    ///opens a dialog to choose the color for visualization for mpr
+    QPushButton _mprSelectColorButton;
+    ///manages the MPR configuration
+    QVBoxLayout _mprLayout;
+    ///displays title of MPR
+    QLabel _mprTitleLabel;
+    ///shows the dimensions of the volume on screen
+    QLabel _volumeInfoLabel;
+    ///layout for entering coordinates
+    QGridLayout _coordinateLayout;
     ///manages configuration of DVR
     QVBoxLayout _dvrLayout;
+    ///manages the color-choosing related widgets for dvr
+    QHBoxLayout _dvrColorLayout;
+    ///displays the current color for dvr
+    QLabel _dvrColorLabel;
+    ///opens a dialog to choose the color for visualization for dvr
+    QPushButton _dvrSelectColorButton;
     ///display description of DVR
     QLabel _dvrTitleLabel;
     ///manages label config of DVR
@@ -70,134 +83,128 @@ private:
     ///choose a suitable step width
     QSlider _dvrStepWidthSlider;
     ///display current step width
-    QSpinBox _dvrStepWidthSpinBox;
-
+    QDoubleSpinBox _dvrStepWidthSpinBox;
     ///renders the 2D MPR visualization
     MPRWidget _mprWidget;
     ///paints the direct volume rendering (DVR)
     DVRWidget _dvrWidget;
 
+    /**
+     * Updates (colors) the color label
+     * to show the user the currently used
+     * transfer function color for MPR.
+     * @brief updateColorLabel
+     */
+    void mprUpdateColorLabel();
 
-    void updateColorLabel()
-    {
-        _colorLabel.setStyleSheet( "background-color: " + _visModel.color().name() );
-    }
+    /**
+     * Updates (colors) the color label
+     * to show the user the currently used
+     * transfer function color for DVR.
+     * @brief updateColorLabel
+     */
+    void dvrUpdateColorLabel();
 
-    void updateMPRWidget()
-    {
-        // zero based -> decrement it!
-        int x = _visModel.volume().getNumVoxels()[0]-1;
-        int y = _visModel.volume().getNumVoxels()[1]-1;
-        int z = _visModel.volume().getNumVoxels()[2]-1;
-        _mprWidget.setT1(Eigen::Vector3f(0,0,0));
-        _mprWidget.setT2(Eigen::Vector3f(x,y,0));
-        _mprWidget.setT3(Eigen::Vector3f(x,y,z));
-    }
+    /**
+     *  Updates the info label which
+     *  displays the current volume size.
+     */
+    void updateVolumeInfo();
+
+    /**
+     * Sets the range limit of a certain spinbox inside
+     * the coordinate input layout.
+     * The spinbox gets the range [0,limit].
+     * @brief setLimit
+     * @param x - determines index of Point (from 0 to 3)
+     * @param y - determines dimension where the limit is set
+     * (x = 1, y = 2, or z = 3)
+     * @param limit
+     */
+    void setLimit(int x, int y, int limit);
+
+    /**
+     * Helper method, updates the limits
+     * for entering coordinates according to
+     * the current volume size.
+     * @brief updateCoordinateLimits
+     */
+    void updateCoordinateLimits();
+
+    /**
+     * Helper method, called after change of volume data.
+     * Updates the user interface accordingly.
+     * @brief updateVolumeChanged
+     */
+    void updateVolumeChanged();
 
     /**
      * Reset the DRW widget to its default position and
      * calibrate the camera for a new volume.
      * @brief updateDRWWidget
      */
-    void updateDVRWidget()
-    {
-        _dvrWidget.setAngle(0.0);
-        _dvrWidget.calibrateCamera();
-    }
+    void updateDVRWidget();
+
+    /**
+     * Calculate the fourth edge point of the plane used
+     * in multiple planar reconstruction (MPR).
+     */
+    void updateT4();
+
+    /**
+     * Updates on-screen value to given coordinate.
+     * Index parameter is used to access the spinboxes inside
+     * the coordinate grid layout.
+     * @brief setCoordinate
+     * @param index - index of point to be updated (can vary between 0 and 3, inclusive).
+     * @param coordinate
+     */
+    void setCoordinate(int index, Eigen::Vector3f coordinate);
+
+    /**
+     * Updates the coordinates of the control point T4
+     * and additionally updates on-screen values of T1,T2,T3
+     * @brief updateCoordinates
+     */
+    void updateCoordinates();
     
-public:
+public:    
+    /**
+     * Construct a new Visualization Widget and setup
+     * the whole user interface.
+     * @brief VisualizationWidget
+     */
+    VisualizationWidget();
     
-    VisualizationWidget() :
-        _visModel {TransferFunction(TransferFunction::LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
-        _mainLayout {},
-        _menuLayout {},
-        _loadFileButton {"Load from file"},
-        _loadRecButton {"Load reconstruction"},
-        _colorLayout {},
-        _colorLabel {},
-        _selectColorButton {"Select color"},
-        _granularitySlider {},
-        _dvrLayout {},
-        _dvrTitleLabel {"DVR (direct volume rendering) configuration:"},
-        _dvrAngleLayout {},
-        _dvrAngleLabel {"Angle: "},
-        _dvrAngleSlider {},
-        _dvrAngleSpinBox {},
-        _dvrStepWidthLayout {},
-        _dvrStepWidthLabel {"Step width: "},
-        _dvrStepWidthSlider {},
-        _dvrStepWidthSpinBox {},
-        _mprWidget {_visModel},
-        _dvrWidget {_visModel}
-    {
-        updateColorLabel();
-        _colorLayout.addWidget(&_colorLabel);
-        _colorLayout.addWidget(&_selectColorButton);
-        _menuLayout.addItem(&_colorLayout);
-
-        _granularitySlider.setRange(1, 10);
-        _granularitySlider.setOrientation(Qt::Horizontal);
-        _granularitySlider.setMaximumWidth(200);
-        _menuLayout.addWidget(&_granularitySlider);
-
-        _dvrAngleLayout.addWidget(&_dvrAngleLabel);
-        _dvrAngleSlider.setRange(1,360);
-        _dvrAngleSlider.setOrientation(Qt::Horizontal);
-        _dvrAngleLayout.addWidget(&_dvrAngleSlider);
-        _dvrAngleSpinBox.setRange(1,360);
-        _dvrAngleLayout.addWidget(&_dvrAngleSpinBox);
-        _dvrAngleLabel.setMaximumWidth(200);
-        _dvrAngleSlider.setMaximumWidth(200);
-        _dvrAngleSpinBox.setMaximumWidth(200);
-
-        _dvrStepWidthLayout.addWidget(&_dvrStepWidthLabel);
-        _dvrStepWidthSlider.setRange(1,100);
-        _dvrStepWidthSlider.setOrientation(Qt::Horizontal);
-        _dvrStepWidthLayout.addWidget(&_dvrStepWidthSlider);
-        _dvrStepWidthLayout.addWidget(&_dvrStepWidthSpinBox);
-        _dvrStepWidthLabel.setMaximumWidth(200);
-        _dvrStepWidthSlider.setMaximumWidth(200);
-        _dvrStepWidthSpinBox.setMaximumWidth(200);
-
-        _dvrLayout.addWidget(&_dvrTitleLabel);
-        _dvrLayout.addItem(&_dvrAngleLayout);
-        _dvrLayout.addItem(&_dvrStepWidthLayout);
-
-        _menuLayout.addItem(&_dvrLayout);
-
-        _menuLayout.addWidget(&_loadFileButton);
-        _menuLayout.addWidget(&_loadRecButton);
-        _mainLayout.addItem(&_menuLayout, 0, 0);
-
-        _mainLayout.addWidget(&_mprWidget, 0, 1);
-        _mainLayout.addWidget(&_dvrWidget, 0, 2);
-
-        _mprWidget.setMinimumHeight(150);
-        setLayout(&_mainLayout);
-
-        connect(&_granularitySlider, &QSlider::valueChanged, &_mprWidget, &MPRWidget::setGranularity);
-        connect(&_dvrAngleSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRAngle);
-        // cast necessary because spinbox has also valueChanged(QString) signal
-        connect(&_dvrAngleSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRAngle);
-        connect(&_dvrStepWidthSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRStepWidth);
-        connect(&_dvrStepWidthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRStepWidth);
-        connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
-        connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
-        connect(&_selectColorButton, &QPushButton::pressed, this, &VisualizationWidget::changeColor);
-    }
-    
-    void setRec(const std::shared_ptr<const Volume>& vol){
-        _visModel.setVolume(*vol);
-        updateMPRWidget();
-        updateDVRWidget();
-    }
+    /**
+     * Updates the current volume.
+     * This method makes it possible to load reconstruction
+     * results into the visualization widget.
+     * @brief setRec
+     * @param vol - shared pointer to reference to new volume.
+     */
+    void setRec(const std::shared_ptr<const Volume>& vol);
     
 signals:
-    //emit this event if you want the volume from the requisition. It is set through a call of setRec
+    /**
+     * emit this event if you want the volume from the requisition. It is set through a call of setRec.
+     */
     void requestRecVolume();
     
 public slots:
-    void changeColor();
+    /**
+     * Change color of transfer function of MPR.
+     *
+     * @brief mprChangeColor
+     */
+    void mprChangeColor();
+
+    /**
+     * Change color of transfer function of DVR.
+     *
+     * @brief dvrChangeColor
+     */
+    void dvrChangeColor();
 
     /**
      * Loads a 3D medical image file into a Volume.
@@ -205,21 +212,7 @@ public slots:
      * After that, the visualization widgets are reset to the default viewpoints.
      * @brief loadFromFile
      */
-    void loadFromFile(){
-        QFileDialog dialog(this);
-        dialog.setFileMode(QFileDialog::AnyFile);
-        dialog.setNameFilter(tr("Medical image data (*.edf)"));
-        QStringList fileNames;
-        if (dialog.exec())
-        {
-            fileNames = dialog.selectedFiles();
-            QString selection = fileNames.at(0);
-
-            _visModel.setVolume(EDFHandler::read(selection.toStdString()));
-            updateMPRWidget();
-            updateDVRWidget();
-        }
-    }
+    void loadFromFile();
 
     /**
      * Updates the angle for DVR.
@@ -227,29 +220,86 @@ public slots:
      * @brief updateDVRAngle
      * @param angle
      */
-    void updateDVRAngle(int angle)
-    {
-        _dvrAngleSpinBox.setValue(angle);
-        _dvrAngleSlider.setValue(angle);
-
-        float radianAngle = (angle*M_PI)/180.0;
-        _dvrWidget.setAngle(radianAngle);
-    }
+    void updateDVRAngle(int angle);
 
     /**
      * Updates the step width for DVR.
-     * TODO: specify criteria for step width
-     * CURRENTLY NOT USED BY DVR WIDGET!!!
-     * @brief updateDVRStepWidth
+     *
+     * @brief updateDVRStep size
      * @param stepWidth
      */
-    void updateDVRStepWidth(int stepWidth)
-    {
-        _dvrStepWidthSpinBox.setValue(stepWidth);
-        _dvrStepWidthSlider.setValue(stepWidth);
+    void updateDVRStepSize(float stepSize);
 
-        //TODO: update value in dvr widget
-    }
+    /**
+     * Updates the X value of the first coordinate
+     * determining the cutting plane (t1).
+     * @brief updateT1X
+     * @param value - new value of the X coordinate
+     */
+    void updateT1X(int value);
+
+    /**
+     * Updates the Y value of the first coordinate
+     * determining the cutting plane (t1).
+     * @brief updateT1Y
+     * @param value - new value of the Y coordinate
+     */
+    void updateT1Y(int value);
+
+    /**
+     * Updates the Z value of the first coordinate
+     * determining the cutting plane (t1).
+     * @brief updateT1Z
+     * @param value - new value of the Z coordinate
+     */
+    void updateT1Z(int value);
+
+    /**
+     * Updates the X value of the second coordinate
+     * determining the cutting plane (t2).
+     * @brief updateT2X
+     * @param value - new value of the X coordinate
+     */
+    void updateT2X(int value);
+
+    /**
+     * Updates the Y value of the second coordinate
+     * determining the cutting plane (t2).
+     * @brief updateT2Y
+     * @param value - new value of the Y coordinate
+     */
+    void updateT2Y(int value);
+
+    /**
+     * Updates the Z value of the second coordinate
+     * determining the cutting plane (t2).
+     * @brief updateT2Z
+     * @param value - new value of the Z coordinate
+     */
+    void updateT2Z(int value);
+
+    /**
+     * Updates the X value of the third coordinate
+     * determining the cutting plane (t3).
+     * @brief updateT3X
+     * @param value - new value of the X coordinate
+     */
+    void updateT3X(int value);
+
+    /**
+     * Updates the Y value of the third coordinate
+     * determining the cutting plane (t3).
+     * @brief updateT3Y
+     * @param value - new value of the Y coordinate
+     */
+    void updateT3Y(int value);
+    /**
+     * Updates the Z value of the third coordinate
+     * determining the cutting plane (t3).
+     * @brief updateT3Z
+     * @param value - new value of the Z coordinate
+     */
+    void updateT3Z(int value);
 };
 
 #endif // VISUALIZATIONWIDGET_H

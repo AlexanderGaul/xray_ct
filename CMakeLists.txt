@@ -55,6 +55,7 @@ target_link_libraries(part2
 # specify test source files
 set(PART2_TEST_SOURCES
         test/test_CG.cpp
+        test/test_MIP.cpp
         test/test_RayTracing.cpp
         test/test_SinogramGeneration.cpp
         test/test_Volume.cpp

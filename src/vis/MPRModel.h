@@ -4,6 +4,8 @@
 
 #include <Eigen/Eigen>
 
+#include "TransferFunction.h"
+
 typedef Eigen::Vector3f Position;
 
 /**
@@ -18,22 +20,52 @@ private:
     Position _t1;
     Position _t2;
     Position _t3;
+    Position _t4;
+
+    TransferFunction _transferFunction;
+
+    QColor _color;
 
 public:
     MPRModel();
 
-    MPRModel(int granularity, Position t1, Position t2, Position t3);
+    MPRModel(int granularity, Position t1, Position t2, Position t3,
+             TransferFunction transferFunction);
 
     int granularity() const;
 
     const Position& t1() const;
     const Position& t2() const;
     const Position& t3() const;
+    const Position& t4() const;
 
     void setGranularity(int granularity);
     void setT1(Position t1);
     void setT2(Position t2);
     void setT3(Position t3);
+    void setT4(Position t4);
+
+    void setTransferFunction(TransferFunction transferFunction)
+    {
+        _transferFunction = transferFunction;
+    }
+
+    const TransferFunction& transferFunction() const
+    {
+        return _transferFunction;
+    }
+
+
+    void setColor(QColor color)
+    {
+        _color = color;
+        _transferFunction.setColor(0, color);
+    }
+
+    const QColor& color() const
+    {
+        return _color;
+    }
 };
 
 #endif //MPRMODEL_H

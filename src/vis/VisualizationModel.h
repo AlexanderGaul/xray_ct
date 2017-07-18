@@ -20,25 +20,11 @@ private:
 
     Volume _volume;
 
-    TransferFunction _transferFunction;
-
 public:
-    VisualizationModel(TransferFunction transferFunction)
+    VisualizationModel()
         : _color { QColor::fromRgb(255, 255, 255)}, //white
-          _volume {},
-          _transferFunction {transferFunction}
+          _volume {}
     {        
-    }
-
-    void setColor(QColor color)
-    {
-        _color = color;
-        _transferFunction.setColor(0, color);
-    }
-
-    const QColor& color() const
-    {
-        return _color;
     }
 
     void setVolume(Volume volume)
@@ -49,15 +35,5 @@ public:
     const Volume& volume() const
     {
         return _volume;
-    }
-
-    void setTransferFunction(TransferFunction transferFunction)
-    {
-        _transferFunction = transferFunction;
-    }
-
-    const TransferFunction& transferFunction() const
-    {
-        return _transferFunction;
     }
 };

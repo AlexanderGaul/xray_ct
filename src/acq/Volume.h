@@ -76,20 +76,6 @@ private:
         _boundingBox.translate(-_boundingBox.center());
     }
 
-    bool validPosition(Eigen::Vector3f& position) const
-    {
-        if(position.x() > getNumVoxels()[0]
-            || position.y() > getNumVoxels()[1]
-            || position.z() > getNumVoxels()[2]
-            || position.x() < 0
-            || position.y() < 0
-            || position.z() < 0)
-        {
-            return false;
-        }
-        return true;
-    }
-    
 public:
     Volume() : VolumeBase {}, _content {}{
         
@@ -117,6 +103,36 @@ public:
     {
         centerBoundingBox();
     }
+
+    bool validPosition(const Eigen::Vector3f& position) const
+    {
+        if(position.x() > getNumVoxels()[0]
+            || position.y() > getNumVoxels()[1]
+            || position.z() > getNumVoxels()[2]
+            || position.x() < 0
+            || position.y() < 0
+            || position.z() < 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool validInnerPosition(const Eigen::Vector3f& position) const
+    {
+        Eigen::Vector3f enhanced = position + Eigen::Vector3f(1,1,1);
+        if(enhanced.x() > getNumVoxels()[0]
+            || enhanced.y() > getNumVoxels()[1]
+            || enhanced.z() > getNumVoxels()[2]
+            || position.x() < 0
+            || position.y() < 0
+            || position.z() < 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
     
     const content_type& content() const
     {
@@ -185,6 +201,11 @@ public:
         if(!validPosition(position))
         {
             return -1.0;
+        }
+
+        if(!validInnerPosition(position))
+        {
+            return getVoxel(position.cast<int>());
         }
 
         // index of voxel centers surrounding the position
@@ -271,8 +292,6 @@ public:
         position(0) /= spacing(0);
         position(1) /= spacing(1);
         position(2) /= spacing(2);
-
-        position -= Eigen::Vector3f(1,1,1);
 
         return getVoxelLinear(position);
     }
