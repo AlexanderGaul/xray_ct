@@ -148,8 +148,8 @@ public:
      * lambda is the lambda for the regularized Container, it is only used when
      * regularized is actually true, otherwise it is discarded
      */
-    void setAcq(bool regularized, float lambda, int cgIterations, Acquisition&& acq){
-        _model = ReconstructionModel {regularized, lambda, cgIterations, std::move(acq.volBase), std::move(acq.poses), std::move(acq.measurements)};
+    void setAcq(bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq){
+        _model = ReconstructionModel {regularized, lambda, noisy, noise, cgIterations, std::move(acq.volBase), std::move(acq.poses), std::move(acq.measurements)};
         update();
         //Important reset, if the volume boundaries would recParamChanged
         _currSlice = 0;
@@ -161,8 +161,8 @@ public:
      * 
      * param. description see above
      */
-    void recParamChanged(bool regularized, float lambda, int cgIterations){
-        _model.recalcVolume(regularized, lambda, cgIterations);
+    void recParamChanged(bool regularized, float lambda, bool noisy, float noise, int cgIterations){
+        _model.changeReconstructionParams(regularized, lambda, noisy, noise, cgIterations);
         update();
         _currSlice = 0;
         emit sliceChanged();
