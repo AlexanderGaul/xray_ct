@@ -86,6 +86,7 @@ public:
         updateRegText();
         _regLambda.setButtonSymbols(QAbstractSpinBox::NoButtons);
         _regLayout.addWidget(&_regLambda);
+        _regLambda.setRange(0, 100000);
         _layout.addItem(&_regLayout, 4, 0);
 
         _updateButton.setEnabled(false);
@@ -183,6 +184,9 @@ public slots:
      */
     void enableUpdate()
     {
+        if(!_sWidget.containsRec()){
+            return;
+        }
         _updateButton.setEnabled(true);
     }
 };

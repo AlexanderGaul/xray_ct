@@ -23,8 +23,8 @@ bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
 
 AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)}, 
-    _poses { std::make_shared<std::vector<AcquisitionPose>>( std::vector<AcquisitionPose> {_volume.getBoundingBox()})}, 
-    _measurements {std::make_shared<Eigen::VectorXf>(ForwardProjectionOperator::forwardProj(volume(), currPoseChecked()))}
+    _poses { _volume.getBoundingBox()}, 
+    _measurements {ForwardProjectionOperator::forwardProj(_volume, currPoseChecked())}
 {
 }
 
@@ -32,7 +32,7 @@ AcquisitionModel::AcquisitionModel(std::string path)
 void AcquisitionModel::loadImage(std::string path)
 {
     _volume = EDFHandler::read(path);
-    _poses->push_back(_volume.getBoundingBox());
+    _poses.push_back(_volume.getBoundingBox());
     if(!checkIfVolumeFitsBlackBox())
     {
         throw std::logic_error("the specified volume does not fit the black box!");
@@ -78,7 +78,7 @@ Eigen::AlignedBox3f AcquisitionModel::getBoundingBox() const{
     }
 
 void AcquisitionModel::clearPoses() {
-        _poses->clear();
+        _poses.clear();
         //since the stack must alway contain one element, add the default pose again
         addDefaultPose();
         updateProjection();
@@ -87,8 +87,8 @@ void AcquisitionModel::clearPoses() {
 
 void AcquisitionModel::deletePose() {
         //since there always has to be an element pop always works
-        _poses->pop_back();
-        if(_poses->empty()){
+        _poses.pop_back();
+        if(_poses.empty()){
             addDefaultPose();
         }
         updateProjection();
@@ -102,35 +102,35 @@ void AcquisitionModel::savePose() {
     }
 
 AcquisitionPose& AcquisitionModel::currPose() {
-        return _poses->back();
+        return _poses.back();
     }
 
 const AcquisitionPose& AcquisitionModel::currPose() const {
-        return _poses->back();
+        return _poses.back();
     }
 
 AcquisitionPose& AcquisitionModel::currPoseChecked() {
-        if(_poses->empty()){
+        if(_poses.empty()){
             throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
         }
-        return _poses->back();
+        return _poses.back();
     }
 
 const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
-        if(_poses->empty()){
+        if(_poses.empty()){
             throw std::out_of_range("Acess on empty pose vector. Fix the AcquistionModel, so that doesn't happen!");
         }
-        return _poses->back();
+        return _poses.back();
     }
 
 
 void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float range)
 {
-    _poses->pop_back();
+    _poses.pop_back();
     
     float distance = M_PI / circles;
     
-    _poses->reserve(circles * equatorialCount);
+    _poses.reserve(circles * equatorialCount);
     
     for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
     {
@@ -162,7 +162,7 @@ void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
     {
         AcquisitionPose pose {getBoundingBox()};
         pose.setRotation(distance / 2.f + i * distance, yAngle);
-        _poses->push_back(pose);
+        _poses.push_back(pose);
     }
 }
 
@@ -170,25 +170,25 @@ std::pair<int, const Eigen::VectorXf> AcquisitionModel::getLastProj()
 {
     const AcquisitionPose currAcq = currPoseChecked();
     const int totalSize = currAcq.getPixelCount();
-    const int offset = _measurements->size() - totalSize;
+    const int offset = _measurements.size() - totalSize;
     
     
     Eigen::VectorXf proj {totalSize};
     for(int p = 0; p < totalSize; ++p){
-        proj[p] = (*_measurements)[offset + p];
+        proj[p] = _measurements[offset + p];
     }
     return std::make_pair(currAcq.getPixelVertical(), proj);
 }
 
 void AcquisitionModel::addDefaultPose(){
-    _poses->push_back(AcquisitionPose {getBoundingBox()});
+    _poses.push_back(AcquisitionPose {getBoundingBox()});
     
     updateLastProjection();
 }
 
 void AcquisitionModel::updateProjection(){
-    _measurements = std::make_shared<Eigen::VectorXf>(
-        ForwardProjectionOperator::forwardProj(_volume, *_poses, _volume.content().rawVec()));
+    _measurements = 
+        ForwardProjectionOperator::forwardProj(_volume, _poses, _volume.content().rawVec());
     // TODO is this necessary??
     //emit poseChanged();
 }
@@ -196,11 +196,11 @@ void AcquisitionModel::updateProjection(){
 void AcquisitionModel::updateLastProjection(){
     const int rayCount = currPoseChecked().getPixelCount();
     const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
-    const int offset = _measurements->size() - rayCount;
+    const int offset = _measurements.size() - rayCount;
     assert(rayCount == proj.size());
     
     for(int x = 0 ; x < rayCount; ++x) {
-        (*_measurements)[offset + x] = proj[x];
+        _measurements[offset + x] = proj[x];
     }
     emit poseChanged();
 }

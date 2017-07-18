@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include <QGridLayout>
 #include <QLabel>
@@ -23,26 +24,28 @@ class SliceWidget : public QWidget
 private:
     int _currSlice;
     int _status;
-    ReconstructionModel _model;
+    std::unique_ptr<ReconstructionModel> _model;
     QImage _image;
 
 public:
-    SliceWidget() : _currSlice(0), _status(2), _model {ReconstructionModel {}}, _image {} {
+    SliceWidget() : _currSlice(0), _status(2), _model {nullptr}, _image {} {
     }
 
     virtual
     void paintEvent(QPaintEvent *event)
     {
+        if(!_model){
+            return;
+        }
         QPainter painter(this);
 
-        const Vec3D<float>& content = _model.getContent();
+        const Vec3D<float>& content = _model->getContent();
         if(content.totalSize() == 0){
             return;
         }
 
-        float maxColor = _model.rec().maxEntry();
+        float maxColor = _model->rec().maxEntry();
         float colorCoeff = 255.0/maxColor;
-        // TODO: reduce duplication
         if(_status == 2)
         {
             int pixelWidth = 1.0*width()/(content.sizeX());
@@ -129,15 +132,17 @@ public:
 
     int slices()
     {
+        if(!_model){
+            return 0;
+        }
         switch(_status)
         {
             case 0:
-                std::cout << _model.rec().content().sizeX() << std::endl;
-                return _model.rec().content().sizeX();
+                return _model->rec().content().sizeX();
             case 1:
-                return _model.rec().content().sizeY();
+                return _model->rec().content().sizeY();
             default:
-                return _model.rec().content().sizeZ();
+                return _model->rec().content().sizeZ();
         }
     }
     
@@ -149,7 +154,7 @@ public:
      * regularized is actually true, otherwise it is discarded
      */
     void setAcq(bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq){
-        _model = ReconstructionModel {regularized, lambda, noisy, noise, cgIterations, std::move(acq.volBase), std::move(acq.poses), std::move(acq.measurements)};
+        _model = std::make_unique<ReconstructionModel>(regularized, lambda, noisy, noise, cgIterations, std::move(acq));
         update();
         //Important reset, if the volume boundaries would recParamChanged
         _currSlice = 0;
@@ -162,14 +167,24 @@ public:
      * param. description see above
      */
     void recParamChanged(bool regularized, float lambda, bool noisy, float noise, int cgIterations){
-        _model.changeReconstructionParams(regularized, lambda, noisy, noise, cgIterations);
+        if(!_model){
+            return;
+        }
+        _model->changeReconstructionParams(regularized, lambda, noisy, noise, cgIterations);
         update();
         _currSlice = 0;
         emit sliceChanged();
     }
     
     std::shared_ptr<const Volume> getRec(){
-        return _model.getRec();
+        if(!_model){
+            return nullptr;
+        }
+        return _model->getRec();
+    }
+    
+    bool containsRec(){
+        return bool(_model);
     }
 
 signals:

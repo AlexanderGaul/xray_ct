@@ -27,7 +27,6 @@ Eigen::VectorXf ForwardProjectionOperator::forwardProj(const VolumeBase& vol, co
     for(int p = 0; p < poseCount;++p){
         for(int y = 0; y < verticalPixels; ++y){
             for(int x = 0; x < horizontalPixels; ++x){
-                //TODO some values where negative (but less than 0.01), investigate why this is
                 proj[x + y*horizontalPixels + p*horizontalPixels*verticalPixels] = RayTracing::forwardProject(vol, poses[p].getRay(x, y), values);
             }
         }

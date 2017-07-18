@@ -85,7 +85,7 @@ public:
     
     
     std::shared_ptr<std::vector<AcquisitionPose>> getPoses()
-    { return _poses; }
+    { return std::make_shared<std::vector<AcquisitionPose>>(_poses); }
     
     
     /**
@@ -103,18 +103,16 @@ public:
 public:
     
     /*
-     * returns a pair of the number of rows (=rays) in the _measurements arrey
+     * returns a pair of the number of rows (=poses) in the _measurements arrey
      * and the measurements themselves
      * This may not be the safest way to acess the vector for painting it but
      * probably the fastest.
-     * 
-     * ?? return number of poses, not number of rows
      * 
      * TODO right now the Projection vector is copied unecessarily but a refernce
      * didn't work. Shouldn't be a problem most of the time; can be fixed later
      */
     std::pair<int, const Eigen::VectorXf> getProj() {
-        return std::make_pair(_poses->size(), *_measurements); 
+        return std::make_pair(_poses.size(), _measurements); 
     }
     /*
      * returns only the last projection
@@ -123,7 +121,7 @@ public:
     
     
     const Eigen::VectorXf& getProjection(){
-        return *_measurements;
+        return _measurements;
     }
     
     /*
@@ -178,9 +176,9 @@ private:
      * more than one pose can be calculated.
      * There has to be alway one element in this stack, which is the one shown in the gui.
      */
-    std::shared_ptr<std::vector<AcquisitionPose>> _poses;
+    std::vector<AcquisitionPose> _poses;
     
-    std::shared_ptr<Eigen::VectorXf> _measurements;
+    Eigen::VectorXf _measurements;
 
 };
 

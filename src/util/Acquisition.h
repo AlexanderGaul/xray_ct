@@ -18,11 +18,11 @@
 struct Acquisition
 {
     VolumeBase volBase;
-    std::shared_ptr<const std::vector<AcquisitionPose>> poses;
-    std::shared_ptr<const Eigen::VectorXf> measurements;
+    std::vector<AcquisitionPose> poses;
+    const Eigen::VectorXf measurements;
     
-    Acquisition(const VolumeBase& volBase, std::shared_ptr<const std::vector<AcquisitionPose>> poses, 
-        std::shared_ptr<const Eigen::VectorXf> measurements
+    Acquisition(const VolumeBase& volBase, const std::vector<AcquisitionPose>& poses, 
+        const Eigen::VectorXf& measurements
     ) : volBase {volBase}, poses {poses}, measurements {measurements} {
         
     }
