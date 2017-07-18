@@ -45,14 +45,14 @@ Eigen::Vector3f DVRWidget::normalize(Eigen::Vector3f x)
 
 DVRWidget::DVRWidget(const VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()),
+      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.5,
                  TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))}
 {
 }
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
 {
-    if(_mode == EMPTY)
+    if(_visModel.volume().getTotalVoxelCount() == 0)
     {
         return;
     }
@@ -64,8 +64,6 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 
     float angle = _dvrModel.angle();
     int resolution = _dvrModel.resolution();
-    int steps = 100;
-    int tileWidth = std::min(width(), height()) / resolution;
 
     // get direction vector between volume center and detector center
     Eigen::Vector3f direction(std::cos(angle),std::sin(angle),0);
@@ -86,19 +84,30 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                     vol.getSpacing()[0] / resolution;
     float sizePixelZ = vol.getNumVoxels()[2] *
                     vol.getSpacing()[2] / resolution;
+    float stepSize = _dvrModel.stepSize();
+    if(stepSize == 0)
+    {
+        stepSize = 0.5;
+    }
+    stepSize /= 100;
+    int steps = sizePixelX/stepSize;
+
+    float reso = std::min(sizePixelX, sizePixelZ) / stepSize;
+
+    int tileWidth = std::min(width(), height()) / reso;
 
     // calculate position of pixel most down and left in camera
     Eigen::Vector3f better = _dvrModel.position();
-    better(0) -= std::sin(angle)*sizePixelX*0.5*resolution;
-    better(1) -= std::cos(angle)*sizePixelX*0.5*resolution;
+    better(0) -= std::sin(angle)*sizePixelX*0.5*reso;
+    better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
     better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
 
     std::cout << "##########" << std::endl;
 
-    for(int i = 0; i<=resolution; ++i)
+    for(int i = 0; i<=reso; ++i)
     {
         Eigen::Vector3f tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
-        for(int j = 0; j<=resolution; ++j)
+        for(int j = 0; j<=reso; ++j)
         {
             Line3f ray(tmp, correction);
 
@@ -119,7 +128,7 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                     {
                         max = intensity;
                     }
-                    intersect += (sizePixelX/steps) * correction;
+                    intersect += (stepSize) * correction;
                 }
                 std::cout << max << std::endl;
             }

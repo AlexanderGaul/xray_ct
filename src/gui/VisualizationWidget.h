@@ -83,7 +83,7 @@ private:
     ///choose a suitable step width
     QSlider _dvrStepWidthSlider;
     ///display current step width
-    QSpinBox _dvrStepWidthSpinBox;
+    QDoubleSpinBox _dvrStepWidthSpinBox;
     ///renders the 2D MPR visualization
     MPRWidget _mprWidget;
     ///paints the direct volume rendering (DVR)
@@ -224,12 +224,11 @@ public slots:
 
     /**
      * Updates the step width for DVR.
-     * TODO: specify criteria for step width
-     * CURRENTLY NOT USED BY DVR WIDGET!!!
-     * @brief updateDVRStepWidth
+     *
+     * @brief updateDVRStep size
      * @param stepWidth
      */
-    void updateDVRStepWidth(int stepWidth);
+    void updateDVRStepSize(float stepSize);
 
     /**
      * Updates the X value of the first coordinate

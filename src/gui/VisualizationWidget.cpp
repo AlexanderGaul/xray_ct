@@ -219,8 +219,8 @@ VisualizationWidget::VisualizationWidget() :
     connect(&_dvrAngleSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRAngle);
     // cast necessary because spinbox has also valueChanged(QString) signal
     connect(&_dvrAngleSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRAngle);
-    connect(&_dvrStepWidthSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRStepWidth);
-    connect(&_dvrStepWidthSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &VisualizationWidget::updateDVRStepWidth);
+    connect(&_dvrStepWidthSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRStepSize);
+    connect(&_dvrStepWidthSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &VisualizationWidget::updateDVRStepSize);
     connect(&_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
     connect(&_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
     connect(&_mprSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::mprChangeColor);
@@ -276,12 +276,12 @@ void VisualizationWidget::updateDVRAngle(int angle)
     _dvrWidget.setAngle(radianAngle);
 }
 
-void VisualizationWidget::updateDVRStepWidth(int stepWidth)
+void VisualizationWidget::updateDVRStepSize(float stepSize)
 {
-    _dvrStepWidthSpinBox.setValue(stepWidth);
-    _dvrStepWidthSlider.setValue(stepWidth);
+    _dvrStepWidthSpinBox.setValue(stepSize);
+    _dvrStepWidthSlider.setValue(stepSize);
 
-    //TODO: update value in dvr widget
+    _dvrWidget.setStepSize(stepSize);
 }
 
 void VisualizationWidget::updateT1X(int value)

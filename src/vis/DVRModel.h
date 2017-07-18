@@ -16,16 +16,18 @@ private:
     int _resolution;
     /// specifies the position of the camera
     Eigen::Vector3f _position;
+    float _stepSize;
 
     TransferFunction _transferFunction;
 
     QColor _color;
 public:
-    DVRModel(float angle, int resolution, Eigen::Vector3f position,
+    DVRModel(float angle, int resolution, Eigen::Vector3f position, float stepSize,
              TransferFunction transferFunction)
         : _angle(angle),
           _resolution(resolution),
           _position {position},
+          _stepSize {stepSize},
           _transferFunction {transferFunction},
           _color(transferFunction.color(0))
     {
@@ -76,6 +78,16 @@ public:
     const QColor& color() const
     {
         return _color;
+    }
+
+    void setStepSize(float stepsize)
+    {
+        _stepSize = stepsize;
+    }
+
+    float stepSize() const
+    {
+        return _stepSize;
     }
 };
 

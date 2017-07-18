@@ -81,4 +81,11 @@ public:
     {
         return _dvrModel.color();
     }
+
+    void setStepSize(float stepSize)
+    {
+        _dvrModel.setStepSize(stepSize);
+        repaint();
+
+    }
 };
