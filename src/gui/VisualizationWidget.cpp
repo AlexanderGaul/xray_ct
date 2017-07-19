@@ -229,6 +229,9 @@ VisualizationWidget::VisualizationWidget() :
 }
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
+    if(!vol){
+        return;
+    }
     _visModel.setVolume(*vol);
     updateVolumeChanged();
 }

@@ -86,6 +86,7 @@ public:
         updateRegText();
         _regLambda.setButtonSymbols(QAbstractSpinBox::NoButtons);
         _regLayout.addWidget(&_regLambda);
+        _regLambda.setRange(0, 100000);
         _layout.addItem(&_regLayout, 4, 0);
 
         _updateButton.setEnabled(false);
@@ -129,7 +130,7 @@ public:
             _sWidget.setAcq(_regCheckBox.isChecked(),
                             static_cast<float>(_regLambda.value()),
                             _noiseCheckBox.isChecked(),
-                            _noiseSpinBox.value(),
+                            _noiseSpinBox.value()/100,
                             _iterationSlider.value(),
                             std::move(acq));
     }
@@ -170,7 +171,7 @@ public slots:
     void updateReconstruction()
     {
         _sWidget.recParamChanged(_regCheckBox.isChecked(), _regLambda.value(),
-                                 _noiseCheckBox.isChecked(), _noiseSpinBox.value(),
+                                 _noiseCheckBox.isChecked(), _noiseSpinBox.value()/100,
                                  _iterationSlider.value());
         //_updateButton.setEnabled(false);
     }
@@ -183,6 +184,9 @@ public slots:
      */
     void enableUpdate()
     {
+        if(!_sWidget.containsRec()){
+            return;
+        }
         _updateButton.setEnabled(true);
     }
 };
