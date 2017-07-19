@@ -14,7 +14,7 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
     if(vol.getTotalVoxelCount() == 0)
     {
         painter.drawText(width()/2, height()/2, "Error: No data loaded!");
-        return; // no data or invalid shape
+        return;
     }
     int resolution = 50;
     int tileWidth = 20;
@@ -45,7 +45,7 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
             Eigen::Vector3f curr = origin + stepX * i * xDir
                     + stepY * j * yDir;
             float intensity = vol.getVoxelLinearPhysical(curr);
-            std::cout << intensity << std::endl;
+
             QColor color = _mprModel.transferFunction().classify(intensity);
             painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
         }
@@ -53,57 +53,10 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
 
 }
 
-void MPRWidget::updateT4()
-{
-    Eigen::Vector3f t4 = _mprModel.t1() +
-            (_mprModel.t2() - _mprModel.t1()) +
-            (_mprModel.t3() - _mprModel.t1());
-    _mprModel.setT4(Eigen::Vector3f(1,1,1));
-}
-
 void MPRWidget::setGranularity(int granularity)
 {
     _mprModel.setGranularity(granularity*10);
     repaint();
-}
-
-void MPRWidget::setT1(Eigen::Vector3f position)
-{
-    _mprModel.setT1(position);
-    repaint();
-}
-
-void MPRWidget::setT2(Eigen::Vector3f position)
-{
-    _mprModel.setT2(position);
-    repaint();
-}
-
-void MPRWidget::setT3(Eigen::Vector3f position)
-{
-    _mprModel.setT3(position);
-    repaint();
-}
-
-
-Eigen::Vector3f MPRWidget::t1() const
-{
-    return _mprModel.t1();
-}
-
-Eigen::Vector3f MPRWidget::t2() const
-{
-    return _mprModel.t2();
-}
-
-Eigen::Vector3f MPRWidget::t3() const
-{
-    return _mprModel.t3();
-}
-
-Eigen::Vector3f MPRWidget::t4() const
-{
-    return _mprModel.t4();
 }
 
 void MPRWidget::setColor(QColor color)

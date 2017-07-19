@@ -97,14 +97,6 @@ public:
      */
     void paintEvent(QPaintEvent* p_e) override;
 
-    /**
-     * Updates the fourth coordinate of the plane which
-     * is precomputed and completely determined
-     * by the three user defined points.
-     * @brief updateT4
-     */
-    void updateT4();
-
 public slots:
     /**
      * Sets the granularity of the mpr widget.
@@ -115,65 +107,6 @@ public slots:
      * @param granularity
      */
     void setGranularity(int granularity);
-
-    /**
-     * Sets the first point describing the 2D plane of MPR.
-     * @brief setT1
-     * @param position - position of the first point
-     */
-    void setT1(Eigen::Vector3f position);
-
-    /**
-     * Sets the second point describing the 2D plane of MPR.
-     * @brief setT2
-     * @param position - position of the second point
-     */
-    void setT2(Eigen::Vector3f position);
-
-    /**
-     * Sets the third point describing the 2D plane of MPR.
-     * @brief setT3
-     * @param position - position of the third point
-     */
-    void setT3(Eigen::Vector3f position);
-
-    /**
-     * Gets the first position which determines the
-     * cutting plane.
-     * Delegates further to model.
-     * @brief t1
-     * @return
-     */
-    Eigen::Vector3f t1() const;
-
-    /**
-     * Gets the second position which determines the
-     * cutting plane.
-     * Delegates further to model.
-     * @brief t2
-     * @return
-     */
-    Eigen::Vector3f t2() const;
-
-    /**
-     * Gets the third position which determines the
-     * cutting plane.
-     * Delegates further to model.
-     * @brief t3
-     * @return
-     */
-    Eigen::Vector3f t3() const;
-
-    /**
-     * Gets the control position which determines the
-     * cutting plane and is used to check
-     * if the cutting plane is valid (does not
-     * exceed the volume).
-     * Delegates further to model.
-     * @brief t4
-     * @return
-     */
-    Eigen::Vector3f t4() const;
 
     /**
      * Sets the color used for the MPR transfer

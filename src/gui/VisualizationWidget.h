@@ -112,26 +112,6 @@ private:
     void updateVolumeInfo();
 
     /**
-     * Sets the range limit of a certain spinbox inside
-     * the coordinate input layout.
-     * The spinbox gets the range [0,limit].
-     * @brief setLimit
-     * @param x - determines index of Point (from 0 to 3)
-     * @param y - determines dimension where the limit is set
-     * (x = 1, y = 2, or z = 3)
-     * @param limit
-     */
-    void setLimit(int x, int y, int limit);
-
-    /**
-     * Helper method, updates the limits
-     * for entering coordinates according to
-     * the current volume size.
-     * @brief updateCoordinateLimits
-     */
-    void updateCoordinateLimits();
-
-    /**
      * Helper method, called after change of volume data.
      * Updates the user interface accordingly.
      * @brief updateVolumeChanged
@@ -144,29 +124,6 @@ private:
      * @brief updateDRWWidget
      */
     void updateDVRWidget();
-
-    /**
-     * Calculate the fourth edge point of the plane used
-     * in multiple planar reconstruction (MPR).
-     */
-    void updateT4();
-
-    /**
-     * Updates on-screen value to given coordinate.
-     * Index parameter is used to access the spinboxes inside
-     * the coordinate grid layout.
-     * @brief setCoordinate
-     * @param index - index of point to be updated (can vary between 0 and 3, inclusive).
-     * @param coordinate
-     */
-    void setCoordinate(int index, Eigen::Vector3f coordinate);
-
-    /**
-     * Updates the coordinates of the control point T4
-     * and additionally updates on-screen values of T1,T2,T3
-     * @brief updateCoordinates
-     */
-    void updateCoordinates();
     
 public:    
     /**
@@ -229,77 +186,6 @@ public slots:
      * @param stepWidth
      */
     void updateDVRStepSize(float stepSize);
-
-    /**
-     * Updates the X value of the first coordinate
-     * determining the cutting plane (t1).
-     * @brief updateT1X
-     * @param value - new value of the X coordinate
-     */
-    void updateT1X(int value);
-
-    /**
-     * Updates the Y value of the first coordinate
-     * determining the cutting plane (t1).
-     * @brief updateT1Y
-     * @param value - new value of the Y coordinate
-     */
-    void updateT1Y(int value);
-
-    /**
-     * Updates the Z value of the first coordinate
-     * determining the cutting plane (t1).
-     * @brief updateT1Z
-     * @param value - new value of the Z coordinate
-     */
-    void updateT1Z(int value);
-
-    /**
-     * Updates the X value of the second coordinate
-     * determining the cutting plane (t2).
-     * @brief updateT2X
-     * @param value - new value of the X coordinate
-     */
-    void updateT2X(int value);
-
-    /**
-     * Updates the Y value of the second coordinate
-     * determining the cutting plane (t2).
-     * @brief updateT2Y
-     * @param value - new value of the Y coordinate
-     */
-    void updateT2Y(int value);
-
-    /**
-     * Updates the Z value of the second coordinate
-     * determining the cutting plane (t2).
-     * @brief updateT2Z
-     * @param value - new value of the Z coordinate
-     */
-    void updateT2Z(int value);
-
-    /**
-     * Updates the X value of the third coordinate
-     * determining the cutting plane (t3).
-     * @brief updateT3X
-     * @param value - new value of the X coordinate
-     */
-    void updateT3X(int value);
-
-    /**
-     * Updates the Y value of the third coordinate
-     * determining the cutting plane (t3).
-     * @brief updateT3Y
-     * @param value - new value of the Y coordinate
-     */
-    void updateT3Y(int value);
-    /**
-     * Updates the Z value of the third coordinate
-     * determining the cutting plane (t3).
-     * @brief updateT3Z
-     * @param value - new value of the Z coordinate
-     */
-    void updateT3Z(int value);
 };
 
 #endif // VISUALIZATIONWIDGET_H
