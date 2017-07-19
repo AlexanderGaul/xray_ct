@@ -14,23 +14,23 @@ class AcquisitionWidget : public QWidget {
     Q_OBJECT
 private:
     AcquisitionModel _aModel;
-    QHBoxLayout layout;
-    PoseViewer _pose;
-    ResultWidget _res;
+    PoseViewer *_pose;
+    ResultWidget *_res;
 
 public:
     AcquisitionWidget(std::string path)
-        : _aModel(path), layout {}, _pose{_aModel}, _res {_aModel}
+        : _aModel(path), _pose{new PoseViewer{_aModel}}, _res {new ResultWidget {_aModel}}
     {
+        QHBoxLayout *layout = new QHBoxLayout {};
         QObject::connect(&_aModel, &AcquisitionModel::poseChanged, this, &AcquisitionWidget::update);
-        QObject::connect(&_aModel, &AcquisitionModel::poseChanged, &_res, &ResultWidget::recalcProject);
+        QObject::connect(&_aModel, &AcquisitionModel::poseChanged, _res, &ResultWidget::recalcProject);
 
         /*
          * Without the strech factor of 1 _res takes most of the  width of the widget
          */
-        layout.addWidget(&_pose, 1);
-        layout.addWidget(&_res, 1);
-        this->setLayout(&layout);
+        layout->addWidget(_pose, 1);
+        layout->addWidget(_res, 1);
+        this->setLayout(layout);
     }
     
     Acquisition getAcq() const {

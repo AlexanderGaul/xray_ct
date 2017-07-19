@@ -18,34 +18,28 @@
 class PoseViewer : public QWidget
 {
     Q_OBJECT
-private:
-    QGridLayout _layout;
-    QGridLayout _viewsLayout;
-	QHBoxLayout _layoutBoxes;
-    QHBoxLayout _layoutButtons;
-    QHBoxLayout _generatorLayout;
-    
+private:    
 	// QScrollArea* scroll_area_;
-	QSpinBox _zoomBox;
-	QCheckBox _raysBox;
+	QSpinBox *_zoomBox;
+	QCheckBox *_raysBox;
     
     /*
      * The number of positions for the automatic generation of Poses
      */
-    QSpinBox _poseCount1;
-    QSpinBox _poseCount2;
-    QPushButton _generatePosesButton;
+    QSpinBox *_poseCount1;
+    QSpinBox *_poseCount2;
+    QPushButton *_generatePosesButton;
 
-	PoseDisplay _poseDisplay;
-    PoseDisplay _poseDisplay2;
-    PoseDisplay _poseDisplay3;
+	PoseDisplay *_poseDisplay;
+    PoseDisplay *_poseDisplay2;
+    PoseDisplay *_poseDisplay3;
     
     /*
      * Buttons to manipulate the pose stack in the AcquisitionModel
      */
-    QPushButton _savePoseButton;
-    QPushButton _deletePoseButton;
-    QPushButton _clearButton;
+    QPushButton *_savePoseButton;
+    QPushButton *_deletePoseButton;
+    QPushButton *_clearButton;
 
     AcquisitionModel& _model;
 	bool _showRays;
@@ -58,7 +52,7 @@ public:
 public slots:
     
     void generatePoses(){
-        _model.addSphericalPoses(_poseCount1.value(), _poseCount2.value());
+        _model.addSphericalPoses(_poseCount1->value(), _poseCount2->value());
     }
 
 };

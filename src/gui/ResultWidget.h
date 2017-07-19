@@ -27,42 +27,27 @@ enum class DrawState{
  */
 class ResultWidget : public QWidget
 {
-    Q_OBJECT
-public:
-    ResultWidget(AcquisitionModel& model, QWidget *parent = nullptr);
-public slots:
-    
+    Q_OBJECT    
+private:    
     /*
-     * When the pose (or the volume) was updated, the forward Projection has to be 
-     * recalculated and redrawn
+     * returns the widget that is currently shown
+     * used to see which widget has to be updated
      */
-    void recalcProject();
     
-protected slots:
-    
-    void paintEvent(QPaintEvent *event) override{
-        //for some reason update wasn't called automatically
-        //even though the drawWidgets are children of this widget
-        currWidget().update();
-    }
-    
+    QTabWidget *_widgetStack;
+    QWidget *_drawWidgetSingle;
+    QWidget *_drawWidgetAll;
+    DrawState _state;
+    AcquisitionModel &_model;
     /*
-     * offers parameter compatibility with the signal of the tabWidget
+     * stores the current visualisation of the x-ray simulation.
+     * 
+     * Currently always uses the 8 bit format
      */
-    void tabChanged(int){
-        recalcProject();
-    }
+    QImage _image;
     
-    /*
-     * Does the drawing.
-     * paintEvent can't be used, since it it isn't allowed to draw on children, so this
-     * is the workaround that avoids creating a subclass
-     * To be get the events of the children this has to be registered in the 
-     * children as listener (see constructor)
-     */
-    bool eventFilter(QObject * watched, QEvent * event) override;
+    QWidget& currWidget();
     
-private:
     /*
      * generates a vector of length 256 that contains all grey colors that are possible
      * in the qt _image
@@ -119,25 +104,40 @@ private:
      * This pixel will always be the white pixel.
      */
     float maxPixel(const Eigen::VectorXf& projection);
+public:
+    ResultWidget(AcquisitionModel& model, QWidget *parent = nullptr);
+public slots:
     
     /*
-     * returns the widget that is currently shown
-     * used to see which widget has to be updated
+     * When the pose (or the volume) was updated, the forward Projection has to be 
+     * recalculated and redrawn
      */
-    QWidget& currWidget();
+    void recalcProject();
     
-    QVBoxLayout _mainLayout;
-    QTabWidget _widgetStack;
-    QWidget _drawWidgetSingle;
-    QWidget _drawWidgetAll;
-    DrawState _state;
-    AcquisitionModel &_model;
+protected slots:
+    
+    void paintEvent(QPaintEvent *event) override{
+        //for some reason update wasn't called automatically
+        //even though the drawWidgets are children of this widget
+        currWidget().update();
+    }
+    
     /*
-     * stores the current visualisation of the x-ray simulation.
-     * 
-     * Currently always uses the 8 bit format
+     * offers parameter compatibility with the signal of the tabWidget
      */
-    QImage _image;
+    void tabChanged(int){
+        recalcProject();
+    }
+    
+    /*
+     * Does the drawing.
+     * paintEvent can't be used, since it it isn't allowed to draw on children, so this
+     * is the workaround that avoids creating a subclass
+     * To be get the events of the children this has to be registered in the 
+     * children as listener (see constructor)
+     */
+    bool eventFilter(QObject * watched, QEvent * event) override;
+
 };
 
 #endif // RESULTWIDGET_H
