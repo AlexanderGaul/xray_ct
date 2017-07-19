@@ -50,11 +50,10 @@ public:
         _transferFunction = transferFunction;
     }
 
-    const TransferFunction& transferFunction() const
+    TransferFunction& transferFunction()
     {
         return _transferFunction;
     }
-
 
     void setColor(QColor color)
     {

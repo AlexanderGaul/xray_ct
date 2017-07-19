@@ -9,50 +9,48 @@ MPRWidget::MPRWidget(const VisualizationModel& visModel)
 void MPRWidget::paintEvent(QPaintEvent* p_e)
 {
     QPainter painter(this);
-    if(_visModel.volume().getTotalVoxelCount() == 0)
+    const Volume& vol = _visModel.volume();
+    _mprModel.transferFunction().setRange(0, 0, vol.maxEntry());
+    if(vol.getTotalVoxelCount() == 0)
     {
         painter.drawText(width()/2, height()/2, "Error: No data loaded!");
         return; // no data or invalid shape
     }
-    if(!_visModel.volume().validPosition(_mprModel.t1()) ||
-            !_visModel.volume().validPosition(_mprModel.t2()) ||
-            !_visModel.volume().validPosition(_mprModel.t3()) ||
-            !_visModel.volume().validPosition(_mprModel.t4()))
+    int resolution = 50;
+    int tileWidth = 20;
+    painter.fillRect(0,0,resolution*tileWidth, resolution*tileWidth, QColor::fromRgb(0,0,0));
+
+    float r = 0.f;
+
+    Eigen::Vector3f normal(1,0,0);
+    normal.normalize();
+
+    Eigen::Vector3f intersect = normal * r;
+    Eigen::Vector3f xDir(-normal(1), normal(0), 0);
+    Eigen::Vector3f yDir = normal.cross(xDir);
+
+    float x = calculateIntersectionLength(Line3f(intersect, xDir));
+    float y = calculateIntersectionLength(Line3f(intersect, yDir));
+
+    Eigen::Vector3f origin =
+            calculateOrigin(calculateOrigin(intersect, xDir), yDir);
+
+    float stepX = x/resolution;
+    float stepY = y/resolution;
+
+    for(int i = 0; i<resolution; ++i)
     {
-        painter.drawText(width()/2, height()/2, "Error: Invalid plane configured!");
-        return;
-    }
-    // for a good rendering, sample each real pixel of the cut plane with 10*10*10 voxels
-    int sampling = 10;
-    int steps = _visModel.volume().getNumVoxels()[0]*sampling;
-    // set background
-    painter.fillRect(0,0, width(), height(), Qt::black);
-
-    int tileWidth = std::min(width(), height());
-    tileWidth /= steps;
-
-    Eigen::Vector3f d1 = _mprModel.t2() - _mprModel.t1();
-    d1 /= (steps);
-    Eigen::Vector3f d2 = _mprModel.t3() - _mprModel.t2();
-    d2 /= (steps);
-
-    for(int i = 0; i<steps; ++i)
-    {
-        Eigen::Vector3f curr = _mprModel.t1() + d2 * i;
-        for(int j = 0; j<steps; ++j)
+        for(int j = 0; j<resolution; ++j)
         {
-            float intensity = -1;
-            if(_visModel.volume().validInnerPosition(curr))
-            {
-                intensity = _visModel.volume().getVoxelLinear(curr);
-            }
-            if(intensity < 0) intensity = 0;
+            Eigen::Vector3f curr = origin + stepX * i * xDir
+                    + stepY * j * yDir;
+            float intensity = vol.getVoxelLinearPhysical(curr);
+            std::cout << intensity << std::endl;
             QColor color = _mprModel.transferFunction().classify(intensity);
-
-            painter.fillRect(QRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth), color);
-            curr += d1;
+            painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
         }
     }
+
 }
 
 void MPRWidget::updateT4()
