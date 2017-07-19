@@ -42,6 +42,10 @@ VisualizationWidget::VisualizationWidget() :
     _mprLayout {},
     _mprTitleLabel {"MPR (mulit planar reconstruction) configuration:"},
     _volumeInfoLabel {},
+    _normalVectorLayout {},
+    _mprDistanceLayout {},
+    _distanceSlider {},
+    _distanceSpinBox {},
     _dvrLayout {},
     _dvrColorLayout {},
     _dvrColorLabel {},
@@ -65,6 +69,35 @@ VisualizationWidget::VisualizationWidget() :
     _mprLayout.addItem(&_mprColorLayout);
     _mprLayout.addWidget(&_mprTitleLabel);
     _mprLayout.addWidget(&_volumeInfoLabel);
+
+    _normalVectorLayout.addWidget(new QLabel("Normal Vector: "));
+    for(int i = 0; i<3; ++i)
+    {
+        QHBoxLayout* layout = new QHBoxLayout;
+        QSlider* slider = new QSlider;
+        slider->setOrientation(Qt::Horizontal);
+        slider->setMaximumWidth(200);
+        QDoubleSpinBox* dSpinBox = new QDoubleSpinBox;
+        dSpinBox->setMaximumWidth(200);
+
+        layout->addWidget(slider);
+        layout->addWidget(dSpinBox);
+
+        _normalVectorLayout.addItem(layout);
+    }
+
+    _mprLayout.addItem(&_normalVectorLayout);
+
+    QLabel* distanceLabel = new QLabel("Distance: ");
+    distanceLabel->setMaximumWidth(200);
+    _mprDistanceLayout.addWidget(distanceLabel);
+    _distanceSlider.setOrientation(Qt::Horizontal);
+    _distanceSlider.setMaximumWidth(200);
+    _mprDistanceLayout.addWidget(&_distanceSlider);
+    _distanceSpinBox.setMaximumWidth(200);
+    _mprDistanceLayout.addWidget(&_distanceSpinBox);
+
+    _mprLayout.addItem(&_mprDistanceLayout);
 
     _menuLayout.addItem(&_mprLayout);
 
@@ -108,6 +141,19 @@ VisualizationWidget::VisualizationWidget() :
     _mprWidget.setMinimumHeight(150);
     setLayout(&_mainLayout);
 
+    connect(static_cast<QAbstractSlider*>(_normalVectorLayout.itemAt(1)->layout()->itemAt(0)->widget()), &QSlider::valueChanged, this, &VisualizationWidget::updateNormalX);
+    connect(static_cast<QAbstractSlider*>(_normalVectorLayout.itemAt(2)->layout()->itemAt(0)->widget()), &QSlider::valueChanged, this, &VisualizationWidget::updateNormalY);
+    connect(static_cast<QAbstractSlider*>(_normalVectorLayout.itemAt(3)->layout()->itemAt(0)->widget()), &QSlider::valueChanged, this, &VisualizationWidget::updateNormalZ);
+
+    connect(static_cast<QDoubleSpinBox*>(_normalVectorLayout.itemAt(1)->layout()->itemAt(1)->widget()),
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &VisualizationWidget::updateNormalX);
+    connect(static_cast<QDoubleSpinBox*>(_normalVectorLayout.itemAt(2)->layout()->itemAt(1)->widget()),
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &VisualizationWidget::updateNormalY);
+    connect(static_cast<QDoubleSpinBox*>(_normalVectorLayout.itemAt(3)->layout()->itemAt(1)->widget()),
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &VisualizationWidget::updateNormalZ);
+
+    connect(&_distanceSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDistance);
+    connect(&_distanceSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &VisualizationWidget::updateDistance);
 
     connect(&_dvrAngleSlider, &QSlider::valueChanged, this, &VisualizationWidget::updateDVRAngle);
     // cast necessary because spinbox has also valueChanged(QString) signal

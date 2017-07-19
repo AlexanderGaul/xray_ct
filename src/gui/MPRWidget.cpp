@@ -20,9 +20,9 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
     int tileWidth = 20;
     painter.fillRect(0,0,resolution*tileWidth, resolution*tileWidth, QColor::fromRgb(0,0,0));
 
-    float r = 0.f;
+    float r = _mprModel.distance();
 
-    Eigen::Vector3f normal(1,0,0);
+    Eigen::Vector3f normal = _mprModel.normal();
     normal.normalize();
 
     Eigen::Vector3f intersect = normal * r;

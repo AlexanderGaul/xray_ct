@@ -123,4 +123,21 @@ public slots:
      * @return
      */
     QColor color() const;
+
+    void setDistance(float distance)
+    {
+        _mprModel.setDistance(distance);
+        update();
+    }
+
+    void setNormal(Eigen::Vector3f normal)
+    {
+        _mprModel.setNormal(normal);
+        update();
+    }
+
+    Eigen::Vector3f normal()
+    {
+        return _mprModel.normal();
+    }
 };

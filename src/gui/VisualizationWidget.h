@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+#include <QAbstractSlider>
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -56,8 +57,12 @@ private:
     QLabel _mprTitleLabel;
     ///shows the dimensions of the volume on screen
     QLabel _volumeInfoLabel;
-    ///layout for entering coordinates
-    QGridLayout _coordinateLayout;
+    ///layout for entering normal vector
+    QVBoxLayout _normalVectorLayout;
+    ///layout for entering distance of plane in mpr
+    QHBoxLayout _mprDistanceLayout;
+    QSlider _distanceSlider;
+    QDoubleSpinBox _distanceSpinBox;
     ///manages configuration of DVR
     QVBoxLayout _dvrLayout;
     ///manages the color-choosing related widgets for dvr
@@ -124,7 +129,7 @@ private:
      * @brief updateDRWWidget
      */
     void updateDVRWidget();
-    
+
 public:    
     /**
      * Construct a new Visualization Widget and setup
@@ -141,6 +146,18 @@ public:
      * @param vol - shared pointer to reference to new volume.
      */
     void setRec(const std::shared_ptr<const Volume>& vol);
+
+    void updateNormalLayout()
+    {
+        Eigen::Vector3f normal = _mprWidget.normal();
+        ((QSlider*) _normalVectorLayout.itemAt(1)->layout()->itemAt(0)->widget())->setValue(normal[0]);
+        ((QSlider*) _normalVectorLayout.itemAt(2)->layout()->itemAt(0)->widget())->setValue(normal[1]);
+        ((QSlider*) _normalVectorLayout.itemAt(3)->layout()->itemAt(0)->widget())->setValue(normal[2]);
+
+        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(1)->layout()->itemAt(1)->widget())->setValue(normal[0]);
+        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(2)->layout()->itemAt(1)->widget())->setValue(normal[1]);
+        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(3)->layout()->itemAt(1)->widget())->setValue(normal[2]);
+    }
     
 signals:
     /**
@@ -186,6 +203,38 @@ public slots:
      * @param stepWidth
      */
     void updateDVRStepSize(float stepSize);
+
+    void updateDistance(float distance)
+    {
+        _distanceSlider.setValue(distance);
+        _distanceSpinBox.setValue(distance);
+        _mprWidget.setDistance(distance);
+    }
+
+    /**
+     * TODO: Make private
+     * @brief updateNormal
+     */
+    void updateNormal(float x, float y, float z)
+    {
+        _mprWidget.setNormal(Eigen::Vector3f(x,y,z));
+        updateNormalLayout();
+    }
+
+    void updateNormalX(float x)
+    {
+        updateNormal(x, _mprWidget.normal()[1], _mprWidget.normal()[2]);
+    }
+
+    void updateNormalY(float y)
+    {
+        updateNormal(_mprWidget.normal()[0], y, _mprWidget.normal()[2]);
+    }
+
+    void updateNormalZ(float z)
+    {
+        updateNormal(_mprWidget.normal()[0], _mprWidget.normal()[1], z);
+    }
 };
 
 #endif // VISUALIZATIONWIDGET_H
