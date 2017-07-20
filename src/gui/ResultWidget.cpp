@@ -4,7 +4,7 @@
 #include <iostream>
 
 void ResultWidget::recalcProject() {
-    switch(_widgetStack.currentIndex()){
+    switch(_widgetStack->currentIndex()){
         case 0:
             paint2DVec(_model.getLastProj());
             break;
@@ -18,10 +18,12 @@ void ResultWidget::recalcProject() {
 }
 
 ResultWidget::ResultWidget(AcquisitionModel& model, QWidget* parent)  
-    : QWidget {parent}, _mainLayout {}, _widgetStack{}, 
-    _drawWidgetSingle{}, _drawWidgetAll{}, 
+    : QWidget {parent}, _widgetStack{new QTabWidget{}}, 
+    _drawWidgetSingle{new QWidget{}}, _drawWidgetAll{new QWidget{}}, 
     _state {DrawState::Single}, _model {model}, 
     _image {} {
+    
+    QVBoxLayout *mainLayout = new QVBoxLayout {};;
     recalcProject();
         
     /*
@@ -29,27 +31,27 @@ ResultWidget::ResultWidget(AcquisitionModel& model, QWidget* parent)
     */
     QPalette pal = palette();
     pal.setColor(QPalette::Background, Qt::black);
-    _drawWidgetSingle.setPalette(pal);
-    _drawWidgetSingle.setAutoFillBackground(true);
-    _drawWidgetAll.setPalette(pal);
-    _drawWidgetAll.setAutoFillBackground(true);
+    _drawWidgetSingle->setPalette(pal);
+    _drawWidgetSingle->setAutoFillBackground(true);
+    _drawWidgetAll->setPalette(pal);
+    _drawWidgetAll->setAutoFillBackground(true);
     
     //see eventFilter
-    _drawWidgetSingle.installEventFilter(this);
-    _drawWidgetAll.installEventFilter(this);
+    _drawWidgetSingle->installEventFilter(this);
+    _drawWidgetAll->installEventFilter(this);
         
-    _widgetStack.addTab(&_drawWidgetSingle, "Latest Projection");
-    _widgetStack.addTab(&_drawWidgetAll, "All Projections");
-    _widgetStack.setCurrentIndex(0);
-    _mainLayout.addWidget(&_widgetStack);
-    QObject::connect(&_widgetStack, &QTabWidget::currentChanged, this,
+    _widgetStack->addTab(_drawWidgetSingle, "Latest Projection");
+    _widgetStack->addTab(_drawWidgetAll, "All Projections");
+    _widgetStack->setCurrentIndex(0);
+    mainLayout->addWidget(_widgetStack);
+    QObject::connect(_widgetStack, &QTabWidget::currentChanged, this,
                      &ResultWidget::tabChanged);
-    this->setLayout(&_mainLayout);
+    this->setLayout(mainLayout);
 }
 
 bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
-    if(event->type() == QEvent::Paint && ( watched == &_drawWidgetSingle ||
-        watched == &_drawWidgetAll)){
+    if(event->type() == QEvent::Paint && ( watched == _drawWidgetSingle ||
+        watched == _drawWidgetAll)){
         QWidget& widget = currWidget();
         QSize size = widget.size();
         
@@ -68,13 +70,13 @@ bool ResultWidget::eventFilter(QObject* watched, QEvent* event) {
 }
 
 QWidget& ResultWidget::currWidget() {
-    switch(_widgetStack.currentIndex()){
+    switch(_widgetStack->currentIndex()){
         case 0:
-            return _drawWidgetSingle;
+            return *_drawWidgetSingle;
         case 1:
-            return _drawWidgetAll;
+            return *_drawWidgetAll;
         default:
-            return _drawWidgetSingle;
+            return *_drawWidgetSingle;
        }
 }
 

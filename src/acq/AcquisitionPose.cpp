@@ -2,118 +2,61 @@
 
 #include <iostream>
 
-AcquisitionPose::AcquisitionPose(float s2dd, float det_w, float det_h, int pixel_h, int pixel_v) :
-    s2dd_(s2dd),
-    src_(- s2dd / 2.f, 0.f, 0.f), 
-    det_(s2dd / 2.f, 0.f, 0.f),
-    det_normal_(-1.f, 0.f, 0.f),
-    det_upl_(s2dd/2.f, det_w/2.f, det_h/2.f),
-    center_(0.f, 0.f, 0.f),
-    _rot(Eigen::AngleAxisf::Identity()),
-    _rotGlobalZ(0.f, Eigen::Vector3f::UnitZ()),
-    _rotLocalY(0.f, Eigen::Vector3f::UnitY()),
-    det_width_(det_w), 
-    det_height_(det_h), 
-    pxl_horizontal_(pixel_h), 
-    pxl_vertical_(pixel_v)
+AcquisitionPose::AcquisitionPose(float s2dd, float detW, float detH, int pixelH, int pixelV) :
+    Pose(Eigen::Vector3f(-s2dd / 2.f, 0.f, 0.f)),
+    _s2dd(s2dd),
+    _det(s2dd / 2.f, 0.f, 0.f),
+    _detUpl(s2dd / 2.f, detW/2.f, detH/2.f),
+    _detWidth(detW), 
+    _detHeight(detH), 
+    _pxlHorizontal(pixelH), 
+    _pxlVertical(pixelV)
 {
 }
 
 Eigen::Vector3f AcquisitionPose::getSourcePosition() const
 {
-    return src_ ;
+    return getPoint();
 }
 
 Eigen::Vector3f AcquisitionPose::getDetectorCenter() const
 {
-    return det_;
+    return _det;
 }
 float AcquisitionPose::getDetectorWidth() const
-{ return det_width_;}
-Eigen::Vector3f AcquisitionPose::getCenter() const
-{ return center_;}
+{ return _detWidth;}
 
-float AcquisitionPose::getRotationGlobalZ() const
-{ return _rotGlobalZ.angle(); }
-float AcquisitionPose::getRotationLocalY() const
-{ return _rotLocalY.angle(); }
-
-Eigen::Matrix3f AcquisitionPose::getRot() const
-{
-    return _rot.toRotationMatrix();
-}
 
 int AcquisitionPose::getPixelHorizontal() const
-{ return pxl_horizontal_; }
+{ return _pxlHorizontal; }
 int AcquisitionPose::getPixelVertical() const
-{ return pxl_vertical_; }
+{ return _pxlVertical; }
 
 
 void AcquisitionPose::updatePose()
 {
-    src_        = getRot() * Eigen::Vector3f(- s2dd_ / 2.f, 0.f, 0.f) + center_;
-    det_        = getRot() * Eigen::Vector3f(s2dd_ / 2.f, 0.f, 0.f) + center_;
-    det_normal_ = getRot() * Eigen::Vector3f(-1.f, 0.f, 0.f);
-    det_upl_    = getRot() * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, det_height_ / 2.f) + center_;
+    Pose::updatePose();
+    _det        = getRotation() * Eigen::Vector3f(_s2dd / 2.f, 0, 0) + Pose::getCenter();
+    
+    _detUpl    = getRotation() * Eigen::Vector3f(_s2dd / 2.f, _detWidth / 2.f, _detHeight / 2.f) + Pose::getCenter();
 }
 
-void AcquisitionPose::setCenter(const Eigen::Vector3f& center)
-{
-    center_ = center;
-    updatePose();
-}
-
-
-void AcquisitionPose::setRotation(float rotGlobalZ, float rotLocalY)
-{
-    _rotGlobalZ = Eigen::AngleAxisf(rotGlobalZ, Eigen::Vector3f::UnitZ());
-    _rotLocalY = Eigen::AngleAxisf(rotLocalY, Eigen::Vector3f::UnitY());
-    _rot = _rotGlobalZ * _rotLocalY;
-    updatePose();
-}
-
-void AcquisitionPose::setRotationGlobalZ(float globalZ)
-{
-    _rotGlobalZ = Eigen::AngleAxisf(globalZ, Eigen::Vector3f::UnitZ());
-    _rot = _rotGlobalZ * _rotLocalY;
-    updatePose();
-}
-
-void AcquisitionPose::setRotation(Eigen::AngleAxisf rot)
-{
-    _rot = rot;
-    updatePose();
-}
-
-void AcquisitionPose::addRotationGlobalZ(float rotZ)
-{
-    _rotGlobalZ = Eigen::AngleAxisf(rotZ + getRotationGlobalZ(), Eigen::Vector3f::UnitZ());
-    _rot = _rotGlobalZ * _rotLocalY;
-    updatePose();
-}
-
-void AcquisitionPose::addRotationLocalY(float rotY)
-{
-    _rotLocalY = Eigen::AngleAxisf(rotY + getRotationLocalY(), Eigen::Vector3f::UnitY());
-    _rot = _rotGlobalZ * _rotLocalY;
-    updatePose();   
-}
 
 Eigen::Vector3f AcquisitionPose::getDetectorUpperLeft() const
 {
-    return det_upl_;
+    return _detUpl;
 }
 Eigen::Vector3f AcquisitionPose::getDetectorLowerLeft() const
 {
-    return getRot() * Eigen::Vector3f(s2dd_ / 2.f, det_width_ / 2.f, -det_height_ / 2.f) + center_;
+    return getRotation() * Eigen::Vector3f(_s2dd / 2.f, _detWidth / 2.f, -_detHeight / 2.f) + Pose::getCenter();
 }
 Eigen::Vector3f AcquisitionPose::getDetectorLowerRight() const
 {
-    return getRot() * Eigen::Vector3f(s2dd_ / 2.f, -det_width_ / 2.f, -det_height_ / 2.f) + center_;
+    return getRotation() * Eigen::Vector3f(_s2dd / 2.f, -_detWidth / 2.f, -_detHeight / 2.f) + Pose::getCenter();
 }
 Eigen::Vector3f AcquisitionPose::getDetectorUpperRight() const
 {
-    return getRot() * Eigen::Vector3f(s2dd_ / 2.f, -det_width_ / 2.f, det_height_ / 2.f) + center_;
+    return getRotation() * Eigen::Vector3f(_s2dd / 2.f, -_detWidth / 2.f, _detHeight / 2.f) + Pose::getCenter();
 }
 std::array<Eigen::Vector3f, 4> AcquisitionPose::getDetectorCorners() const
 {
@@ -132,11 +75,11 @@ Eigen::ParametrizedLine<float, 3> AcquisitionPose::getRay(int horizontal, int ve
 
 Eigen::Vector3f AcquisitionPose::getPixelCenter(int horizontal, int vertical) const
 {
-    Eigen::Vector3f right = getRot() * Eigen::Vector3f(0.f, -1.f, 0.f);
-    Eigen::Vector3f down = getRot() * Eigen::Vector3f(0.f, 0.f, -1.f);
+    Eigen::Vector3f right = getRotation() * Eigen::Vector3f(0.f, -1.f, 0.f);
+    Eigen::Vector3f down = getRotation() * Eigen::Vector3f(0.f, 0.f, -1.f);
 
-    Eigen::Vector3f pxl_dist_h = right * (det_width_ / pxl_horizontal_);
-    Eigen::Vector3f pxl_dist_v = down * (det_height_ / pxl_vertical_);
+    Eigen::Vector3f pxl_dist_h = right * (_detWidth / _pxlHorizontal);
+    Eigen::Vector3f pxl_dist_v = down * (_detHeight / _pxlVertical);
 
     Eigen::Vector3f pixel_center = getDetectorUpperLeft() + pxl_dist_h * (1. / 2.) + pxl_dist_h * horizontal + pxl_dist_v * (1. / 2.) + pxl_dist_v * vertical;
 

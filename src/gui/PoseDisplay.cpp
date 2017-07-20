@@ -68,27 +68,9 @@ void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOp
     if(!onlySources)
     {
         painter.resetTransform();
-        if(lowOpacity)
-        { pen.setColor(QColor(0, 0, 0, 32)); }
-        else
-        { pen.setColor(Qt::black); }
+        
+        pen.setColor(QColor(196, 196, 196));
         painter.setPen(pen);
-        
-        // rays on corners are always drawn
-        for(int i = 0; i < detectorSize.x(); i += detectorSize.x() - 1)
-        {
-            for(int j = 0; j < detectorSize.y(); j += detectorSize.y() - 1)
-            {
-                Eigen::Vector3f pixel = pose.getPixelCenter(i, j);
-
-                    painter.drawLine(
-                        x_center + sourcePos(_xAxis) * _zoom,
-                        y_center - sourcePos(_yAxis) * _zoom,
-                        x_center + pixel(_xAxis) * _zoom,
-                        y_center - pixel(_yAxis) * _zoom);
-            }
-        }
-        
         if(_showRays)
         {
             for(int i = 0; i < detectorSize.x(); i++)
@@ -105,6 +87,29 @@ void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOp
             }
         }
 
+        if(lowOpacity)
+        { pen.setColor(QColor(0, 0, 0, 32)); }
+        else
+        { pen.setColor(Qt::black); }
+        painter.setPen(pen);
+        
+        
+        // rays on corners are always drawn
+        for(int x = 0, i = 0; i < 2; i++)
+        {
+            for(int y = 0, j = 0; j < 2; j++)
+            {
+                Eigen::Vector3f pixel = pose.getPixelCenter(x, y);
+
+                    painter.drawLine(
+                        x_center + sourcePos(_xAxis) * _zoom,
+                        y_center - sourcePos(_yAxis) * _zoom,
+                        x_center + pixel(_xAxis) * _zoom,
+                        y_center - pixel(_yAxis) * _zoom);
+                y = detectorSize.y() - 1;
+            }
+            x = detectorSize.x() - 1;
+        }
         //painter.setBrush(Qt::white);
 
         //painter.translate(x_center, y_center);

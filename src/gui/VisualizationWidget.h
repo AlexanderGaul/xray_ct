@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <array>
 
 #include <QAbstractSlider>
 #include <QColorDialog>
@@ -37,62 +38,47 @@ private:
     ///manages all data related to visualization
     VisualizationModel _visModel;
 
-    ///all layout items for visulisation are composed in the main layout
-    QGridLayout _mainLayout;
-    ///manages all menu items
-    QVBoxLayout _menuLayout;
+    
     ///loads the Volume from a file
-    QPushButton _loadFileButton;    
+    QPushButton *_loadFileButton;    
     ///loads the Volume from the ReconstructionPose
-    QPushButton _loadRecButton;
-    ///manages the color-choosing related widgets for mpr
-    QHBoxLayout _mprColorLayout;
+    QPushButton *_loadRecButton;
     ///displays the current color for mpr
-    QLabel _mprColorLabel;
+    QLabel *_mprColorLabel;
     ///opens a dialog to choose the color for visualization for mpr
-    QPushButton _mprSelectColorButton;
-    ///manages the MPR configuration
-    QVBoxLayout _mprLayout;
+    QPushButton *_mprSelectColorButton;
     ///displays title of MPR
-    QLabel _mprTitleLabel;
+    QLabel *_mprTitleLabel;
     ///shows the dimensions of the volume on screen
-    QLabel _volumeInfoLabel;
-    ///layout for entering normal vector
-    QVBoxLayout _normalVectorLayout;
-    ///layout for entering distance of plane in mpr
-    QHBoxLayout _mprDistanceLayout;
-    QSlider _distanceSlider;
-    QDoubleSpinBox _distanceSpinBox;
-    ///manages configuration of DVR
-    QVBoxLayout _dvrLayout;
-    ///manages the color-choosing related widgets for dvr
-    QHBoxLayout _dvrColorLayout;
+    QLabel *_volumeInfoLabel;
+    std::array<QSlider*, 3> _normalSlider;
+    std::array<QDoubleSpinBox*, 3> _normalSpinBox;
+    
+    
+    QSlider *_distanceSlider;
+    QDoubleSpinBox *_distanceSpinBox;
     ///displays the current color for dvr
-    QLabel _dvrColorLabel;
+    QLabel *_dvrColorLabel;
     ///opens a dialog to choose the color for visualization for dvr
-    QPushButton _dvrSelectColorButton;
+    QPushButton *_dvrSelectColorButton;
     ///display description of DVR
-    QLabel _dvrTitleLabel;
-    ///manages label config of DVR
-    QHBoxLayout _dvrAngleLayout;
+    QLabel *_dvrTitleLabel;
     ///info text regarding angle for DVR
-    QLabel _dvrAngleLabel;
+    QLabel *_dvrAngleLabel;
     ///choose a suitable angle for DVR
-    QSlider _dvrAngleSlider;
+    QSlider *_dvrAngleSlider;
     ///display current angle (in degrees)
-    QSpinBox _dvrAngleSpinBox;
-    ///manages step width config of DVR
-    QHBoxLayout _dvrStepWidthLayout;
+    QSpinBox *_dvrAngleSpinBox;
     ///info text regarding angle for DVR
-    QLabel _dvrStepWidthLabel;
+    QLabel *_dvrStepWidthLabel;
     ///choose a suitable step width
-    QSlider _dvrStepWidthSlider;
+    QSlider *_dvrStepWidthSlider;
     ///display current step width
-    QDoubleSpinBox _dvrStepWidthSpinBox;
+    QDoubleSpinBox *_dvrStepWidthSpinBox;
     ///renders the 2D MPR visualization
-    MPRWidget _mprWidget;
+    MPRWidget *_mprWidget;
     ///paints the direct volume rendering (DVR)
-    DVRWidget _dvrWidget;
+    DVRWidget *_dvrWidget;
 
     /**
      * Updates (colors) the color label
@@ -149,14 +135,14 @@ public:
 
     void updateNormalLayout()
     {
-        Eigen::Vector3f normal = _mprWidget.normal();
-        ((QSlider*) _normalVectorLayout.itemAt(1)->layout()->itemAt(0)->widget())->setValue(normal[0]);
-        ((QSlider*) _normalVectorLayout.itemAt(2)->layout()->itemAt(0)->widget())->setValue(normal[1]);
-        ((QSlider*) _normalVectorLayout.itemAt(3)->layout()->itemAt(0)->widget())->setValue(normal[2]);
+        Eigen::Vector3f normal = _mprWidget->normal();
+        _normalSlider.at(0)->setValue(normal[0]);
+        _normalSlider.at(1)->setValue(normal[1]);
+        _normalSlider.at(2)->setValue(normal[2]);
 
-        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(1)->layout()->itemAt(1)->widget())->setValue(normal[0]);
-        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(2)->layout()->itemAt(1)->widget())->setValue(normal[1]);
-        ((QDoubleSpinBox*) _normalVectorLayout.itemAt(3)->layout()->itemAt(1)->widget())->setValue(normal[2]);
+        _normalSpinBox.at(0)->setValue(normal[0]);
+        _normalSpinBox.at(1)->setValue(normal[1]);
+        _normalSpinBox.at(2)->setValue(normal[2]);
     }
     
 signals:
@@ -206,9 +192,9 @@ public slots:
 
     void updateDistance(float distance)
     {
-        _distanceSlider.setValue(distance);
-        _distanceSpinBox.setValue(distance);
-        _mprWidget.setDistance(distance);
+        _distanceSlider->setValue(distance);
+        _distanceSpinBox->setValue(distance);
+        _mprWidget->setDistance(distance);
     }
 
     /**
@@ -217,23 +203,23 @@ public slots:
      */
     void updateNormal(float x, float y, float z)
     {
-        _mprWidget.setNormal(Eigen::Vector3f(x,y,z));
+        _mprWidget->setNormal(Eigen::Vector3f(x,y,z));
         updateNormalLayout();
     }
 
     void updateNormalX(float x)
     {
-        updateNormal(x, _mprWidget.normal()[1], _mprWidget.normal()[2]);
+        updateNormal(x, _mprWidget->normal()[1], _mprWidget->normal()[2]);
     }
 
     void updateNormalY(float y)
     {
-        updateNormal(_mprWidget.normal()[0], y, _mprWidget.normal()[2]);
+        updateNormal(_mprWidget->normal()[0], y, _mprWidget->normal()[2]);
     }
 
     void updateNormalZ(float z)
     {
-        updateNormal(_mprWidget.normal()[0], _mprWidget.normal()[1], z);
+        updateNormal(_mprWidget->normal()[0], _mprWidget->normal()[1], z);
     }
 };
 

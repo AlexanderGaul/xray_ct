@@ -7,12 +7,15 @@
 #include <QPainter>
 #include <QWidget>
 
+#include <QKeyEvent>
+
 #include "DVRCamera.h"
 #include "DVRModel.h"
 #include "MIP.h"
 #include "RayTracing.h"
 #include "VisualizationModel.h"
 #include "Volume.h"
+#include "CameraPose.h"
 
 /**
  * Implementation of orthographic
@@ -28,7 +31,10 @@ private:
     const VisualizationModel& _visModel;
     DVRModel _dvrModel;
     DVRCamera _dvrCamera;
-
+    
+    CameraPose _pose;
+    
+    
     /**
      * Calculates the camera position.
      *
@@ -49,8 +55,12 @@ private:
      *          as the input vector.
      */
     Eigen::Vector3f normalize(Eigen::Vector3f x);
+    
 
 public:
+    virtual void keyPressEvent(QKeyEvent *event);
+    
+    
     DVRWidget(const VisualizationModel& visModel);
 
     void paintEvent(QPaintEvent* p_e) override;

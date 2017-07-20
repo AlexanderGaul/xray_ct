@@ -21,12 +21,13 @@ class RayTracing
         return std::signbit(x) ? -1 : 1;
     }
     
-
+public:
     /**
      * return t so that ray.pointAt(t) is the actual intersection point
      */
     static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
 
+private:
     /*
      * Used as a return value
      * Represents the the intersections points of a ray and a box if they never actually

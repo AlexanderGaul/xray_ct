@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.5.1)
 set(ACQ_SRCS
         EDFhandler.cpp
         AcquisitionModel.cpp
+        Pose.cpp
         AcquisitionPose.cpp
         RayTracing.cpp
         ForwardProjectionOperator.cpp
@@ -13,6 +14,7 @@ set(ACQ_HDRS
         IOutilities.h
         Volume.h
         AcquisitionModel.h
+        Pose.h
         AcquisitionPose.h
         RayTracing.h
         Vec3D.h

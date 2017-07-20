@@ -29,14 +29,6 @@ public:
         connect(&_vWidget, &VisualizationWidget::requestRecVolume, this, &MainWindow::requestedReconstruction);
     }
 
-    ~MainWindow(){
-        /*
-         * Avoids Segfaults at the end of the program because of Qt's broken ownership
-         * system (at least from a c++11 onwards point of view)
-         */
-        exit(0);
-    }
-
 private slots:
     void requestedAquisition(){
         _rWidget.setAcq(_aWidget.getAcq());

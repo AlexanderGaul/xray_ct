@@ -24,14 +24,18 @@ Eigen::Vector3f DVRWidget::normalize(Eigen::Vector3f x)
 
 DVRWidget::DVRWidget(const VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.5,
+      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.0025,
                  TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
-      _dvrCamera {}
+      _dvrCamera {},
+      
+      _pose{_visModel.volume().getBoundingBox(), 200, 200}
 {
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
 {
+    
     QPainter painter(this);
     if(_visModel.volume().getTotalVoxelCount() == 0)
     {
@@ -42,6 +46,8 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 
     const Volume& vol = _visModel.volume();
     Eigen::AlignedBox3f box = vol.getBoundingBox();
+    
+    _pose.setBoundingBox(vol.getBoundingBox());
 
     float angle = _dvrModel.angle();
     int resolution = _dvrModel.resolution();
@@ -82,26 +88,76 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     better(0) -= std::sin(angle)*sizePixelX*0.5*reso;
     better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
     better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
+    
+    
 
-    MIP mip;
-    for(int i = 0; i<=reso; ++i)
+    tileWidth = std::min(width(), height()) / _pose.getPixelHorizontal();
+    int count = vol.getBoundingBox().diagonal().norm() / _dvrModel.stepSize();
+    
+    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
     {
-        Eigen::Vector3f tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
-        for(int j = 0; j<=reso; ++j)
+        for(int y = 0; y < _pose.getPixelVertical(); y++)
         {
-            float mipValue = mip.calculateMIP(
-                        vol,
-                        tmp,
-                        correction,
-                        stepSizeLength);
-            // paint measured volume
-            QColor color = _dvrModel.transferFunction().classify(mipValue);
-            painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
-            // update pixel position
-            tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
+            float maxSample = 0;
+            Eigen::ParametrizedLine<float, 3> ray = _pose.getRayOrthogonal(x, y);
+
+            float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
+            
+            if(!std::isnan(distance))
+            {
+                for(int i = 0; i <= count; i++)
+                {
+                    float sample = vol.getVoxelLinearPhysical(ray.pointAt(distance));
+                    if(sample > maxSample)
+                    {
+                        maxSample = sample;
+                    }
+                    distance += _dvrModel.stepSize();
+                }
+                QColor color = _dvrModel.transferFunction().classify(maxSample);
+                painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
+            }
         }
     }
+    // FOR SLICE VIEWING
+    /*
+    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
+    {
+        for(int y = 0; y < _pose.getPixelVertical(); y++)
+        {
+            float intensity = vol.getVoxelLinearPhysical(_pose.getPixel(x, y));
+            QColor color = _dvrModel.transferFunction().classify(intensity);
+            painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
+        }
+    }
+    */
 }
+
+void DVRWidget::keyPressEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Left) {
+        _pose.addRotationZ(0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Right) {  
+        _pose.addRotationZ(-0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Up) {
+        _pose.addRotationY(-0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Down) {
+        _pose.addRotationY(0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    }
+}
+
 
 void DVRWidget::setAngle(float angle)
 {

@@ -9,32 +9,25 @@
 
 #include <QObject>
 
-class AcquisitionPose
+#include "Pose.h"
+
+class AcquisitionPose : public Pose
 {
 private:
-    float s2dd_;
+    float _s2dd;
 
-    Eigen::Vector3f src_;
-    Eigen::Vector3f det_;
-    Eigen::Vector3f det_normal_;
-    Eigen::Vector3f det_upl_;
+    Eigen::Vector3f _det;
+    Eigen::Vector3f _detUpl;
 
-    Eigen::Vector3f center_;
-    
-    Eigen::AngleAxisf _rotGlobalZ;
-    Eigen::AngleAxisf _rotLocalY;
-    Eigen::AngleAxisf _rot;
+    float _detWidth;
+    float _detHeight;
 
-    float det_width_;
-    float det_height_;
+    int _pxlHorizontal;
+    int _pxlVertical;
 
-    int pxl_horizontal_;
-    int pxl_vertical_;
-
-    void updatePose();
-    Eigen::Matrix3f getRot() const;
 
 public:
+    
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
         : AcquisitionPose(boundingBox.diagonal().norm()*1.5f, 0.8f, 0.8f, 20, 20) {
             
@@ -53,20 +46,7 @@ public:
     int getPixelCount() const {
         return getPixelHorizontal()*getPixelVertical();
     }
-
-    void setCenter(const Eigen::Vector3f& center);
     
-    float getRotationGlobalZ() const;
-    float getRotationLocalY() const;
-    
-    void setRotation(Eigen::AngleAxisf rot);
-    void setRotation(float globalZ, float localY = 0);
-    
-    void setRotationGlobalZ(float globalZ);
-    void setRotationLocalY(float localY);
-    
-    void addRotationGlobalZ(float rotZ);
-    void addRotationLocalY(float rotY);
     
     Eigen::Vector3f getDetectorUpperLeft() const;
     Eigen::Vector3f getDetectorUpperRight() const;
@@ -79,8 +59,11 @@ public:
 
     Eigen::ParametrizedLine<float, 3> getRay(int index) const
     {
-        return getRay(index / pxl_horizontal_, index % pxl_horizontal_);
+        return getRay(index / _pxlHorizontal, index % _pxlHorizontal);
     }
+    
+protected:
+    virtual void updatePose() override;
 };
 
 #endif
