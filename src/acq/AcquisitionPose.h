@@ -29,7 +29,7 @@ private:
 public:
     
     AcquisitionPose(const Eigen::AlignedBox<float, 3>& boundingBox)
-        : AcquisitionPose(boundingBox.diagonal().norm()*1.5f, 0.8f, 0.8f, 20, 20) {
+        : AcquisitionPose(boundingBox.diagonal().norm()*1.5f, 0.2f, 0.2f, 5, 5) {
             
         }
 
@@ -38,6 +38,14 @@ public:
     Eigen::Vector3f getSourcePosition() const;
     Eigen::Vector3f getDetectorCenter() const;
     float getDetectorWidth() const;
+    
+    float getDetectorHeight() const {
+        return _detHeight;
+    }
+    
+    float getDetectorSourceDistance(){
+        return _s2dd;
+    }
 
     Eigen::Vector3f getCenter() const;
 
@@ -62,6 +70,12 @@ public:
         return getRay(index / _pxlHorizontal, index % _pxlHorizontal);
     }
     
+    bool equals(const AcquisitionPose& pose2){
+        return _s2dd == pose2._s2dd             && 
+        _det == pose2._det                      && _detUpl == pose2._detUpl &&
+        _detWidth == pose2._detWidth            && _detHeight == pose2._detHeight && 
+        _pxlHorizontal == pose2._pxlHorizontal  && _pxlVertical == pose2._pxlVertical;
+    }
 protected:
     virtual void updatePose() override;
 };

@@ -12,6 +12,11 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _savePoseButton {new QPushButton{"Store current pose"}}, 
     _deletePoseButton {new QPushButton{"Delete current pose"}}, 
     _clearButton {new QPushButton{"Clear all poses"}},
+    _verticalPixels {new QSpinBox{}},
+    _horizontalPixels {new QSpinBox{}},
+    _detectorWidth {new QDoubleSpinBox {}},
+    _detectorHeight {new QDoubleSpinBox {}},
+    _detectorSouceDistance {new QDoubleSpinBox {}},
      _model {model},
      _showRays {false},
      _zoom {100}
@@ -21,6 +26,11 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
 	QHBoxLayout *layoutBoxes = new QHBoxLayout {};
     QHBoxLayout *layoutButtons = new QHBoxLayout {};
     QHBoxLayout *generatorLayout = new QHBoxLayout {};
+    QHBoxLayout *layoutVerticalPix = new QHBoxLayout {};
+    QHBoxLayout *layoutHorizontalPix = new QHBoxLayout {};
+    QHBoxLayout *layoutDetectorWidth = new QHBoxLayout {};
+    QHBoxLayout *layoutDetectorHeight = new QHBoxLayout {};
+    QHBoxLayout *layoutDetectorSouceDistance = new QHBoxLayout {};
     
     QLabel* raysLabel = new QLabel("Show Rays");
     QLabel* zoomLabel = new QLabel("Zoom");
@@ -53,6 +63,47 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     layoutButtons->addWidget(_clearButton);
     layout->addLayout(layoutButtons, 3, 0);
     
+    
+    layoutVerticalPix->addWidget(new QLabel{"#Vertical Detector Pixels"});
+    layoutVerticalPix->addWidget(_verticalPixels);
+    _verticalPixels->setRange(2, 100);
+    _verticalPixels->setValue(5);
+    layout->addLayout(layoutVerticalPix, 4, 0);
+    
+    layoutHorizontalPix->addWidget(new QLabel{"#Horizontal Detector Pixels"});
+    layoutHorizontalPix->addWidget(_horizontalPixels);
+    _horizontalPixels->setRange(2, 100);
+    _horizontalPixels->setValue(5);
+    layout->addLayout(layoutHorizontalPix, 5, 0);
+    
+    layoutDetectorWidth->addWidget(new QLabel{"Detector Width in Meter"});
+    layoutDetectorWidth->addWidget(_detectorWidth);
+    layout->addLayout(layoutDetectorWidth, 6, 0);
+    _detectorWidth->setValue(0.2);
+    _detectorWidth->setSingleStep(0.1);
+    _detectorWidth->setRange(0.01, 10);
+    
+    layoutDetectorHeight->addWidget(new QLabel{"Detector Height in Meter"});
+    layoutDetectorHeight->addWidget(_detectorHeight);
+    layout->addLayout(layoutDetectorHeight, 7, 0);
+    _detectorHeight->setValue(0.2);
+    _detectorHeight->setSingleStep(0.1);
+    _detectorHeight->setRange(0.01, 10);
+    
+    layoutDetectorSouceDistance->addWidget(new QLabel{"Detector-Source-Dinstance (x * Volume Diagonal)"});
+    layoutDetectorSouceDistance->addWidget(_detectorSouceDistance);
+    layout->addLayout(layoutDetectorSouceDistance, 8, 0);
+    _detectorSouceDistance->setValue(1.5);
+    _detectorSouceDistance->setSingleStep(0.1);
+    _detectorSouceDistance->setRange(1.01, 10);
+    
+    connect(_verticalPixels, &QSpinBox::editingFinished, this, &PoseViewer::verticalPixelsChanged);
+    connect(_horizontalPixels, &QSpinBox::editingFinished, this, &PoseViewer::horizontalPixelsChanged);
+    connect(_detectorWidth, &QDoubleSpinBox::editingFinished, this, &PoseViewer::detectorWidthChanged);
+    connect(_detectorHeight, &QDoubleSpinBox::editingFinished, this, &PoseViewer::detectorHeightChanged);
+    connect(_detectorSouceDistance, &QDoubleSpinBox::editingFinished, this, &PoseViewer::detSourceDistanceChanged);
+    
+    
     QLabel* countLabel1 = new QLabel("Circles");
     countLabel1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QLabel* countLabel2 = new QLabel("Max Poses per Circle");
@@ -65,8 +116,10 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     generatorLayout->addWidget(_generatePosesButton);
     
     _poseCount1->setMinimum(1);
+    _poseCount1->setValue(30);
     _poseCount2->setMinimum(1);
-    layout->addLayout(generatorLayout, 4, 0);
+    _poseCount2->setValue(30);
+    layout->addLayout(generatorLayout, 9, 0);
     
     setLayout(layout);
     

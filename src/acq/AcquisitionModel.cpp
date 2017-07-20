@@ -22,8 +22,9 @@ bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
 
 
 AcquisitionModel::AcquisitionModel(std::string path)
-    :  _filled {true}, _volume{EDFHandler::read(path)}, 
-    _poses { _volume.getBoundingBox()}, 
+    :  _filled {true}, _volume{EDFHandler::read(path)},
+    _posePrototype {_volume.getBoundingBox()},
+    _poses { _posePrototype},
     _measurements {ForwardProjectionOperator::forwardProj(_volume, currPoseChecked())}
 {
 }
@@ -32,7 +33,8 @@ AcquisitionModel::AcquisitionModel(std::string path)
 void AcquisitionModel::loadImage(std::string path)
 {
     _volume = EDFHandler::read(path);
-    _poses.push_back(_volume.getBoundingBox());
+    addDefaultPose();
+    emit poseChanged();
     if(!checkIfVolumeFitsBlackBox())
     {
         throw std::logic_error("the specified volume does not fit the black box!");
@@ -181,9 +183,7 @@ std::pair<int, const Eigen::VectorXf> AcquisitionModel::getLastProj()
 }
 
 void AcquisitionModel::addDefaultPose(){
-    _poses.push_back(AcquisitionPose {getBoundingBox()});
-    
-    updateLastProjection();
+    _poses.push_back(_posePrototype);
 }
 
 void AcquisitionModel::updateProjection(){
