@@ -44,9 +44,9 @@ void AcquisitionModel::loadImage(std::string path)
 void AcquisitionModel::updateRotation(RotationAxis axis, float angle){
     //see description of the rotation axis for why the if is as it is
     if(axis == RotationAxis::Z){
-        currPoseChecked().addRotationGlobalZ(angle);
+        currPoseChecked().addRotationZ(angle);
     } else if (axis == RotationAxis::Y) {
-        currPoseChecked().addRotationLocalY(angle);
+        currPoseChecked().addRotationY(angle);
     }
     updateLastProjection();
 }

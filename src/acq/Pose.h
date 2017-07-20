@@ -17,8 +17,8 @@ private:
     Eigen::Vector3f _point;
     Eigen::Vector3f _normal;
     
-    Eigen::AngleAxisf _rotGlobalZ;
-    Eigen::AngleAxisf _rotLocalY;
+    Eigen::AngleAxisf _rotZ;
+    Eigen::AngleAxisf _rotY;
     Eigen::AngleAxisf _rot;
 
         
@@ -26,16 +26,16 @@ public:
     Pose();
     Pose(Eigen::Vector3f point, Eigen::Vector3f center = Eigen::Vector3f(0, 0, 0));
     
-    float getRotationGlobalZ() const;
-    float getRotationLocalY() const;
+    float getRotationZ() const;
+    float getRotationY() const;
     Eigen::Matrix3f getRotation() const;
     
-    void setRotation(float rotGlobalZ, float rotLocalY);
-    void setRotationGlobalZ(float globalZ);
-    void setRotationLocalY(float localY);
+    void setRotation(float z, float y);
+    void setRotationZ(float z);
+    void setRotationY(float y);
     
-    void addRotationGlobalZ(float rotZ);
-    void addRotationLocalY(float rotY);
+    void addRotationZ(float rotZ);
+    void addRotationY(float rotY);
     
     Eigen::Vector3f getCenter() const;
     void setCenter(Eigen::Vector3f center);

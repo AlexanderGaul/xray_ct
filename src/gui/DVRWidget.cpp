@@ -89,29 +89,10 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
     better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
     
-    /*
-    MIP mip;
-    for(int i = 0; i<=reso; ++i)
-    {
-        Eigen::Vector3f tmp = better + i * sizePixelZ * Eigen::Vector3f(0, 0, std::cos(angle));
-        for(int j = 0; j<=reso; ++j)
-        {
-            float mipValue = mip.calculateMIP(
-                        vol,
-                        tmp,
-                        correction,
-                        stepSizeLength);
-            // paint measured volume
-            QColor color = _dvrModel.transferFunction().classify(mipValue);
-            painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
-            // update pixel position
-            tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
-        }
-    }
-    */
+    
+
     tileWidth = std::min(width(), height()) / _pose.getPixelHorizontal();
     int count = vol.getBoundingBox().diagonal().norm() / _dvrModel.stepSize();
-    
     
     for(int x = 0; x < _pose.getPixelHorizontal(); x++)
     {
@@ -119,6 +100,7 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
         {
             float maxSample = 0;
             Eigen::ParametrizedLine<float, 3> ray = _pose.getRayOrthogonal(x, y);
+
             float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
             
             if(!std::isnan(distance))
@@ -154,22 +136,22 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 void DVRWidget::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _pose.addRotationGlobalZ(0.05f);
+        _pose.addRotationZ(0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Right) {  
-        _pose.addRotationGlobalZ(-0.05f);
+        _pose.addRotationZ(-0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Up) {
-        _pose.addRotationLocalY(-0.05f);
+        _pose.addRotationY(-0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Down) {
-        _pose.addRotationLocalY(0.05f);
+        _pose.addRotationY(0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
