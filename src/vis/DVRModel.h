@@ -6,6 +6,7 @@
 
 #include "TransferFunction.h"
 
+
 class DVRModel
 {
 private:
@@ -21,6 +22,7 @@ private:
     TransferFunction _transferFunction;
 
     QColor _color;
+    
 public:
     DVRModel(float angle, int resolution, Eigen::Vector3f position, float stepSize,
              TransferFunction transferFunction)
@@ -32,6 +34,7 @@ public:
           _color(transferFunction.color(0))
     {
     }
+
 
     float angle() const
     {

@@ -214,12 +214,19 @@ public:
         position = position - Eigen::Vector3f(0.5, 0.5, 0.5);
         Eigen::Vector3i minVoxel = position.cast<int>();
         
+        bool reset = false;
         for(int i = 0; i < 3; i++)
         {
             if(minVoxel(i) < 0)
-            { minVoxel(i) = 0; }
+            { minVoxel(i) = 0; 
+              reset = true;}
             if(minVoxel(i) > getNumVoxels()(i) - 2)
-            { minVoxel(i) = getNumVoxels()(i) - 2; }
+            { minVoxel(i) = getNumVoxels()(i) - 1; 
+              reset = true;}
+        }
+        if(reset)
+        {
+            return getVoxel(minVoxel);
         }
 
         // relative position between surrounding voxel centers

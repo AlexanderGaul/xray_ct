@@ -24,14 +24,18 @@ Eigen::Vector3f DVRWidget::normalize(Eigen::Vector3f x)
 
 DVRWidget::DVRWidget(const VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.5,
+      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.0025,
                  TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
-      _dvrCamera {}
+      _dvrCamera {},
+      
+      _pose {0.2f, 0.8f, 0.8f, 200, 200}
 {
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
 {
+    
     QPainter painter(this);
     if(_visModel.volume().getTotalVoxelCount() == 0)
     {
@@ -82,7 +86,8 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     better(0) -= std::sin(angle)*sizePixelX*0.5*reso;
     better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
     better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
-
+    
+    /*
     MIP mip;
     for(int i = 0; i<=reso; ++i)
     {
@@ -101,7 +106,61 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
             tmp += sizePixelX * Eigen::Vector3f(-std::sin(angle), std::cos(angle), 0);
         }
     }
+    */
+    tileWidth = std::min(width(), height()) / _pose.getPixelHorizontal();
+    int count = vol.getBoundingBox().diagonal().norm() / _dvrModel.stepSize();
+    
+    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
+    {
+        for(int y = 0; y < _pose.getPixelVertical(); y++)
+        {
+            float maxSample = 0;
+            Eigen::ParametrizedLine<float, 3> ray = _pose.getRay(x, y);
+            float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
+            
+            if(!std::isnan(distance))
+            {
+                for(int i = 0; i <= count; i++)
+                {
+                    float sample = vol.getVoxelLinearPhysical(ray.pointAt(distance));
+                    if(sample > maxSample)
+                    {
+                        maxSample = sample;
+                    }
+                    distance += _dvrModel.stepSize();
+                }
+                QColor color = _dvrModel.transferFunction().classify(maxSample);
+                painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
+            }
+        }
+    }
 }
+
+void DVRWidget::keyPressEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Left) {
+        _pose.addRotationGlobalZ(0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Right) {  
+        _pose.addRotationGlobalZ(-0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Up) {
+        _pose.addRotationLocalY(-0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    } else if(event->key() == Qt::Key_Down) {
+        _pose.addRotationLocalY(0.05f);
+        //emit sceneChanged();
+        //emit _model.poseChanged();
+        update();
+    }
+}
+
 
 void DVRWidget::setAngle(float angle)
 {
