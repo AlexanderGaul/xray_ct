@@ -28,7 +28,7 @@ DVRWidget::DVRWidget(const VisualizationModel& visModel)
                  TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
       _dvrCamera {},
       
-      _pose {0.2f, 0.8f, 0.8f, 200, 200}
+      _pose{_visModel.volume().getBoundingBox(), 200, 200}
 {
     setFocusPolicy(Qt::ClickFocus);
 }
@@ -46,6 +46,8 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 
     const Volume& vol = _visModel.volume();
     Eigen::AlignedBox3f box = vol.getBoundingBox();
+    
+    _pose.setBoundingBox(vol.getBoundingBox());
 
     float angle = _dvrModel.angle();
     int resolution = _dvrModel.resolution();
@@ -110,12 +112,13 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     tileWidth = std::min(width(), height()) / _pose.getPixelHorizontal();
     int count = vol.getBoundingBox().diagonal().norm() / _dvrModel.stepSize();
     
+    
     for(int x = 0; x < _pose.getPixelHorizontal(); x++)
     {
         for(int y = 0; y < _pose.getPixelVertical(); y++)
         {
             float maxSample = 0;
-            Eigen::ParametrizedLine<float, 3> ray = _pose.getRay(x, y);
+            Eigen::ParametrizedLine<float, 3> ray = _pose.getRayOrthogonal(x, y);
             float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
             
             if(!std::isnan(distance))
@@ -134,6 +137,18 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
             }
         }
     }
+    // FOR SLICE VIEWING
+    /*
+    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
+    {
+        for(int y = 0; y < _pose.getPixelVertical(); y++)
+        {
+            float intensity = vol.getVoxelLinearPhysical(_pose.getPixel(x, y));
+            QColor color = _dvrModel.transferFunction().classify(intensity);
+            painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
+        }
+    }
+    */
 }
 
 void DVRWidget::keyPressEvent(QKeyEvent* event)

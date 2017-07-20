@@ -80,6 +80,13 @@ Eigen::Vector3f Pose::getPoint() const
 {
     return _point;
 }
+void Pose::setPointRef(Eigen::Vector3f point)
+{
+    _pointRef = point;
+    _normalRef = _pointRef;
+    _normalRef.normalize();
+    updatePose();
+}
 Eigen::Vector3f Pose::getNormal() const
 {
     return _normal;
@@ -88,7 +95,7 @@ Eigen::Vector3f Pose::getNormal() const
 void Pose::setDistanceToCenter(float distance)
 {
     _pointRef.normalize();
-    _pointRef *= distance;
+    _pointRef = _pointRef * distance;
     updatePose();
 }
 

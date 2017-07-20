@@ -15,7 +15,7 @@
 #include "RayTracing.h"
 #include "VisualizationModel.h"
 #include "Volume.h"
-#include "AcquisitionPose.h"
+#include "CameraPose.h"
 
 /**
  * Implementation of orthographic
@@ -32,7 +32,7 @@ private:
     DVRModel _dvrModel;
     DVRCamera _dvrCamera;
     
-    AcquisitionPose _pose;
+    CameraPose _pose;
     
     
     /**

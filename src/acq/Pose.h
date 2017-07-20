@@ -43,6 +43,7 @@ public:
 
 protected:
     Eigen::Vector3f getPoint() const;
+    void setPointRef(Eigen::Vector3f point);
     Eigen::Vector3f getNormal() const;
     
     void setDistanceToCenter(float distance);

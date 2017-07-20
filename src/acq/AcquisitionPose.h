@@ -63,7 +63,7 @@ public:
     }
     
 protected:
-    void updatePose();
+    virtual void updatePose() override;
 };
 
 #endif
