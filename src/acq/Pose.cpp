@@ -10,8 +10,8 @@ Pose::Pose(Eigen::Vector3f point, Eigen::Vector3f center)
     _pointRef{point - center},
     _point{point},
     _center{center},
-    _rotGlobalZ{0.f, Eigen::Vector3f::UnitZ()},
-    _rotLocalY{0.f, Eigen::Vector3f::UnitY()},
+    _rotZ{0.f, Eigen::Vector3f::UnitZ()},
+    _rotY{0.f, Eigen::Vector3f::UnitY()},
     _rot{Eigen::AngleAxisf::Identity()}
 {
     _normal = point - center;
@@ -20,48 +20,48 @@ Pose::Pose(Eigen::Vector3f point, Eigen::Vector3f center)
 }
 
 
-float Pose::getRotationGlobalZ() const
+float Pose::getRotationZ() const
 {
-    return _rotGlobalZ.angle();
+    return _rotZ.angle();
 }
-float Pose::getRotationLocalY() const
+float Pose::getRotationY() const
 {
-    return _rotLocalY.angle();
+    return _rotY.angle();
 }
 Eigen::Matrix3f Pose::getRotation() const
 {
     return _rot.toRotationMatrix();
 }
 
-void Pose::setRotation(float rotGlobalZ, float rotLocalY)
+void Pose::setRotation(float z, float y)
 {
-    _rotGlobalZ = Eigen::AngleAxisf(rotGlobalZ, Eigen::Vector3f::UnitZ());
-    _rotLocalY = Eigen::AngleAxisf(rotLocalY, Eigen::Vector3f::UnitY());
-    _rot = _rotGlobalZ * _rotLocalY;
+    _rotZ = Eigen::AngleAxisf(z, Eigen::Vector3f::UnitZ());
+    _rotY = Eigen::AngleAxisf(y, Eigen::Vector3f::UnitY());
+    _rot = _rotZ * _rotY;
     updatePose();
 }
-void Pose::setRotationGlobalZ(float globalZ)
+void Pose::setRotationZ(float z)
 {
-    _rotGlobalZ = Eigen::AngleAxisf(globalZ, Eigen::Vector3f::UnitZ());
-    _rot = _rotGlobalZ * _rotLocalY;
+    _rotZ = Eigen::AngleAxisf(z, Eigen::Vector3f::UnitZ());
+    _rot = _rotZ * _rotY;
     updatePose();
 }
-void Pose::setRotationLocalY(float localY)
+void Pose::setRotationY(float y)
 {
-    _rotLocalY = Eigen::AngleAxisf(localY, Eigen::Vector3f::UnitY());
-    _rot = _rotGlobalZ * _rotLocalY;
+    _rotY = Eigen::AngleAxisf(y, Eigen::Vector3f::UnitY());
+    _rot = _rotZ * _rotY;
     updatePose();
 }
-void Pose::addRotationGlobalZ(float rotZ)
+void Pose::addRotationZ(float rotZ)
 {
-    _rotGlobalZ = Eigen::AngleAxisf(rotZ + getRotationGlobalZ(), Eigen::Vector3f::UnitZ());
-    _rot = _rotGlobalZ * _rotLocalY;
+    _rotZ = Eigen::AngleAxisf(rotZ + getRotationZ(), Eigen::Vector3f::UnitZ());
+    _rot = _rotZ * _rotY;
     updatePose();
 }
-void Pose::addRotationLocalY(float rotY)
+void Pose::addRotationY(float rotY)
 {
-    _rotLocalY = Eigen::AngleAxisf(rotY + getRotationLocalY(), Eigen::Vector3f::UnitY());
-    _rot = _rotGlobalZ * _rotLocalY;
+    _rotY = Eigen::AngleAxisf(rotY + getRotationY(), Eigen::Vector3f::UnitY());
+    _rot = _rotZ * _rotY;
     updatePose();
 }
 

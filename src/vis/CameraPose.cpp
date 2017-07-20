@@ -26,7 +26,7 @@ CameraPose::CameraPose(const Eigen::AlignedBox<float, 3>& boundingBox, int pixel
 void CameraPose::setBoundingBox(const Eigen::AlignedBox<float, 3> boundingBox)
 {
     _minDistance = boundingBox.diagonal().norm() / 2.f; 
-    if(getPoint().norm() == 0)
+    if(getPoint().norm() < _minDistance / 10.f)
     {
         setPointRef(Eigen::Vector3f(-boundingBox.diagonal().norm() / 3.f, 0.f, 0.f));
     }

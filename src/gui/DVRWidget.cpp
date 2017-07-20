@@ -154,22 +154,22 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 void DVRWidget::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _pose.addRotationGlobalZ(0.05f);
+        _pose.addRotationZ(0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Right) {  
-        _pose.addRotationGlobalZ(-0.05f);
+        _pose.addRotationZ(-0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Up) {
-        _pose.addRotationLocalY(-0.05f);
+        _pose.addRotationY(-0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
     } else if(event->key() == Qt::Key_Down) {
-        _pose.addRotationLocalY(0.05f);
+        _pose.addRotationY(0.05f);
         //emit sceneChanged();
         //emit _model.poseChanged();
         update();
