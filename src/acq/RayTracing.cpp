@@ -10,7 +10,8 @@ float RayTracing::boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3
         
         {
             const float divx = 1/ray.direction().x(); 
-            if(ray.direction().x() >= 0){
+            //if(ray.direction().x() >= 0 )
+            if(!std::signbit(ray.direction().x())){
                 tmin = (boxMin.x() - ray.origin().x()) * divx;
                 tmax = (boxMax.x() - ray.origin().x()) * divx;
             } else {
@@ -21,7 +22,8 @@ float RayTracing::boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3
         
         {
             const float divy = 1/ray.direction().y(); 
-            if(ray.direction().y() >= 0){
+            //if(ray.direction().y() >= 0){
+            if(!std::signbit(ray.direction().y())){
                 tymin = (boxMin.y() - ray.origin().y()) * divy;
                 tymax = (boxMax.y() - ray.origin().y()) * divy;
             } else {
@@ -44,7 +46,8 @@ float RayTracing::boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3
         
         {
             const float divz = 1/ray.direction().z(); 
-            if(ray.direction().z() >= 0){
+            //if(ray.direction().z() >= 0){
+            if(!std::signbit(ray.direction().z())){
                 tzmin = (boxMin.z() - ray.origin().z()) * divz;
                 tzmax = (boxMax.z() - ray.origin().z()) * divz;
             } else {

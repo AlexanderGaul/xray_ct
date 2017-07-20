@@ -20,7 +20,7 @@ CameraPose::CameraPose(const Eigen::AlignedBox<float, 3>& boundingBox, int pixel
     _right{0.f, 1.f, 0.f},
     _screenCenter{- boundingBox.diagonal().norm() / 2.f, 0.f, 0.f}
 {
-    setFov(120);
+    setFov(60);
 }
 
 void CameraPose::setBoundingBox(const Eigen::AlignedBox<float, 3> boundingBox)
@@ -28,10 +28,11 @@ void CameraPose::setBoundingBox(const Eigen::AlignedBox<float, 3> boundingBox)
     _minDistance = boundingBox.diagonal().norm() / 2.f; 
     if(getPoint().norm() < _minDistance / 10.f)
     {
-        setPointRef(Eigen::Vector3f(-boundingBox.diagonal().norm() / 3.f, 0.f, 0.f));
+        setPointRef(Eigen::Vector3f(-boundingBox.diagonal().norm() * 10, 0.f, 0.f));
     }
     setFov(_fov);
     updatePose();
+
 }
 void CameraPose::setFov(float fov)
 {
@@ -97,6 +98,7 @@ Eigen::Vector3f CameraPose::getPixel(int horizontal, int vertical, Eigen::Vector
     
     position = position + _right * _pixelSize * horizontal;
     position = position + _down * _pixelSize * vertical;
+
     
     return position;
 }
