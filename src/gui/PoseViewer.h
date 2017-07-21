@@ -84,9 +84,7 @@ private:
     void intParamChanged(QSpinBox *box, int oldVal){
         if(oldVal == box->value()){
            return; 
-        }       
-        
-        std::cout << box << std::endl;
+        }
         
         if(_model.containsModifiedElements()){
             if(QMessageBox::Ok != QMessageBox::question(this, "Delete Saved Poses", "If pose parameters are changed all saved poses have to be deleted. Do you want to continue?", QMessageBox::Ok | QMessageBox::No, QMessageBox::Ok)){
