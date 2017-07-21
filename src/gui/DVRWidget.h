@@ -28,15 +28,15 @@ class DVRWidget : public QWidget
 {
     Q_OBJECT
 private:
-    const VisualizationModel& _visModel;
-    DVRModel _dvrModel;
+    VisualizationModel& _visModel;
+    DVRModel& _dvrModel;
     
 
 public:
     virtual void keyPressEvent(QKeyEvent *event);
     
     
-    DVRWidget(const VisualizationModel& visModel);
+    DVRWidget(VisualizationModel& visModel);
 
     void paintEvent(QPaintEvent* p_e) override;
 
@@ -44,7 +44,24 @@ public:
 
     QColor color() const;
 
+
     void setStepSize(float stepSize);
 
     void setColorRange(float from, float to);
+    
+public slots:
+    void changedPose();
+    
+    /*
+    QSize sizeHint()
+    {
+        //setGeometry(0, 0, _dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
+        return QSize(_dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
+    }
+    QSize minimumSizeHint()
+    {
+        //setGeometry(0, 0, _dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
+        return QSize(_dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
+    }
+    */
 };

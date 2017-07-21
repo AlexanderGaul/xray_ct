@@ -1,0 +1,70 @@
+#include "BoxSlider.h"
+
+#include <iostream>
+
+BoxSlider::BoxSlider(float minValue, float maxValue, int decimal, float singleStep)
+    :
+    _slider {new QSlider()},
+    _box {new QDoubleSpinBox()},
+    _layout {new QHBoxLayout()}
+{
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    _slider->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    _box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    //_box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    
+    
+    _slider->setOrientation(Qt::Horizontal);
+    _slider->setRange(0, static_cast<int>((maxValue - minValue) / singleStep));
+    _slider->setSingleStep(1);
+    
+    _box->setRange(minValue, maxValue);
+    _box->setSingleStep(singleStep);
+    _box->setDecimals(decimal);
+    
+    _layout->addWidget(_slider);
+    _layout->addWidget(_box);
+    _layout->setStretch(0, 2);
+    _layout->setStretch(1, 1);
+    
+    setLayout(_layout);
+    _layout->setContentsMargins(0, 0, 0, 0);
+    
+    connect(_box, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &BoxSlider::boxChanged);
+    connect(_slider, &QSlider::valueChanged, this, &BoxSlider::sliderChanged);
+}
+
+void BoxSlider::boxChanged(float value)
+{
+    float min = static_cast<float>(_box->minimum());
+    float max = static_cast<float>(_box->maximum());
+    float step = static_cast<float>(_box->singleStep());
+    int iValue = static_cast<int>((value - min) / step);
+    
+    _slider->setValue(iValue);
+    emit valueChanged(value);
+}
+void BoxSlider::sliderChanged(int value)
+{
+    float min = static_cast<float>(_box->minimum());
+    float max = static_cast<float>(_box->maximum());
+    float step = static_cast<float>(_box->singleStep());
+    
+    float fValue = min + value * step;
+    
+    _box->setValue(fValue);
+    emit valueChanged(fValue);
+}
+
+
+void BoxSlider::changedValue(float value)
+{
+    _box->setValue(value);
+    boxChanged(value);
+    //emit valueChanged(value);
+}
+
+QSize BoxSlider::minimumSizeHint() const
+{
+    return _box->minimumSizeHint();
+}

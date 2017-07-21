@@ -30,6 +30,10 @@ void CameraPose::setFov(float fov)
     float screenWidth = 2 * tanf(_fov / 2.f / 180.f * M_PI);
     _pixelSize = screenWidth / _pxlHorizontal;
 }
+float CameraPose::getFov()
+{
+    return _fov;
+}
 
 int CameraPose::getPixelHorizontal() const
 {
@@ -40,7 +44,7 @@ int CameraPose::getPixelVertical() const
     return _pxlVertical;
 }
 
-Eigen::ParametrizedLine<float, 3> CameraPose::getRayProjective(int horizontal, int vertical)
+Eigen::ParametrizedLine<float, 3> CameraPose::getRayPerspective(int horizontal, int vertical)
 {
     Eigen::Vector3f pixel = getPixel(horizontal, vertical, getCenter());
     Eigen::Vector3f direction = pixel - getPoint();

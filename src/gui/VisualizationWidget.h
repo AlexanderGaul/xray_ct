@@ -23,6 +23,8 @@
 #include "VisualizationModel.h"
 #include "Volume.h"
 
+#include "DVRControlWidget.h"
+
 /**
  * Widget to configure and execute visualization algorithms.
  *
@@ -72,6 +74,7 @@ private:
     ///info text regarding angle for DVR
     QLabel *_dvrStepWidthLabel;
     ///choose a suitable step width
+    
     QSlider *_dvrStepWidthSlider;
     ///display current step width
     QDoubleSpinBox *_dvrStepWidthSpinBox;
@@ -79,6 +82,8 @@ private:
     MPRWidget *_mprWidget;
     ///paints the direct volume rendering (DVR)
     DVRWidget *_dvrWidget;
+    
+    DVRControlWidget* _dvrControlWidget;
 
     /**
      * Updates (colors) the color label

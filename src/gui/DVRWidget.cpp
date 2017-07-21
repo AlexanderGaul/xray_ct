@@ -1,11 +1,13 @@
 #include "DVRWidget.h"
 
 
-DVRWidget::DVRWidget(const VisualizationModel& visModel)
+DVRWidget::DVRWidget(VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {0.0025, TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))}
+      _dvrModel {visModel.getDVRModel()}
 {
     setFocusPolicy(Qt::ClickFocus);
+    
+    connect(&_dvrModel, &DVRModel::redraw, this, &DVRWidget::changedPose);
 }
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
@@ -34,7 +36,16 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
         for(int y = 0; y < _dvrModel.getCameraPose().getPixelVertical(); y++)
         {
             float maxSample = 0;
-            Eigen::ParametrizedLine<float, 3> ray = _dvrModel.getCameraPose().getRayOrthogonal(x, y);
+            Eigen::ParametrizedLine<float, 3> ray;
+            
+            if(!_dvrModel.getPerspective())
+            {
+                ray = _dvrModel.getCameraPose().getRayOrthogonal(x, y);
+            }
+            else
+            {
+                ray = _dvrModel.getCameraPose().getRayPerspective(x, y);
+            }
 
             float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
             
@@ -73,22 +84,22 @@ void DVRWidget::keyPressEvent(QKeyEvent* event)
     if(event->key() == Qt::Key_Left) {
         _dvrModel.getCameraPose().addRotationZ(0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Right) {  
         _dvrModel.getCameraPose().addRotationZ(-0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Up) {
         _dvrModel.getCameraPose().addRotationY(-0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationY();
         update();
     } else if(event->key() == Qt::Key_Down) {
         _dvrModel.getCameraPose().addRotationY(0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationY();
         update();
     }
 }
@@ -113,3 +124,10 @@ void DVRWidget::setColorRange(float from, float to)
 {
     _dvrModel.setColorRange(from, to);
 }
+
+
+void DVRWidget::changedPose()
+{
+    update();
+}
+

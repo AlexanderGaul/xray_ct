@@ -4,6 +4,7 @@
 
 #include "TransferFunction.h"
 #include "Volume.h"
+#include "DVRModel.h"
 
 /**
  * The visualization model manages the current configuration
@@ -19,12 +20,15 @@ private:
     QColor _color;
 
     Volume _volume;
+    
+    DVRModel _dvrModel;
 
 public:
     VisualizationModel()
         : _color { QColor::fromRgb(255, 255, 255)}, //white
-          _volume {}
-    {        
+          _volume {},
+          _dvrModel {0.0025, TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))}
+    {
     }
 
     void setVolume(Volume volume)
@@ -36,4 +40,10 @@ public:
     {
         return _volume;
     }
+    
+    DVRModel& getDVRModel()
+    {
+        return _dvrModel;
+    }
+    
 };

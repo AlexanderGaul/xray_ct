@@ -27,11 +27,12 @@ public:
     CameraPose(int pixelHorizontal, int pixelVertical, float distance = 0.5f);
     
     void setFov(float fov);
+    float getFov();
     
     int getPixelHorizontal() const;
     int getPixelVertical() const;
     
-    Eigen::ParametrizedLine<float, 3> getRayProjective(int horizontal, int vertical);
+    Eigen::ParametrizedLine<float, 3> getRayPerspective(int horizontal, int vertical);
     Eigen::ParametrizedLine<float, 3> getRayOrthogonal(int horizontal, int vertical);
     
     void setDistance(float distance);
