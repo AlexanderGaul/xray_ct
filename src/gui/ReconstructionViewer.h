@@ -46,7 +46,7 @@ public:
     _iterationLabel{new QLabel {}}, _iterationSlider{new QSlider {}}, 
     _regCheckBox{new QCheckBox{"Regularized Reconstruction"}}, _regLambda{new QDoubleSpinBox {}}, 
     _updateButton{new QPushButton{"Update reconstruction"}}, 
-    _noiseSpinBox{new QDoubleSpinBox{}}, _noiseCheckBox {new QCheckBox{"Activate Noise"}} {
+    _noiseSpinBox{new QDoubleSpinBox{}}, _noiseCheckBox {new QCheckBox{"Activate Gaussian Noise"}} {
         QGridLayout *layout = new QGridLayout {};
         QGridLayout *sliderLayout = new QGridLayout {};
         QHBoxLayout *controlLayout = new QHBoxLayout {};
@@ -90,7 +90,8 @@ public:
         updateRegText();
         _regLambda->setButtonSymbols(QAbstractSpinBox::NoButtons);
         regLayout->addWidget(_regLambda);
-        _regLambda->setRange(0, 100000);
+        _regLambda->setRange(0, 5000);
+        _regLambda->setPrefix("λ=");
         layout->addItem(regLayout, 4, 0);
 
         _updateButton->setEnabled(false);

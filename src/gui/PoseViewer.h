@@ -69,7 +69,7 @@ private:
         }       
         
         if(_model.containsModifiedElements()){
-             if(QMessageBox::Ok != QMessageBox::question(this, "Delete Saved Poses", "If pose parameters are changed all saved poses have to be deleted. Do you want to continue?", QMessageBox::Ok | QMessageBox::No, QMessageBox::Ok)){
+             if(QMessageBox::Ok != QMessageBox::question(this, "Delete Saved Poses", "When pose parameters are changed, all saved poses have to be deleted. Do you want to do this?", QMessageBox::Ok | QMessageBox::No, QMessageBox::Ok)){
                 box->setValue(oldVal);
                 return;
             }
@@ -87,7 +87,7 @@ private:
         }
         
         if(_model.containsModifiedElements()){
-            if(QMessageBox::Ok != QMessageBox::question(this, "Delete Saved Poses", "If pose parameters are changed all saved poses have to be deleted. Do you want to continue?", QMessageBox::Ok | QMessageBox::No, QMessageBox::Ok)){
+            if(QMessageBox::Ok != QMessageBox::question(this, "Delete Saved Poses", "When pose parameters are changed all saved poses have to be deleted. Do you want to do this?", QMessageBox::Ok | QMessageBox::No, QMessageBox::Ok)){
                 box->setValue(oldVal);
                 return;
             }
