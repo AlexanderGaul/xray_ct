@@ -7,37 +7,27 @@
 
 
 CameraPose::CameraPose()
+    :
+    CameraPose(200, 200)
 {}
 
 
-CameraPose::CameraPose(const Eigen::AlignedBox<float, 3>& boundingBox, int pixelHorizontal, int pixelVertical)
+CameraPose::CameraPose(int pixelHorizontal, int pixelVertical, float distance)
     :
-    Pose(Eigen::Vector3f(-boundingBox.diagonal().norm(), 0.f, 0.f)),
+    Pose(Eigen::Vector3f(-distance, 0.f, 0.f)),
     _pxlHorizontal{pixelVertical},
     _pxlVertical{pixelVertical},
-    _minDistance{boundingBox.diagonal().norm() / 2.f},
     _down{0.f, 0.f, -1.f},
     _right{0.f, 1.f, 0.f},
-    _screenCenter{- boundingBox.diagonal().norm() / 2.f, 0.f, 0.f}
+    _screenCenter{getPoint() - getNormal()}
 {
-    setFov(60);
+    setFov(30);
 }
 
-void CameraPose::setBoundingBox(const Eigen::AlignedBox<float, 3> boundingBox)
-{
-    _minDistance = boundingBox.diagonal().norm() / 2.f; 
-    if(getPoint().norm() < _minDistance / 10.f)
-    {
-        setPointRef(Eigen::Vector3f(-boundingBox.diagonal().norm() * 10, 0.f, 0.f));
-    }
-    setFov(_fov);
-    updatePose();
-
-}
 void CameraPose::setFov(float fov)
 {
     _fov = fov;
-    float screenWidth = 2 * _minDistance * tanf(_fov / 2.f / 180.f * M_PI);
+    float screenWidth = 2 * tanf(_fov / 2.f / 180.f * M_PI);
     _pixelSize = screenWidth / _pxlHorizontal;
 }
 
@@ -65,7 +55,7 @@ Eigen::ParametrizedLine<float, 3> CameraPose::getRayOrthogonal(int horizontal, i
 void CameraPose::setDistance(float distance)
 {
     Pose::setDistanceToCenter(distance);
-    _screenCenter = getRotation() * (getPoint() - getNormal() * _minDistance);
+    _screenCenter = getRotation() * (getPoint() - getNormal());
 }
 float CameraPose::getDistance()
 {
@@ -76,7 +66,7 @@ float CameraPose::getDistance()
 void CameraPose::updatePose()
 {
     Pose::updatePose();
-    _screenCenter = getPoint() - getNormal() * _minDistance;
+    _screenCenter = getPoint() - getNormal();
     _down = getRotation() * Eigen::Vector3f(0.f, 0.f, -1.f);
     _right = getRotation() * Eigen::Vector3f(0.f, 1.f, 0.f);
 }

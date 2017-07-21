@@ -30,31 +30,6 @@ class DVRWidget : public QWidget
 private:
     const VisualizationModel& _visModel;
     DVRModel _dvrModel;
-    DVRCamera _dvrCamera;
-    
-    CameraPose _pose;
-    
-    
-    /**
-     * Calculates the camera position.
-     *
-     * More specifically, the position of the pixel most left
-     * and at the bottom of the camera is calculated.
-     * @brief calculateCameraPosition
-     * @param volume
-     * @return
-     */
-    Eigen::Vector3f calculateCameraPosition(const Volume& volume);
-
-    /**
-     * Normalizes the input vector,
-     * such that the l1 norm is exactly one.
-     * @brief normalize
-     * @param x input vector containing exactly three values
-     * @return normalized vector, in the same direction
-     *          as the input vector.
-     */
-    Eigen::Vector3f normalize(Eigen::Vector3f x);
     
 
 public:
@@ -64,20 +39,6 @@ public:
     DVRWidget(const VisualizationModel& visModel);
 
     void paintEvent(QPaintEvent* p_e) override;
-
-    /**
-     * Sets the rotation angle for the DVR.
-     * @brief setAngle
-     * @param angle - the angle of rotation in radians
-     */
-    void setAngle(float angle);
-
-    /**
-     * Calibrates the camera according to the corresponding
-     * volume.
-     * @brief calibrateCamera
-     */
-    void calibrateCamera();
 
     void setColor(QColor color);
 

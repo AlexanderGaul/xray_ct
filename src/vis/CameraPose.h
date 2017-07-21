@@ -16,7 +16,6 @@ private:
     int _pxlHorizontal;
     int _pxlVertical;
     
-    float _minDistance;
     float _fov;
     float _pixelSize;
     
@@ -25,9 +24,8 @@ private:
     Eigen::Vector3f _screenCenter;
 public:
     CameraPose();
-    CameraPose(const Eigen::AlignedBox<float, 3>& boundingBox, int pixelHorizontal, int pixelVertical);
+    CameraPose(int pixelHorizontal, int pixelVertical, float distance = 0.5f);
     
-    void setBoundingBox(const Eigen::AlignedBox<float, 3> boundingBox);
     void setFov(float fov);
     
     int getPixelHorizontal() const;

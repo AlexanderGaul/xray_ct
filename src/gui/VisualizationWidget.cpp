@@ -25,8 +25,8 @@ void VisualizationWidget::updateVolumeChanged()
 
 void VisualizationWidget::updateDVRWidget()
 {
-    _dvrWidget->setAngle(0.0);
-    _dvrWidget->calibrateCamera();
+    //_dvrWidget->setAngle(0.0);
+    //_dvrWidget->calibrateCamera();
     _dvrWidget->setColorRange(0, _visModel.volume().maxEntry());
 }
 
@@ -226,7 +226,7 @@ void VisualizationWidget::updateDVRAngle(int angle)
     _dvrAngleSlider->setValue(angle);
 
     float radianAngle = (angle*M_PI)/180.0;
-    _dvrWidget->setAngle(radianAngle);
+    //_dvrWidget->setAngle(radianAngle);
 }
 
 void VisualizationWidget::updateDVRStepSize(float stepSize)
