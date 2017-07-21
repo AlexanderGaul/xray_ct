@@ -66,13 +66,13 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     
     layoutVerticalPix->addWidget(new QLabel{"#Vertical Detector Pixels"});
     layoutVerticalPix->addWidget(_verticalPixels);
-    _verticalPixels->setRange(2, 100);
+    _verticalPixels->setRange(2, 400);
     _verticalPixels->setValue(5);
     layout->addLayout(layoutVerticalPix, 4, 0);
     
     layoutHorizontalPix->addWidget(new QLabel{"#Horizontal Detector Pixels"});
     layoutHorizontalPix->addWidget(_horizontalPixels);
-    _horizontalPixels->setRange(2, 100);
+    _horizontalPixels->setRange(2, 400);
     _horizontalPixels->setValue(5);
     layout->addLayout(layoutHorizontalPix, 5, 0);
     
@@ -90,7 +90,7 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _detectorHeight->setSingleStep(0.1);
     _detectorHeight->setRange(0.01, 10);
     
-    layoutDetectorSouceDistance->addWidget(new QLabel{"Detector-Source-Dinstance (x * Volume Diagonal)"});
+    layoutDetectorSouceDistance->addWidget(new QLabel{"Detector-Source-Distance (x * Volume Diagonal)"});
     layoutDetectorSouceDistance->addWidget(_detectorSouceDistance);
     layout->addLayout(layoutDetectorSouceDistance, 8, 0);
     _detectorSouceDistance->setValue(1.5);
