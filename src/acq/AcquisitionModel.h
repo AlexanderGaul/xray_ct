@@ -5,6 +5,7 @@
 #include <memory>
 #include <array>
 #include <cmath>
+#include <tuple>
 
 #include <QObject>
 #include <QFile>
@@ -30,7 +31,6 @@ class AcquisitionModel : public QObject
 {
     Q_OBJECT
 public:
-    AcquisitionModel();
     /**
      * @brief AcquisitionModel. Creates an acquisition model and loads
      * an EDF image from the given path.
@@ -98,9 +98,6 @@ public:
     
 
     void addSphericalPoses(int circles, int equatorialCount, float range = 2.f * M_PI);
-    private: void addCircularPoses(int count, float angle, float range = 2.f * M_PI);
-
-public:
     
     /*
      * returns a pair of the number of rows (=poses) in the _measurements arrey
@@ -130,11 +127,51 @@ public:
     Acquisition getAcq() const {
         return Acquisition {_volume, _poses, _measurements};
     }
-
+    
+    /*
+     * changes the size of the detector and/ or the number of pixels
+     * since other functions assume that all poses have the same structure, this
+     * requires that old poses are deleted
+     * 
+     * return true if poses have to be reset or deleted
+     */
+    void changePoseParams(float sourceDetDistance, float detectorWidth, float detectorHeight,
+                          int horizontalPixels, int verticalPixels){
+        _posePrototype = AcquisitionPose {sourceDetDistance*_volume.getBoundingBox().diagonal().norm(), 
+            detectorWidth, detectorHeight, horizontalPixels, verticalPixels};
+        clearPoses();
+        emit poseChanged();
+    }
+    
+    /*
+     * returns the parameters for a pose constructor in the same order as they are used
+     * in the constructor:
+     * detector-source-distance, detector width, detector height, #horizontal pixels
+     * #vertical pixels
+     * 
+     * It is important to note that the distance is given relative to the length of the
+     * volume distance.
+     */
+    std::tuple<float, float, float, int, int> currPrototype(){
+        return std::make_tuple(_posePrototype.getDetectorSourceDistance()/volume().getBoundingBox().diagonal().norm(),
+                                _posePrototype.getDetectorWidth(), _posePrototype.getDetectorHeight(), 
+                               _posePrototype.getPixelHorizontal(), _posePrototype.getPixelVertical());
+    }
+    
+    /*
+     * return false if and only if there is only a single element in _poses, which was
+     * not modified (meaning it equals the stored prototype)
+     */
+    bool containsModifiedElements(){
+        return _poses.size() > 1 || !_poses.front().equals(_posePrototype);
+    }
+    
 signals:  
     //emited when the acquistion pose changes (because of user action)
     void poseChanged();
 private:
+    void addCircularPoses(int count, float angle, float range = 2.f * M_PI);
+    
     bool checkIfVolumeFitsBlackBox() const;
     
     /*
@@ -170,6 +207,7 @@ private:
     const Eigen::Vector3f FIXED_BOX_SIZE = Eigen::Vector3f(0.15, 0.15, 0.25);
     bool _filled;
     Volume _volume;
+    AcquisitionPose _posePrototype;
     /*
      * Is effectively a stack. May later be replaced with std::stack TODO
      * Stores older poses that were created by the user, so that a ForwardProjection on 
@@ -179,6 +217,7 @@ private:
     std::vector<AcquisitionPose> _poses;
     
     Eigen::VectorXf _measurements;
+    
 
 };
 
