@@ -24,13 +24,14 @@ in it.
 
 The program can be executed typing
 
-<<executable_name>> <<path_to_volume.edf>>
+./part2 <<path_to_volume.edf>>
 
-into a terminal.
+into a terminal (at the location of the executable, which is
+called part2 by default).
 It is important to use only valid paths to .edf files 
 containing three dimensional volumes.
 
-### Acquisition widget manual
+### AcquisitionWidget manual
 
 In the acquisition widget, the user can see the position of 
 X-ray emitter and detector (who form an 
@@ -62,7 +63,7 @@ linearized way.
 
 TODO SIMON: IS ALL ACQUISITONS DESCRIPTION CORRECT?
 
-### Reconstruction widget manual
+### ReconstructionWidget manual
 
 The top part of this widget shows the reconstruction results. 
 
