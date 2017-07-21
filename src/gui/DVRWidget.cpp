@@ -1,36 +1,13 @@
 #include "DVRWidget.h"
 
-Eigen::Vector3f DVRWidget::calculateCameraPosition(const Volume& volume)
-{
-    return _dvrCamera.calculateCameraPosition(volume, _dvrModel.angle());
-}
 
-Eigen::Vector3f DVRWidget::normalize(Eigen::Vector3f x)
-{
-    float sum = 0.0;
-    for(int i = 0; i<x.rows(); ++i)
-    {
-        sum += std::abs(x(i));
-    }
-    if(sum > 0)
-    {
-        for(int i = 0; i<x.rows(); ++i)
-        {
-            x(i) /= sum;
-        }
-    }
-    return x;
-}
-
-DVRWidget::DVRWidget(const VisualizationModel& visModel)
+DVRWidget::DVRWidget(VisualizationModel& visModel)
     : _visModel {visModel},
-      _dvrModel {M_PI, 5, calculateCameraPosition(_visModel.volume()), 0.0025,
-                 TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))},
-      _dvrCamera {},
-      
-      _pose{_visModel.volume().getBoundingBox(), 200, 200}
+      _dvrModel {visModel.getDVRModel()}
 {
     setFocusPolicy(Qt::ClickFocus);
+    
+    connect(&_dvrModel, &DVRModel::redraw, this, &DVRWidget::changedPose);
 }
 
 void DVRWidget::paintEvent(QPaintEvent* p_e)
@@ -46,60 +23,29 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 
     const Volume& vol = _visModel.volume();
     Eigen::AlignedBox3f box = vol.getBoundingBox();
-    
-    _pose.setBoundingBox(vol.getBoundingBox());
-
-    float angle = _dvrModel.angle();
-    int resolution = _dvrModel.resolution();
-
-    // get direction vector between volume center and detector center
-    Eigen::Vector3f direction(std::cos(angle),std::sin(angle),0);
-    // normalize direction
-    direction = normalize(direction);
-    // compute direction vector between detector and volume
-    Eigen::Vector3f correction = direction;
-    // small negative values cause numerical instability...
-    for(int i = 0; i<3; ++i)
-    {
-        if(std::abs(correction(i)) > 0.0001)
-        {
-            correction(i) = -correction(i);
-        }
-    }
-    // get physical size of one pixel
-    float sizePixelX = vol.getNumVoxels()[0] *
-                    vol.getSpacing()[0] / resolution;
-    float sizePixelZ = vol.getNumVoxels()[2] *
-                    vol.getSpacing()[2] / resolution;
-    float stepSizeLength = _dvrModel.stepSize();
-    if(stepSizeLength == 0)
-    {        
-        painter.drawText(width()/2, height()/2, "Error: DVR not possible with step size = 0!");
-        return;
-    }
-    stepSizeLength /= 100;
-
-    float reso = std::min(sizePixelX, sizePixelZ) / stepSizeLength;
-
-    int tileWidth = std::min(width(), height()) / reso;
-
-    // calculate position of pixel most down and left in camera
-    Eigen::Vector3f better = _dvrModel.position();
-    better(0) -= std::sin(angle)*sizePixelX*0.5*reso;
-    better(1) -= std::cos(angle)*sizePixelX*0.5*reso;
-    better(2) = box.corner(Eigen::AlignedBox3f::BottomLeftFloor)(2);
+    _dvrModel.getCameraPose().setDistance(vol.getBoundingBox().diagonal().norm());
     
     
-
-    tileWidth = std::min(width(), height()) / _pose.getPixelHorizontal();
+    float scale = std::min(static_cast<float>(width()) / _dvrModel.getCameraPose().getPixelHorizontal(), static_cast<float>(height()) / _dvrModel.getCameraPose().getPixelVertical());
+    painter.scale(scale, scale);
+    
     int count = vol.getBoundingBox().diagonal().norm() / _dvrModel.stepSize();
     
-    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
+    for(int x = 0; x < _dvrModel.getCameraPose().getPixelHorizontal(); x++)
     {
-        for(int y = 0; y < _pose.getPixelVertical(); y++)
+        for(int y = 0; y < _dvrModel.getCameraPose().getPixelVertical(); y++)
         {
             float maxSample = 0;
-            Eigen::ParametrizedLine<float, 3> ray = _pose.getRayOrthogonal(x, y);
+            Eigen::ParametrizedLine<float, 3> ray;
+            
+            if(!_dvrModel.getPerspective())
+            {
+                ray = _dvrModel.getCameraPose().getRayOrthogonal(x, y);
+            }
+            else
+            {
+                ray = _dvrModel.getCameraPose().getRayPerspective(x, y);
+            }
 
             float distance = RayTracing::boxIntersectHelper(vol.getBoundingBox(), ray);
             
@@ -115,17 +61,17 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                     distance += _dvrModel.stepSize();
                 }
                 QColor color = _dvrModel.transferFunction().classify(maxSample);
-                painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
+                painter.fillRect(x, y, 1, 1, color);
             }
         }
     }
     // FOR SLICE VIEWING
     /*
-    for(int x = 0; x < _pose.getPixelHorizontal(); x++)
+    for(int x = 0; x < _dvrModel.getCameraPose().getPixelHorizontal(); x++)
     {
-        for(int y = 0; y < _pose.getPixelVertical(); y++)
+        for(int y = 0; y < _dvrModel.getCameraPose().getPixelVertical(); y++)
         {
-            float intensity = vol.getVoxelLinearPhysical(_pose.getPixel(x, y));
+            float intensity = vol.getVoxelLinearPhysical(_dvrModel.getCameraPose().getPixel(x, y));
             QColor color = _dvrModel.transferFunction().classify(intensity);
             painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
         }
@@ -136,42 +82,26 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 void DVRWidget::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _pose.addRotationZ(0.05f);
+        _dvrModel.getCameraPose().addRotationZ(0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Right) {  
-        _pose.addRotationZ(-0.05f);
+        _dvrModel.getCameraPose().addRotationZ(-0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Up) {
-        _pose.addRotationY(-0.05f);
+        _dvrModel.getCameraPose().addRotationY(-0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationY();
         update();
     } else if(event->key() == Qt::Key_Down) {
-        _pose.addRotationY(0.05f);
+        _dvrModel.getCameraPose().addRotationY(0.05f);
         //emit sceneChanged();
-        //emit _model.poseChanged();
+        emit _dvrModel.updateRotationY();
         update();
     }
-}
-
-
-void DVRWidget::setAngle(float angle)
-{
-    if(angle != _dvrModel.angle())
-    {
-        _dvrModel.setAngle(angle);
-        calibrateCamera();
-        repaint();
-    }
-}
-
-void DVRWidget::calibrateCamera()
-{
-    _dvrModel.setPosition(calculateCameraPosition(_visModel.volume()));
 }
 
 void DVRWidget::setColor(QColor color)
@@ -194,3 +124,10 @@ void DVRWidget::setColorRange(float from, float to)
 {
     _dvrModel.setColorRange(from, to);
 }
+
+
+void DVRWidget::changedPose()
+{
+    update();
+}
+

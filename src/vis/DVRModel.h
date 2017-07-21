@@ -1,64 +1,36 @@
-#pragma once
 #ifndef DVRMODEL_H
 #define DVRMODEL_H
 
 #include <Eigen/Eigen>
+#include <QObject>
+#include <QWidget>
 
 #include "TransferFunction.h"
+#include "CameraPose.h"
+//#include "VisualizationModel.h"
 
 
-class DVRModel
+class DVRModel : public QObject
 {
+    Q_OBJECT
 private:
-    /// specifies the angle of camera in radians
-    float _angle;
-    /// specifies the camera resolution (camera has
-    /// resolution x resolution pixels)
-    int _resolution;
-    /// specifies the position of the camera
-    Eigen::Vector3f _position;
     float _stepSize;
-
+    bool _perspective;
     TransferFunction _transferFunction;
-
     QColor _color;
     
+    CameraPose _pose;
+    
+    //VisualizationModel& _model;
+    
 public:
-    DVRModel(float angle, int resolution, Eigen::Vector3f position, float stepSize,
-             TransferFunction transferFunction)
-        : _angle(angle),
-          _resolution(resolution),
-          _position {position},
-          _stepSize {stepSize},
+    DVRModel(float stepSize, TransferFunction transferFunction)
+        :
+          _stepSize{stepSize},
+          _perspective{false},
           _transferFunction {transferFunction},
           _color(transferFunction.color(0))
     {
-    }
-
-
-    float angle() const
-    {
-        return _angle;
-    }
-
-    void setAngle(float angle)
-    {
-        _angle = angle;
-    }
-
-    int resolution() const
-    {
-        return _resolution;
-    }
-
-    Eigen::Vector3f position() const
-    {
-        return _position;
-    }
-
-    void setPosition(Eigen::Vector3f position)
-    {
-        _position = position;
     }
 
     void setTransferFunction(TransferFunction transferFunction)
@@ -86,6 +58,7 @@ public:
     void setStepSize(float stepsize)
     {
         _stepSize = stepsize;
+        emit redraw();
     }
 
     float stepSize() const
@@ -97,6 +70,78 @@ public:
     {
         _transferFunction.setRange(0, from, to);
     }
+    
+    CameraPose& getCameraPose()
+    {
+        return _pose;
+    }
+    
+signals:
+    void redraw();
+    
+    void updateRotationY();
+    void updateRotationZ();
+    void updateZoom();
+    void updateDistance();
+    void updateStepSize();
+    
+public slots:
+    void setRotationYDeg(float y)
+    {
+        float radians = y / 180.f * M_PI;
+        _pose.setRotationY(radians);
+        emit redraw();
+    }
+    void setRotationZDeg(float z)
+    {
+        float radians = z / 180.f * M_PI;
+        _pose.setRotationZ(radians);
+        emit redraw();
+    }
+    void setDistance(float distance)
+    {
+        _pose.setDistance(distance);
+        emit redraw();
+    }
+    void setZoom(float zoom)
+    {
+        _pose.setFov(zoom);
+        emit redraw();
+    }
+    void setPerspective(bool persp)
+    {
+        _perspective = persp;
+        emit redraw();
+    }
+    
+public:
+    float getRotationYDeg()
+    {
+        float deg = _pose.getRotationY() / M_PI * 180.f;
+        return deg;
+    }
+    
+    float getRotationZDeg()
+    {
+        float deg = _pose.getRotationZ() / M_PI * 180.f;
+        return deg;
+    }
+    
+    float getDistance()
+    {
+        return _pose.getDistance();
+    }
+    
+    float getZoom()
+    {
+        return _pose.getFov();
+    }
+    
+    bool getPerspective()
+    {
+        return _perspective;
+    }
+    
 };
 
 #endif // DVRMODEL_H

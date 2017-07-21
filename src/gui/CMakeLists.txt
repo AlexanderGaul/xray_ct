@@ -12,6 +12,8 @@ set(GUI_SRCS
         ResultWidget.cpp
         SliceWidget.cpp
         VisualizationWidget.cpp
+        DVRControlWidget.cpp
+        BoxSlider.cpp
         )
 set(GUI_HDRS
         MainWindow.h        
@@ -24,6 +26,8 @@ set(GUI_HDRS
         ResultWidget.h
         SliceWidget.h
         VisualizationWidget.h
+        DVRControlWidget.h
+        BoxSlider.h
         )
 
 add_library(part2_lib_gui ${GUI_HDRS} ${GUI_SRCS} )

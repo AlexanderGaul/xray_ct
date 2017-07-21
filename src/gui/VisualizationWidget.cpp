@@ -1,5 +1,8 @@
 #include "VisualizationWidget.h"
 
+#include <iostream>
+#include <QGroupBox>
+
 void VisualizationWidget::mprUpdateColorLabel()
 {
     _mprColorLabel->setStyleSheet( "background-color: " + _mprWidget->color().name() );
@@ -25,8 +28,8 @@ void VisualizationWidget::updateVolumeChanged()
 
 void VisualizationWidget::updateDVRWidget()
 {
-    _dvrWidget->setAngle(0.0);
-    _dvrWidget->calibrateCamera();
+    //_dvrWidget->setAngle(0.0);
+    //_dvrWidget->calibrateCamera();
     _dvrWidget->setColorRange(0, _visModel.volume().maxEntry());
 }
 
@@ -52,12 +55,13 @@ VisualizationWidget::VisualizationWidget() :
     _dvrStepWidthSlider {new QSlider {}},
     _dvrStepWidthSpinBox {new QDoubleSpinBox {}},
     _mprWidget {new MPRWidget{_visModel}},
-    _dvrWidget {new DVRWidget{_visModel}}
+    _dvrWidget {new DVRWidget{_visModel}},
+    _dvrControlWidget {new DVRControlWidget(_visModel.getDVRModel())}
 {
     ///all layout items for visulisation are composed in the main layout
-    QGridLayout *mainLayout = new QGridLayout {};
+    QHBoxLayout *mainLayout = new QHBoxLayout {};
     ///manages all menu items
-    QVBoxLayout *menuLayout = new QVBoxLayout {};
+    QGridLayout *menuLayout = new QGridLayout {};
     ///manages the color-choosing related widgets for mpr
     QHBoxLayout *mprColorLayout = new QHBoxLayout {};
     ///manages the MPR configuration
@@ -110,7 +114,7 @@ VisualizationWidget::VisualizationWidget() :
 
     mprLayout->addItem(mprDistanceLayout);
 
-    menuLayout->addItem(mprLayout);
+    //menuLayout->addItem(mprLayout);
 
     dvrUpdateColorLabel();
     dvrColorLayout->addWidget(_dvrColorLabel);
@@ -139,15 +143,26 @@ VisualizationWidget::VisualizationWidget() :
     mprLayout->addItem(dvrColorLayout);
     dvrLayout->addItem(dvrAngleLayout);
     dvrLayout->addItem(dvrStepWidthLayout);
+    
+    menuLayout->addWidget(_loadFileButton, 0, 0);
+    menuLayout->addWidget(_loadRecButton, 1, 0);
+    menuLayout->addItem(mprLayout, 2, 0);
+    
+    
+    //_dvrControlWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-    menuLayout->addItem(dvrLayout);
-
-    menuLayout->addWidget(_loadFileButton);
-    menuLayout->addWidget(_loadRecButton);
-    mainLayout->addItem(menuLayout, 0, 0);
-
-    mainLayout->addWidget(_mprWidget, 0, 1);
-    mainLayout->addWidget(_dvrWidget, 0, 2);
+    
+    menuLayout->addWidget(_dvrControlWidget, 3, 0);
+    
+    //_dvrWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //_mprWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mainLayout->addItem(menuLayout);
+    mainLayout->addWidget(_mprWidget);
+    mainLayout->addWidget(_dvrWidget);
+    
+    mainLayout->setStretch(0, 3);
+    mainLayout->setStretch(1, 5);
+    mainLayout->setStretch(2, 5);
 
     _mprWidget->setMinimumHeight(150);
     setLayout(mainLayout);
@@ -226,7 +241,8 @@ void VisualizationWidget::updateDVRAngle(int angle)
     _dvrAngleSlider->setValue(angle);
 
     float radianAngle = (angle*M_PI)/180.0;
-    _dvrWidget->setAngle(radianAngle);
+    std::cout << _dvrControlWidget->sizeHint().width() << std::endl;
+    //_dvrWidget->setAngle(radianAngle);
 }
 
 void VisualizationWidget::updateDVRStepSize(float stepSize)
