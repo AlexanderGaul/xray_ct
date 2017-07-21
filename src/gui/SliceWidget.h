@@ -29,6 +29,10 @@ private:
 
 public:
     SliceWidget() : _currSlice(0), _status(2), _model {nullptr}, _image {} {
+        QPalette pal = palette();
+        pal.setColor(QPalette::Background, Qt::black);
+        this->setPalette(pal);
+        this->setAutoFillBackground(true);
     }
 
     virtual
@@ -40,52 +44,61 @@ public:
         QPainter painter(this);
 
         const Vec3D<float>& content = _model->getContent();
+        const Eigen::Vector3f& spacing = _model->getVolumeBase().getSpacing();
         if(content.totalSize() == 0){
             return;
         }
 
         float maxColor = _model->rec().maxEntry();
         float colorCoeff = 255.0/maxColor;
-        if(_status == 2)
-        {
-            int pixelWidth = 1.0*width()/(content.sizeX());
-            int pixelHeight = 1.0*height()/(content.sizeY());
+        
+        if(_status == 2) {   
+            const float spacingRatio = spacing.x()/spacing.y();
+            int maxPixelWidth = 1.0*width()/(content.sizeX())/spacingRatio;
+            int maxPixelHeight = 1.0*height()/(content.sizeY());
+           
+            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
+            
+            int pixelWidth = pixelSize * spacingRatio;
+            int pixelHeight = pixelSize;
 
-            for(int i = 0; i< content.sizeX(); ++i)
-            {
-                for(int j = 0; j<content.sizeY(); ++j)
-                {
+            for(int i = 0; i< content.sizeX(); ++i) {
+                for(int j = 0; j<content.sizeY(); ++j) {
                     int curr = std::abs(content.get(i,j,_currSlice)) * colorCoeff;
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
                 }
             }
-            return;
-        }
-        if(_status == 1) // Y
-        {
-            int pixelWidth = 1.0*width()/(content.sizeX());
-            int pixelHeight = 1.0*height()/(content.sizeZ());
-            for(int i = 0; i< content.sizeX(); ++i)
-            {
-                for(int j = 0; j<content.sizeZ(); ++j)
-                {
+        } else if(_status == 1) {
+            const float spacingRatio = spacing.x()/spacing.z();
+            int maxPixelWidth = 1.0*width()/(content.sizeX())/spacingRatio;
+            int maxPixelHeight = 1.0*height()/(content.sizeZ());
+            
+            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
+            
+            int pixelWidth = pixelSize * spacingRatio;
+            int pixelHeight = pixelSize;
+            
+            for(int i = 0; i< content.sizeX(); ++i) {
+                for(int j = 0; j<content.sizeZ(); ++j) {
                     int curr = std::abs(content.get(i,_currSlice,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
                 }
             }
-            return;
-        }
-        if(_status == 0) // X
-        {
-            int pixelWidth = 1.0*width()/(content.sizeY());
-            int pixelHeight = 1.0*height()/(content.sizeZ());
-            for(int i = 0; i< content.sizeY(); ++i)
-            {
-                for(int j = 0; j<content.sizeZ(); ++j)
-                {
+        } else {
+            const float spacingRatio = spacing.y()/spacing.z();
+            int maxPixelWidth = 1.0*width()/(content.sizeY())/spacingRatio;
+            int maxPixelHeight = 1.0*height()/(content.sizeZ());
+            
+            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
+            
+            int pixelWidth = pixelSize * spacingRatio;
+            int pixelHeight = pixelSize;
+            
+            for(int i = 0; i< content.sizeY(); ++i) {
+                for(int j = 0; j<content.sizeZ(); ++j) {
                     int curr = std::abs(content.get(_currSlice,i,j)) * colorCoeff;
 
                     QColor color = QColor::fromRgb(curr, curr, curr);

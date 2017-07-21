@@ -33,7 +33,7 @@ private:
     std::shared_ptr<Volume> _reconstruction;
     
 
-    
+public:
     
     std::unique_ptr<DataContainer> generateContainer(const VolumeBase& base, bool regularized, float lambda) {
         if(regularized){
@@ -49,6 +49,10 @@ private:
     
     void recalcReconstruction(int iterations){
         _reconstruction = std::make_shared<Volume>(*_reconstruction, CG::conjugateGradient(iterations, *_cont, getMeasurements()));
+    }
+    
+    const VolumeBase& getVolumeBase(){
+        return *_reconstruction;
     }
     
     Eigen::VectorXf generateNoise(double noise){
