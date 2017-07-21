@@ -81,8 +81,7 @@ public:
         iterationLayout->addWidget(_iterationLabel);
         _iterationSlider->setRange(1, 100);
         _iterationSlider->setOrientation(Qt::Horizontal);
-        //TODO: declare 5 as constant
-        _iterationSlider->setValue(5);
+        _iterationSlider->setValue(40);
         iterationLayout->addWidget(_iterationSlider);
 
         layout->addItem(iterationLayout, 3, 0);
@@ -128,6 +127,7 @@ public:
         
         updateRegText();
         updateSpinBox();
+        updateStatus();
         
     }
 
