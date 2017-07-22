@@ -98,9 +98,13 @@ public slots:
     /*
      * This is used when only one of the parameters change.
      */
-    void changeReconstructionParams(bool regularized, float lambda, bool noisy, float noise, int iterations)
+    void changeReconstructionParams(bool regularized, float lambda, int iterations)
     {
         _cont = generateContainer(*_reconstruction, regularized, lambda);
+        recalcReconstruction(iterations);
+    }
+    
+    void changeNoise(bool noisy, float noise, int iterations){
         _noisy = noisy;
         if(_noisy){
             _noise = generateNoise(noise);
