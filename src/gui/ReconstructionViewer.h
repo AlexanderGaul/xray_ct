@@ -35,6 +35,8 @@ private:
     QDoubleSpinBox *_noiseSpinBox;
     //used to mark wheter the error should actually be aplied
     QCheckBox *_noiseCheckBox;
+    
+    QPushButton *_updateNoiseButton;
 
 public:
 
@@ -46,7 +48,8 @@ public:
     _iterationLabel{new QLabel {}}, _iterationSlider{new QSlider {}}, 
     _regCheckBox{new QCheckBox{"Regularized Reconstruction"}}, _regLambda{new QDoubleSpinBox {}}, 
     _updateButton{new QPushButton{"Update reconstruction"}}, 
-    _noiseSpinBox{new QDoubleSpinBox{}}, _noiseCheckBox {new QCheckBox{"Activate Gaussian Noise"}} {
+    _noiseSpinBox{new QDoubleSpinBox{}}, _noiseCheckBox {new QCheckBox{"Activate Gaussian Noise"}},
+    _updateNoiseButton {new QPushButton {"Update Noise"}}{
         QGridLayout *layout = new QGridLayout {};
         QGridLayout *sliderLayout = new QGridLayout {};
         QHBoxLayout *controlLayout = new QHBoxLayout {};
@@ -99,6 +102,8 @@ public:
         noiseLayout->addWidget(_noiseCheckBox);
         noiseLayout->addWidget(_noiseSpinBox);
         layout->addItem(noiseLayout, 6, 0);
+        
+        layout->addWidget(_updateNoiseButton, 7, 0);
 
         setLayout(layout);
 
@@ -118,7 +123,9 @@ public:
                 &ReconstructionViewer::enableUpdate);
         connect(_noiseCheckBox, &QCheckBox::stateChanged, this, &ReconstructionViewer::updateSpinBox);
 
-        connect(_updateButton, &QPushButton::pressed, this, &ReconstructionViewer::updateReconstruction);
+        connect(_updateButton, &QPushButton::pressed, this, &ReconstructionViewer::updateReconstructionParams);
+
+        connect(_updateNoiseButton, &QPushButton::pressed, this, &ReconstructionViewer::updateNoise);
         _noiseSpinBox->setMaximum(1000.);
         _noiseSpinBox->setMinimum(0.);
         _noiseSpinBox->setDecimals(2);
@@ -174,12 +181,14 @@ public slots:
         _iterationLabel->setText(QString("Iterations: "+QString::number(_iterationSlider->value())));
     }
 
-    void updateReconstruction()
+    void updateReconstructionParams()
     {
         _sWidget->recParamChanged(_regCheckBox->isChecked(), _regLambda->value(),
-                                 _noiseCheckBox->isChecked(), _noiseSpinBox->value()/100,
                                  _iterationSlider->value());
-        //_updateButton.setEnabled(false);
+    }
+    
+    void updateNoise(){
+        _sWidget->noiseChanged(_noiseCheckBox->isChecked(), _noiseSpinBox->value()/100, _iterationSlider->value());
     }
 
     /**

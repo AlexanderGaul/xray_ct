@@ -51,7 +51,6 @@ public:
 
         float maxColor = _model->rec().maxEntry();
         float colorCoeff = 255.0/maxColor;
-        std::cout << "start\n";
         if(_status == 2) {   
             const float spacingRatio = spacing.x()/spacing.y();
             int maxPixelWidth = 1.0*width()/(content.sizeX())/spacingRatio;
@@ -64,12 +63,10 @@ public:
 
             for(int i = 0; i< content.sizeX(); ++i) {
                 for(int j = 0; j<content.sizeY(); ++j) {
-                    std::cout << content.get(i,j,_currSlice) << "; ";
                     int curr = std::abs(content.get(i,j,_currSlice)) * colorCoeff;
                     QColor color = QColor::fromRgb(curr, curr, curr);
                     painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
                 }
-                std::cout << std::endl;
             }
         } else if(_status == 1) {
             const float spacingRatio = spacing.x()/spacing.z();
@@ -181,13 +178,20 @@ public:
      * 
      * param. description see above
      */
-    void recParamChanged(bool regularized, float lambda, bool noisy, float noise, int cgIterations){
+    void recParamChanged(bool regularized, float lambda, int cgIterations){
         if(!_model){
             return;
         }
-        _model->changeReconstructionParams(regularized, lambda, noisy, noise, cgIterations);
+        _model->changeReconstructionParams(regularized, lambda, cgIterations);
         update();
-        emit sliceChanged();
+    }
+    
+    void noiseChanged(bool noisy, float noise, int cgIterations){
+        if(!_model){
+            return;
+        }
+        _model->changeNoise(noisy, noise, cgIterations);
+        update();
     }
     
     std::shared_ptr<const Volume> getRec(){
