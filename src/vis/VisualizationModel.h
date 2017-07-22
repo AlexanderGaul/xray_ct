@@ -34,12 +34,20 @@ public:
     {
     }
 
-    void setVolume(Volume volume)
+    void setVolume(const Volume& volume)
     {
         _volume = volume;
         
         _mprModel.changedVolume(volume);
         _dvrModel.changedVolume(volume);
+    }
+    
+    void setVolume(Volume&& volume)
+    {
+        _volume = std::move(volume);
+        
+        _mprModel.changedVolume(_volume);
+        _dvrModel.changedVolume(_volume);
     }
 
     const Volume& volume() const
