@@ -18,7 +18,7 @@
  */
 class DataContainer{
 protected:
-    const VolumeBase& _base;
+    const VolumeBase _base;
     const std::vector<AcquisitionPose>& _poses;
     
 public:
