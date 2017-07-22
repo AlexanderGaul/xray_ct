@@ -5,12 +5,12 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     :
     QGroupBox ("MPR"),
     _model(model),
-    _posX {new BoxSlider(-.25f, .25f, 4, 0.0025f)},
-    _posY {new BoxSlider(-.25f, .25f, 4, 0.0025f)},
-    _posZ {new BoxSlider(-.25f, .25f, 4, 0.0025f)},
+    _posX {new BoxSlider(-.2f, .2f, 4, 0.001f)},
+    _posY {new BoxSlider(-.2f, .2f, 4, 0.001f)},
+    _posZ {new BoxSlider(-.2f, .2f, 4, 0.001f)},
     _rotY{new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _rotZ{new BoxSlider(0.f, 360.f, 1, 2.5f)},
-    _zoom{new BoxSlider(0.f, 200.f, 2, 2.f )},
+    _zoom{new BoxSlider(0.f, 4.f, 4, 0.01f )},
     _func{new TransferFuncWidget(_model.transferFunction())},
     _layout{new QGridLayout}
 {
@@ -52,8 +52,11 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     
     connect(_zoom, &BoxSlider::valueChanged, &_model, &MPRModel::setZoom);
     
-    connect(_func, &TransferFuncWidget::valueChanged, &_model, &MPRModel::redraw);
+    connect(_func, &TransferFuncWidget::functionChanged, &_model, &MPRModel::redraw);
     
+    connect(&model, &MPRModel::volumeChanged, this, &MPRControlWidget::changedVolume);
+    
+    connect(&model, &MPRModel::functionChanged, _func, &TransferFuncWidget::changedFunction);
     
     updatePositionX();
     updatePositionY();
@@ -61,6 +64,14 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     updateRotationY();
     updateRotationZ();
     updateZoom();
+}
+
+void MPRControlWidget::changedVolume(const Volume& vol)
+{
+    float diag = vol.getBoundingBox().diagonal().norm() / 2.f;
+    _posX->increaseRange(-diag, diag);
+    _posY->increaseRange(-diag, diag);
+    _posZ->increaseRange(-diag, diag);
 }
 
 

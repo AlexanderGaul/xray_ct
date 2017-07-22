@@ -1,32 +1,17 @@
 #include "MPRModel.h"
 
 MPRModel::MPRModel()
-    : _granularity(10),
-      _distance(0.01),
-      _normal(1,0,0),
+    : 
       _transferFunction(TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))),
       _color(QColor::fromRgb(255,255,255)),
       _pose(200, 200, 0.f)
 {
 }
 
-MPRModel::MPRModel(int granularity, float distance, Eigen::Vector3f normal,
-                   TransferFunction transferFunction)
-    : _granularity(granularity),
-      _distance(distance),
-      _transferFunction(transferFunction),
-      _color(transferFunction.color(0))
+MPRModel::MPRModel(TransferFunction transferFunction)
+    : 
+      _transferFunction(transferFunction)
 {
-}
-
-int MPRModel::granularity() const
-{
-    return _granularity;
-}
-
-void MPRModel::setGranularity(int granularity)
-{
-    _granularity = granularity;
 }
 
 int MPRModel::getPixelHorizontal()
@@ -43,9 +28,21 @@ Eigen::Vector3f MPRModel::getPixel(int horizontal, int vertical)
     return _pose.getPixel(horizontal, vertical);
 }
 
+void MPRModel::changedVolume(const Volume& vol)
+{
+    setColorRange(0.f, vol.maxEntry());
+    emit volumeChanged(vol);
+}
+
+void MPRModel::setColorRange(float from, float to)
+{
+    _transferFunction.setRange(0, from, to);
+    emit functionChanged();
+}
+
 void MPRModel::setZoom(float zoom)
 {
-    _pose.setFov(zoom);
+    _pose.setZoom(zoom);
     emit redraw();
 }
 void MPRModel::setPositionX(float x)
@@ -79,9 +76,6 @@ void MPRModel::setRotationZDeg(float z)
     emit redraw();
 }
 
-
-
-
 float MPRModel::getPositionX()
 {
     return _pose.getCenter().x();
@@ -108,5 +102,5 @@ float MPRModel::getRotationZDeg()
 
 float MPRModel::getZoom()
 {
-    return _pose.getFov();
+    return _pose.getZoom();
 }

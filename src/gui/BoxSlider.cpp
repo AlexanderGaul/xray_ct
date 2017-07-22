@@ -1,7 +1,5 @@
 #include "BoxSlider.h"
 
-#include <iostream>
-
 BoxSlider::BoxSlider(float minValue, float maxValue, int decimal, float singleStep)
     :
     _justChanged {false},
@@ -69,19 +67,40 @@ void BoxSlider::changedValue(float value)
     //emit valueChanged(value);
 }
 
-QSize BoxSlider::minimumSizeHint() const
-{
-    return _box->minimumSizeHint();
-}
-
 void BoxSlider::setMax(float max)
 {
+    _box->setMaximum(max);
+    float min = static_cast<float>(_box->minimum());
+    max = static_cast<float>(_box->maximum());
+    float step = static_cast<float>(_box->singleStep());
+    _slider->setMaximum(static_cast<int>((max - min) / step));
     
+    emit boxChanged(_box->value());
 }
 void BoxSlider::setMin(float min)
 {
+    _box->setMinimum(min);
     
+    min = static_cast<float>(_box->minimum());
+    float max = static_cast<float>(_box->maximum());
+    float step = static_cast<float>(_box->singleStep());
+    _slider->setMaximum(static_cast<int>((max - min) / step));
+    
+    emit boxChanged(_box->value());
 }
+
+void BoxSlider::increaseRange(float min, float max)
+{
+    if(min < _box->minimum())
+    {
+        setMin(min);
+    }
+    if(max > _box->maximum())
+    {
+        setMax(max);
+    }
+}
+
 
 bool BoxSlider::catchEvent()
 {

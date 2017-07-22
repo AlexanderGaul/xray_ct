@@ -4,15 +4,6 @@
 #include <QGroupBox>
 #include <QMessageBox>
 
-void VisualizationWidget::mprUpdateColorLabel()
-{
-    _mprColorLabel->setStyleSheet( "background-color: " + _mprWidget->color().name() );
-}
-
-void VisualizationWidget::dvrUpdateColorLabel()
-{
-    _dvrColorLabel->setStyleSheet( "background-color: " + _dvrWidget->color().name() );
-}
 
 void VisualizationWidget::updateVolumeInfo()
 {
@@ -38,15 +29,10 @@ VisualizationWidget::VisualizationWidget() :
     _visModel {},
     _loadFileButton {new QPushButton{"Load from file"}},
     _loadRecButton {new QPushButton{"Load reconstruction"}},
-    _mprColorLabel {new QLabel {}},
-    _mprSelectColorButton {new QPushButton{"Select color for MPR"}},
     _volumeInfoLabel {new QLabel{}},
-    _dvrColorLabel {new QLabel{}},
-    _dvrSelectColorButton {new QPushButton{"Select color for DVR"}},
     _mprWidget {new MPRWidget{_visModel}},
     _dvrWidget {new DVRWidget{_visModel}},
     _axisWidget {new AxisWidget {_visModel.getMPRModel()}},
-    
     _dvrControlWidget {new DVRControlWidget(_visModel.getDVRModel())},
     _mprControlWidget {new MPRControlWidget(_visModel.getMPRModel())}
 {
@@ -54,32 +40,13 @@ VisualizationWidget::VisualizationWidget() :
     QHBoxLayout *mainLayout = new QHBoxLayout {};
     ///manages all menu items
     QGridLayout *menuLayout = new QGridLayout {};
-    ///manages the color-choosing related widgets for mpr
-    QHBoxLayout *mprColorLayout = new QHBoxLayout {};
-    ///manages the color-choosing related widgets for dvr
-    QHBoxLayout *dvrColorLayout = new QHBoxLayout {};
-    ///manages label config of DVR
-    
-    mprUpdateColorLabel();
-    mprColorLayout->addWidget(_mprColorLabel);
-    mprColorLayout->addWidget(_mprSelectColorButton);
-
-    dvrUpdateColorLabel();
-    dvrColorLayout->addWidget(_dvrColorLabel);
-    dvrColorLayout->addWidget(_dvrSelectColorButton);
-    
     
     menuLayout->addWidget(_loadFileButton, 0, 0);
-    menuLayout->addWidget(_loadRecButton, 1, 0);
-    
-    
-    //_dvrControlWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    menuLayout->addWidget(_loadRecButton, 0, 1);
 
-    menuLayout->addWidget(_mprControlWidget, 2, 0);
-    menuLayout->addWidget(_dvrControlWidget, 3, 0);
+    menuLayout->addWidget(_mprControlWidget, 1, 0, 1, 2);
+    menuLayout->addWidget(_dvrControlWidget, 2, 0, 1, 2);
     
-    //_dvrWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //_mprWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->addItem(menuLayout);
     QVBoxLayout *mprLayout = new QVBoxLayout {};
     mprLayout->addWidget(_mprWidget);
@@ -97,11 +64,8 @@ VisualizationWidget::VisualizationWidget() :
 
     setLayout(mainLayout);
 
-
     connect(_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
     connect(_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
-    connect(_mprSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::mprChangeColor);
-    connect(_dvrSelectColorButton, &QPushButton::pressed, this, &VisualizationWidget::dvrChangeColor);
 }
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
@@ -113,25 +77,6 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
     updateVolumeChanged();
 }
 
-void VisualizationWidget::mprChangeColor()
-{
-    QColor newColor = QColorDialog::getColor(_mprWidget->color(),parentWidget());
-    if ( newColor != _mprWidget->color() )
-    {
-        _mprWidget->setColor( newColor );
-        mprUpdateColorLabel();
-    }
-}
-
-void VisualizationWidget::dvrChangeColor()
-{
-    QColor newColor = QColorDialog::getColor(_dvrWidget->color(), parentWidget());
-    if ( newColor != _dvrWidget->color() )
-    {
-        _dvrWidget->setColor( newColor );
-        dvrUpdateColorLabel();
-    }
-}
 
 void VisualizationWidget::loadFromFile(){
     QFileDialog dialog(this);

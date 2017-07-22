@@ -7,8 +7,8 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _camera {model.getCameraPose()},
     _rotY {new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _rotZ {new BoxSlider(0.f, 360.f, 1, 2.5f)},
-    _zoom {new BoxSlider(0.f, 200.f, 2, 2.f )},
-    _distance {new BoxSlider(0.f, 10.f, 4, 0.01f)},
+    _zoom {new BoxSlider(0.f, 4.f, 4, 0.01f )},
+    _distance {new BoxSlider(0.f, 1.5f, 4, 0.01f)},
     _step {new BoxSlider(0.f, 0.5f, 5, 0.0005f)},
     _perspective {new QCheckBox()},
     _func {new TransferFuncWidget(_model.transferFunction())},
@@ -41,7 +41,6 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _layout->setAlignment(Qt::AlignTop);
     
     
-    
     setLayout(_layout);
     
     //connects
@@ -52,7 +51,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     connect(_zoom, &BoxSlider::valueChanged, &_model, &DVRModel::setZoom);
     connect(_step, &BoxSlider::valueChanged, &_model, &DVRModel::setStepSize);
     
-    connect(_func, &TransferFuncWidget::valueChanged, &_model, &DVRModel::redraw);
+    connect(_func, &TransferFuncWidget::functionChanged, &_model, &DVRModel::redraw);
     
     
     connect(&model, &DVRModel::updateRotationY, this, &DVRControlWidget::updateRotationY);
@@ -61,12 +60,20 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     connect(&model, &DVRModel::updateDistance, this ,&DVRControlWidget::updateDistance);
     connect(&model, &DVRModel::updateStepSize, this ,&DVRControlWidget::updateStepSize);
     
+    connect(&model, &DVRModel::volumeChanged, this, &DVRControlWidget::changedVolume);
+    
+    connect(&model, &DVRModel::functionChanged, _func, &TransferFuncWidget::changedFunction);
     
     updateRotationY();
     updateRotationZ();
     updateZoom();
     updateDistance();
     updateStepSize();
+}
+
+void DVRControlWidget::changedVolume(const Volume& vol)
+{
+    _distance->increaseRange(0.f, 4 * vol.getBoundingBox().diagonal().norm());
 }
 
 

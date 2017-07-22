@@ -7,6 +7,7 @@
 
 #include "TransferFunction.h"
 #include "CameraPose.h"
+#include "Volume.h"
 //#include "VisualizationModel.h"
 
 
@@ -37,13 +38,15 @@ public:
     {
         _transferFunction = transferFunction;
     }
-
     TransferFunction& transferFunction()
     {
         return _transferFunction;
     }
-
-
+    void setColorRange(float from, float to)
+    {
+        _transferFunction.setRange(0, from, to);
+        emit functionChanged();
+    }
     void setColor(QColor color)
     {
         _color = color;
@@ -66,10 +69,6 @@ public:
         return _stepSize;
     }
 
-    void setColorRange(float from, float to)
-    {
-        _transferFunction.setRange(0, from, to);
-    }
     
     CameraPose& getCameraPose()
     {
@@ -85,7 +84,18 @@ signals:
     void updateDistance();
     void updateStepSize();
     
+    // used by DVRControlWidget
+    void volumeChanged(const Volume& vol);
+    void functionChanged();
+    
 public slots:
+    void changedVolume(const Volume& vol)
+    {
+        setColorRange(0, vol.maxEntry());
+        emit volumeChanged(vol);
+    }
+    
+    
     void setRotationYDeg(float y)
     {
         float radians = y / 180.f * M_PI;
@@ -105,7 +115,7 @@ public slots:
     }
     void setZoom(float zoom)
     {
-        _pose.setFov(zoom);
+        _pose.setZoom(zoom);
         emit redraw();
     }
     void setPerspective(bool persp)
@@ -138,7 +148,7 @@ public:
     
     float getZoom()
     {
-        return _pose.getFov();
+        return _pose.getZoom();
     }
     
     bool getPerspective()

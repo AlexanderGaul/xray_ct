@@ -14,6 +14,7 @@ class TransferFuncWidget : public QGroupBox
 {
     Q_OBJECT
 private:
+    
     TransferFunction& _function;
     
     QDoubleSpinBox* _iMin;
@@ -30,8 +31,12 @@ private:
     void setIMax(float max);
     void changeColor();
 
+public slots:
+    void changedFunction();
+
 signals:
-    void valueChanged();
+    void functionChanged();
+
     
 };
 

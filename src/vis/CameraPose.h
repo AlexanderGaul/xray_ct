@@ -16,7 +16,7 @@ private:
     int _pxlHorizontal;
     int _pxlVertical;
     
-    float _fov;
+    float _zoom;
     float _pixelSize;
     
     Eigen::Vector3f _down;
@@ -26,8 +26,8 @@ public:
     CameraPose();
     CameraPose(int pixelHorizontal, int pixelVertical, float distance = 0.5f);
     
-    void setFov(float fov);
-    float getFov();
+    void setZoom(float zoom);
+    float getZoom();
     
     int getPixelHorizontal() const;
     int getPixelVertical() const;

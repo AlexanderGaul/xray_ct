@@ -21,9 +21,7 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
         return;
     }
     
-    
     painter.fillRect(0, 0, width(), height(), QColor::fromRgb(0,0,0));
-
 
     float scale = std::min(static_cast<float>(width()) / _mprModel.getPixelHorizontal(), static_cast<float>(height()) / _mprModel.getPixelVertical());
     painter.scale(scale, scale);
@@ -41,13 +39,6 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
     }
 
 }
-
-void MPRWidget::setGranularity(int granularity)
-{
-    _mprModel.setGranularity(granularity*10);
-    repaint();
-}
-
 void MPRWidget::setColor(QColor color)
 {
     _mprModel.setColor(color);

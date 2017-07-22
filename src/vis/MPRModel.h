@@ -8,6 +8,7 @@
 
 #include "TransferFunction.h"
 #include "CameraPose.h"
+#include "Volume.h"
 
 typedef Eigen::Vector3f Position;
 
@@ -20,7 +21,6 @@ class MPRModel : public QObject
 {
     Q_OBJECT
 private:
-    int _granularity;
     float _distance;
     Eigen::Vector3f _normal;
     TransferFunction _transferFunction;
@@ -32,18 +32,13 @@ private:
 public:
     MPRModel();
 
-    MPRModel(int granularity, float distance, Eigen::Vector3f _normal,
-             TransferFunction transferFunction);
+    MPRModel(TransferFunction transferFunction);
 
-    int granularity() const;
-
-    void setGranularity(int granularity);
 
     void setTransferFunction(TransferFunction transferFunction)
     {
         _transferFunction = transferFunction;
     }
-
     TransferFunction& transferFunction()
     {
         return _transferFunction;
@@ -59,33 +54,16 @@ public:
     {
         return _color;
     }
-
-    void setDistance(float distance)
-    {
-        _distance = distance;
-    }
-
-    float distance()
-    {
-        return _distance;
-    }
-
-    void setNormal(Eigen::Vector3f normal)
-    {
-        _normal = normal;
-    }
-
-    Eigen::Vector3f normal()
-    {
-        return _normal;
-    }
     
+public:
+    void changedVolume(const Volume& vol);
+    
+    void setColorRange(float from, float to);
     
     int getPixelHorizontal();
     int getPixelVertical();
     
     Eigen::Vector3f getPixel(int horizontal, int vertical);
-    
     
     void setPositionX(float x);
     void setPositionY(float y);
@@ -111,6 +89,8 @@ public:
     
 signals:
     void redraw();
+    void volumeChanged(const Volume& vol);
+    void functionChanged();
     
     
 };

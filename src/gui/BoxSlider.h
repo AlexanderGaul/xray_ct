@@ -40,11 +40,9 @@ signals:
     void valueChanged(float value);
 
 public:
-    QSize minimumSizeHint() const override;
-
-public:
     void setMax(float max);
     void setMin(float min);
+    void increaseRange(float min, float max);
 
 private:
     /*
