@@ -50,7 +50,7 @@ public slots:
     
     void updateZoom();
     
-
+    void changedVolume(const Volume& vol);
     
 };
 

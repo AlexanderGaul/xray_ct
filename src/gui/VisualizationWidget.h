@@ -41,49 +41,20 @@ private:
     ///manages all data related to visualization
     VisualizationModel _visModel;
 
-    
     ///loads the Volume from a file
     QPushButton *_loadFileButton;    
     ///loads the Volume from the ReconstructionPose
     QPushButton *_loadRecButton;
-    ///displays the current color for mpr
-    QLabel *_mprColorLabel;
-    ///opens a dialog to choose the color for visualization for mpr
-    QPushButton *_mprSelectColorButton;
     ///shows the dimensions of the volume on screen
     QLabel *_volumeInfoLabel;
     
-   
-    ///displays the current color for dvr
-    QLabel *_dvrColorLabel;
-    ///opens a dialog to choose the color for visualization for dvr
-    QPushButton *_dvrSelectColorButton;
-    ///display description of DVR
-
     ///renders the 2D MPR visualization
     MPRWidget *_mprWidget;
     ///paints the direct volume rendering (DVR)
     DVRWidget *_dvrWidget;
     
-    
     DVRControlWidget* _dvrControlWidget;
     MPRControlWidget* _mprControlWidget;
-
-    /**
-     * Updates (colors) the color label
-     * to show the user the currently used
-     * transfer function color for MPR.
-     * @brief updateColorLabel
-     */
-    void mprUpdateColorLabel();
-
-    /**
-     * Updates (colors) the color label
-     * to show the user the currently used
-     * transfer function color for DVR.
-     * @brief updateColorLabel
-     */
-    void dvrUpdateColorLabel();
 
     /**
      *  Updates the info label which
@@ -129,19 +100,6 @@ signals:
     void requestRecVolume();
     
 public slots:
-    /**
-     * Change color of transfer function of MPR.
-     *
-     * @brief mprChangeColor
-     */
-    void mprChangeColor();
-
-    /**
-     * Change color of transfer function of DVR.
-     *
-     * @brief dvrChangeColor
-     */
-    void dvrChangeColor();
 
     /**
      * Loads a 3D medical image file into a Volume.

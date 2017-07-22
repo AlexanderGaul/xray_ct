@@ -50,3 +50,13 @@ void LinearPiece::setIntensity1(float intensity1)
 {
     _intensity1 = intensity1;
 }
+
+
+float LinearPiece::getIntensity0()
+{
+    return _intensity0;
+}
+float LinearPiece::getIntensity1()
+{
+    return _intensity1;
+}

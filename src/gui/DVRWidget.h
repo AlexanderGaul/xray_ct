@@ -49,19 +49,9 @@ public:
 
     void setColorRange(float from, float to);
     
+    void updateVolume(Volume vol);
+    
 public slots:
     void changedPose();
     
-    /*
-    QSize sizeHint()
-    {
-        //setGeometry(0, 0, _dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
-        return QSize(_dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
-    }
-    QSize minimumSizeHint()
-    {
-        //setGeometry(0, 0, _dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
-        return QSize(_dvrModel.getCameraPose().getPixelHorizontal(), _dvrModel.getCameraPose().getPixelHorizontal());
-    }
-    */
 };

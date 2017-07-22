@@ -55,4 +55,12 @@ public:
         _pieces[index].setIntensity0(from);
         _pieces[index].setIntensity1(to);
     }
+    void setMin(int index, int min)
+    {
+        _pieces[index].setIntensity0(min);
+    }
+    void setMax(int index, int max)
+    {
+        _pieces[index].setIntensity1(max);
+    }
 };

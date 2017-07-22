@@ -15,6 +15,7 @@
 #include "DVRModel.h"
 #include "BoxSlider.h"
 #include "TransferFuncWidget.h"
+#include "Volume.h"
 
 class DVRControlWidget : public QGroupBox
 {
@@ -38,6 +39,7 @@ private:
     
 public:
     DVRControlWidget(DVRModel& model);
+    void changedVolume(const Volume& vol);
 
 private slots:
     void updateRotationY();

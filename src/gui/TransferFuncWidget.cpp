@@ -15,8 +15,8 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
     minLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     maxLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     
-    _iMin->setRange(0.f, 50.f);
-    _iMax->setRange(0.f, 50.f);
+    _iMin->setRange(0.f, 100.f);
+    _iMax->setRange(0.f, 100.f);
     
     _iMin->setDecimals(4);
     _iMax->setDecimals(4);
@@ -43,7 +43,7 @@ void TransferFuncWidget::setIMin(float min)
     {
         _function.getPieces()[0].setIntensity0(min);
     }
-    emit valueChanged();
+    emit functionChanged();
 }
 void TransferFuncWidget::setIMax(float max)
 {
@@ -51,7 +51,7 @@ void TransferFuncWidget::setIMax(float max)
     {
         _function.getPieces()[0].setIntensity1(max);
     }
-    emit valueChanged();
+    emit functionChanged();
 }
 void TransferFuncWidget::changeColor()
 {
@@ -60,5 +60,14 @@ void TransferFuncWidget::changeColor()
         QColor newColor = QColorDialog::getColor(_function.color(0), parentWidget());
         _function.getPieces()[0].setColor(newColor);
 
+    }
+}
+
+void TransferFuncWidget::changedFunction()
+{
+    if(!_function.empty())
+    {
+        _iMin->setValue(_function.getPieces()[0].getIntensity0());
+        _iMax->setValue(_function.getPieces()[0].getIntensity1());
     }
 }

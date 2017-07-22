@@ -115,6 +115,12 @@ void DVRWidget::setColorRange(float from, float to)
     _dvrModel.setColorRange(from, to);
 }
 
+void DVRWidget::updateVolume(Volume vol)
+{
+    setColorRange(0, vol.maxEntry());
+    
+}
+
 
 void DVRWidget::changedPose()
 {

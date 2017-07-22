@@ -19,20 +19,20 @@ CameraPose::CameraPose(int pixelHorizontal, int pixelVertical, float distance)
     _pxlVertical{pixelVertical},
     _down{0.f, 0.f, -1.f},
     _right{0.f, 1.f, 0.f},
-    _screenCenter{getPoint() - getNormal()}
+    _screenCenter{getPoint() - getNormal() * 0.5f}
 {
-    setFov(90);
+    setZoom(1.f);
 }
 
-void CameraPose::setFov(float fov)
+void CameraPose::setZoom(float zoom)
 {
-    _fov = fov;
-    float screenWidth = 2 * tanf(_fov / 2.f / 180.f * M_PI);
+    _zoom = zoom;
+    float screenWidth = 0.5f / _zoom;
     _pixelSize = screenWidth / _pxlHorizontal;
 }
-float CameraPose::getFov()
+float CameraPose::getZoom()
 {
-    return _fov;
+    return _zoom;
 }
 
 int CameraPose::getPixelHorizontal() const
@@ -70,7 +70,7 @@ float CameraPose::getDistance()
 void CameraPose::updatePose()
 {
     Pose::updatePose();
-    _screenCenter = getPoint() - getNormal();
+    _screenCenter = getPoint() - getNormal() * 0.5f;
     _down = getRotation() * Eigen::Vector3f(0.f, 0.f, -1.f);
     _right = getRotation() * Eigen::Vector3f(0.f, 1.f, 0.f);
 }

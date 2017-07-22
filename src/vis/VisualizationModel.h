@@ -37,6 +37,9 @@ public:
     void setVolume(Volume volume)
     {
         _volume = volume;
+        
+        _mprModel.changedVolume(volume);
+        _dvrModel.changedVolume(volume);
     }
 
     const Volume& volume() const

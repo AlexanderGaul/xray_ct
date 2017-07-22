@@ -25,4 +25,7 @@ public:
     void setIntensity0(float intensity0);
 
     void setIntensity1(float intensity1);
+    
+    float getIntensity0();
+    float getIntensity1();
 };
