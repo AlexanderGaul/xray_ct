@@ -29,8 +29,6 @@ void MPRModel::setGranularity(int granularity)
     _granularity = granularity;
 }
 
-
-
 int MPRModel::getPixelHorizontal()
 {
     return _pose.getPixelHorizontal();
@@ -44,8 +42,6 @@ Eigen::Vector3f MPRModel::getPixel(int horizontal, int vertical)
 {
     return _pose.getPixel(horizontal, vertical);
 }
-
-
 
 void MPRModel::setZoom(float zoom)
 {
@@ -82,6 +78,8 @@ void MPRModel::setRotationZDeg(float z)
     _pose.setRotationZ(radians);
     emit redraw();
 }
+
+
 
 
 float MPRModel::getPositionX()

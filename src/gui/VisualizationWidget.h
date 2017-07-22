@@ -25,6 +25,7 @@
 
 #include "DVRControlWidget.h"
 #include "MPRControlWidget.h"
+#include "AxisWidget.h"
 
 /**
  * Widget to configure and execute visualization algorithms.
@@ -65,9 +66,12 @@ private:
     ///paints the direct volume rendering (DVR)
     DVRWidget *_dvrWidget;
     
+    ///paints the axes for the mpr to visualize the current rotation
+    AxisWidget *_axisWidget;
     
     DVRControlWidget* _dvrControlWidget;
     MPRControlWidget* _mprControlWidget;
+    
 
     /**
      * Updates (colors) the color label

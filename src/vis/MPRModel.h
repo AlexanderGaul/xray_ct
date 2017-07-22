@@ -105,7 +105,10 @@ public:
     
     float getZoom();
     
-
+    Eigen::Matrix3f getRotation() const{
+        return _pose.getRotation();
+    }
+    
 signals:
     void redraw();
     

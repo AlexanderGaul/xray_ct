@@ -45,6 +45,7 @@ VisualizationWidget::VisualizationWidget() :
     _dvrSelectColorButton {new QPushButton{"Select color for DVR"}},
     _mprWidget {new MPRWidget{_visModel}},
     _dvrWidget {new DVRWidget{_visModel}},
+    _axisWidget {new AxisWidget {_visModel.getMPRModel()}},
     
     _dvrControlWidget {new DVRControlWidget(_visModel.getDVRModel())},
     _mprControlWidget {new MPRControlWidget(_visModel.getMPRModel())}
@@ -80,7 +81,14 @@ VisualizationWidget::VisualizationWidget() :
     //_dvrWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     //_mprWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->addItem(menuLayout);
-    mainLayout->addWidget(_mprWidget);
+    QVBoxLayout *mprLayout = new QVBoxLayout {};
+    mprLayout->addWidget(_mprWidget);
+    mprLayout->addWidget(_axisWidget);
+    mprLayout->setStretch(0, 5);
+    mprLayout->setStretch(1, 1);
+    
+    mainLayout->addItem(mprLayout);
+    //mainLayout->addWidget(_axisWidget);
     mainLayout->addWidget(_dvrWidget);
     
     mainLayout->setStretch(0, 3);

@@ -17,7 +17,7 @@ public:
     {
     }
     
-    virtual Eigen::VectorXf mult(Eigen::VectorXf vector) const override
+    virtual Eigen::VectorXf mult(const Eigen::VectorXf vector) const override
     {
         //calculates A^T*A*x
         Eigen::VectorXf res = backwardProj(forwardProj(vector));

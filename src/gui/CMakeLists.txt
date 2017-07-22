@@ -16,6 +16,7 @@ set(GUI_SRCS
         MPRControlWidget.cpp
         BoxSlider.cpp
         TransferFuncWidget.cpp
+        AxisWidget.cpp
         )
 set(GUI_HDRS
         MainWindow.h        
@@ -32,6 +33,7 @@ set(GUI_HDRS
         MPRControlWidget.h
         BoxSlider.h
         TransferFuncWidget.h
+        AxisWidget.h
         )
 
 add_library(part2_lib_gui ${GUI_HDRS} ${GUI_SRCS} )
