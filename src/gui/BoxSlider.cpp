@@ -4,6 +4,7 @@
 
 BoxSlider::BoxSlider(float minValue, float maxValue, int decimal, float singleStep)
     :
+    _justChanged {false},
     _slider {new QSlider()},
     _box {new QDoubleSpinBox()},
     _layout {new QHBoxLayout()}
@@ -36,6 +37,8 @@ BoxSlider::BoxSlider(float minValue, float maxValue, int decimal, float singleSt
 
 void BoxSlider::boxChanged(float value)
 {
+    if (catchEvent()) return;
+    
     float min = static_cast<float>(_box->minimum());
     float max = static_cast<float>(_box->maximum());
     float step = static_cast<float>(_box->singleStep());
@@ -44,8 +47,11 @@ void BoxSlider::boxChanged(float value)
     _slider->setValue(iValue);
     emit valueChanged(value);
 }
+
 void BoxSlider::sliderChanged(int value)
 {
+    if (catchEvent()) return;
+    
     float min = static_cast<float>(_box->minimum());
     float max = static_cast<float>(_box->maximum());
     float step = static_cast<float>(_box->singleStep());
@@ -67,4 +73,18 @@ void BoxSlider::changedValue(float value)
 QSize BoxSlider::minimumSizeHint() const
 {
     return _box->minimumSizeHint();
+}
+
+bool BoxSlider::catchEvent()
+{
+    if(_justChanged)
+    {
+        _justChanged = false;
+        return true;
+    }
+    else
+    {
+        _justChanged = true;
+        return false;
+    }
 }

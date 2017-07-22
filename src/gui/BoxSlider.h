@@ -19,6 +19,8 @@ class BoxSlider : public QWidget
 {
     Q_OBJECT
 private:
+    bool _justChanged;
+    
     QLabel* _label;
     QSlider* _slider;
     QDoubleSpinBox* _box;
@@ -39,6 +41,11 @@ signals:
 
 public:
     QSize minimumSizeHint() const override;
+
+private:
+    // the connection of valueChanged functions can lead to chained resets of values
+    bool catchEvent();
+
 };
 
 #endif
