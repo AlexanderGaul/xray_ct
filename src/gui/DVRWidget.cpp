@@ -10,7 +10,7 @@ DVRWidget::DVRWidget(VisualizationModel& visModel)
     connect(&_dvrModel, &DVRModel::redraw, this, &DVRWidget::changedPose);
 }
 
-void DVRWidget::paintEvent(QPaintEvent* p_e)
+void DVRWidget::paintEvent(QPaintEvent*)
 {
     
     QPainter painter(this);

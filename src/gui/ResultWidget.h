@@ -116,12 +116,6 @@ public slots:
     
 protected slots:
     
-    void paintEvent(QPaintEvent *event) override{
-        //for some reason update wasn't called automatically
-        //even though the drawWidgets are children of this widget
-        currWidget().update();
-    }
-    
     /*
      * offers parameter compatibility with the signal of the tabWidget
      */

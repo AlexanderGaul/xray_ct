@@ -157,7 +157,7 @@ Volume EDFHandler::read(const std::string& filename)
     // convert spacing
     Eigen::VectorXf dimSpacing = Eigen::VectorXf::Ones(nDims);
     if (spacing.size() > 0) {
-        if (spacing.size() != nDims)
+        if (static_cast<int>(spacing.size()) != nDims)
             throw std::runtime_error("EDFHandler::read: spacing inconsistency");
         for (int i = 0; i < nDims; ++i)
             dimSpacing[i] = spacing[i];

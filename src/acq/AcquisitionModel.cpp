@@ -124,7 +124,6 @@ void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float
     for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
     {
         int count;
-        float distance;
         float cosine = cosf(yRot);
         if(1.f > cosine * equatorialCount)
         {
