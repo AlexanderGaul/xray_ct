@@ -27,9 +27,14 @@ public:
 	PoseDisplay(AcquisitionModel& model);
 	PoseDisplay(AcquisitionModel& model, int axis);
 
-    virtual void paintEvent(QPaintEvent *event);
+    virtual void paintEvent(QPaintEvent *event) override;
     
-    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event) override;
+    
+    void mousePressEvent(QMouseEvent * event) override{
+        setFocus(Qt::MouseFocusReason);
+    }
+    
 public slots:
     void setShowRays(int state);
     void setZoom(int zoom);
