@@ -11,6 +11,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _distance {new BoxSlider(0.f, 10.f, 4, 0.01f)},
     _step {new BoxSlider(0.f, 0.5f, 5, 0.0005f)},
     _perspective {new QCheckBox()},
+    _func {new TransferFuncWidget(_model.transferFunction())},
     _layout {new QGridLayout()}
 {
     
@@ -35,6 +36,8 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _layout->addWidget(_distance, 4, 1);
     _layout->addWidget(_step, 5, 1);
     
+    _layout->addWidget(_func, 6, 0, 1, 2);
+    
     _layout->setAlignment(Qt::AlignTop);
     
     
@@ -48,6 +51,8 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     connect(_distance, &BoxSlider::valueChanged, &_model, &DVRModel::setDistance);
     connect(_zoom, &BoxSlider::valueChanged, &_model, &DVRModel::setZoom);
     connect(_step, &BoxSlider::valueChanged, &_model, &DVRModel::setStepSize);
+    
+    connect(_func, &TransferFuncWidget::valueChanged, &_model, &DVRModel::redraw);
     
     
     connect(&model, &DVRModel::updateRotationY, this, &DVRControlWidget::updateRotationY);

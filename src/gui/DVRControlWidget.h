@@ -14,6 +14,7 @@
 
 #include "DVRModel.h"
 #include "BoxSlider.h"
+#include "TransferFuncWidget.h"
 
 class DVRControlWidget : public QGroupBox
 {
@@ -29,6 +30,8 @@ private:
     BoxSlider* _distance;
     
     QCheckBox* _perspective;
+    
+    TransferFuncWidget* _func;
 
     QGridLayout* _layout;
     

@@ -13,6 +13,7 @@
 
 #include "MPRModel.h"
 #include "BoxSlider.h"
+#include "TransferFuncWidget.h"
 
 class MPRControlWidget : public QGroupBox
 {
@@ -29,6 +30,8 @@ private:
     BoxSlider* _rotZ;
     
     BoxSlider* _zoom;
+    
+    TransferFuncWidget* _func;
 
 
     QGridLayout* _layout;

@@ -42,6 +42,10 @@ signals:
 public:
     QSize minimumSizeHint() const override;
 
+public:
+    void setMax(float max);
+    void setMin(float min);
+
 private:
     /*
      * this function decides whether the current valueChanged call is redundant

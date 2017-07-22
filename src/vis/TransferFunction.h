@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <QColor>
+#include <QColorDialog>
 
 #include "LinearPiece.h"
 
@@ -30,6 +31,11 @@ public:
     TransferFunction(std::vector<LinearPiece> pieces);
     
     QColor classify(float intensity) const;
+    
+    bool empty()
+    {
+        return _pieces.empty();
+    }
     
     void addPiece(LinearPiece function);
     std::vector<LinearPiece>& getPieces();
