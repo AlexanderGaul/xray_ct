@@ -10,12 +10,12 @@
 class Pose
 {
 private:
-    Eigen::Vector3f _pointRef;
     Eigen::Vector3f _normalRef;
 
     Eigen::Vector3f _center;
-    Eigen::Vector3f _point;
     Eigen::Vector3f _normal;
+    float           _distance;
+    Eigen::Vector3f _point;
     
     Eigen::AngleAxisf _rotZ;
     Eigen::AngleAxisf _rotY;
@@ -25,6 +25,7 @@ private:
 public:
     Pose();
     Pose(Eigen::Vector3f point, Eigen::Vector3f center = Eigen::Vector3f(0, 0, 0));
+    Pose(Eigen::Vector3f normal, float direction, Eigen::Vector3f center = Eigen::Vector3f(0, 0, 0));
     
     float getRotationZ() const;
     float getRotationY() const;
@@ -43,7 +44,7 @@ public:
 
 protected:
     Eigen::Vector3f getPoint() const;
-    void setPointRef(Eigen::Vector3f point);
+    //void setPointRef(Eigen::Vector3f point);
     Eigen::Vector3f getNormal() const;
     
     void setDistanceToCenter(float distance);

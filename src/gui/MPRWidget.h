@@ -16,9 +16,10 @@ class MPRWidget : public QWidget
     Q_OBJECT
 
 private:
-    const VisualizationModel& _visModel;
-    MPRModel _mprModel;
+    VisualizationModel& _visModel;
+    MPRModel& _mprModel;
 
+    /*
     float calculateIntersectionLength(Line3f ray)
     {
         float factor = 100;
@@ -76,6 +77,7 @@ private:
                                                               Line3f(outside1, direction));
         return intersect1;
     }
+    */
 
 public:
     /**
@@ -86,7 +88,7 @@ public:
      * @brief MPRWidget
      * @param visModel
      */
-    MPRWidget(const VisualizationModel& visModel);
+    MPRWidget(VisualizationModel& visModel);
 
     /**
      * This method is called to paint the MPR on the
@@ -140,4 +142,8 @@ public slots:
     {
         return _mprModel.normal();
     }
+
+public slots:
+    void changedPose();
+
 };

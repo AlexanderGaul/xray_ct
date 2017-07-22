@@ -1,9 +1,12 @@
 #include "MPRWidget.h"
 
-MPRWidget::MPRWidget(const VisualizationModel& visModel)
+#include <iostream>
+
+MPRWidget::MPRWidget(VisualizationModel& visModel)
     : _visModel {visModel},
-      _mprModel {}
+      _mprModel {visModel.getMPRModel()}
 {
+    connect(&_mprModel, &MPRModel::redraw, this, &MPRWidget::changedPose);
 }
 
 void MPRWidget::paintEvent(QPaintEvent* p_e)
@@ -11,43 +14,29 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
     QPainter painter(this);
     const Volume& vol = _visModel.volume();
     _mprModel.transferFunction().setRange(0, 0, vol.maxEntry());
+    
     if(vol.getTotalVoxelCount() == 0)
     {
         painter.drawText(width()/2, height()/2, "Error: No data loaded!");
         return;
     }
-    int resolution = 50;
-    int tileWidth = 20;
-    painter.fillRect(0,0,resolution*tileWidth, resolution*tileWidth, QColor::fromRgb(0,0,0));
+    
+    
+    painter.fillRect(0, 0, width(), height(), QColor::fromRgb(0,0,0));
 
-    float r = _mprModel.distance();
 
-    Eigen::Vector3f normal = _mprModel.normal();
-    normal.normalize();
-
-    Eigen::Vector3f intersect = normal * r;
-    Eigen::Vector3f xDir(-normal(1), normal(0), 0);
-    Eigen::Vector3f yDir = normal.cross(xDir);
-
-    float x = calculateIntersectionLength(Line3f(intersect, xDir));
-    float y = calculateIntersectionLength(Line3f(intersect, yDir));
-
-    Eigen::Vector3f origin =
-            calculateOrigin(calculateOrigin(intersect, xDir), yDir);
-
-    float stepX = x/resolution;
-    float stepY = y/resolution;
-
-    for(int i = 0; i<resolution; ++i)
+    float scale = std::min(static_cast<float>(width()) / _mprModel.getPixelHorizontal(), static_cast<float>(height()) / _mprModel.getPixelVertical());
+    painter.scale(scale, scale);
+    
+    for(int x = 0; x < _mprModel.getPixelHorizontal(); x++)
     {
-        for(int j = 0; j<resolution; ++j)
+        for(int y = 0; y < _mprModel.getPixelVertical(); y++)
         {
-            Eigen::Vector3f curr = origin + stepX * i * xDir
-                    + stepY * j * yDir;
-            float intensity = vol.getVoxelLinearPhysical(curr);
-
+            //std::cout << _mprModel.getPixel(x, y) << std::endl;
+            Eigen::Vector3f pixel = _mprModel.getPixel(x, y);
+            float intensity = vol.getVoxelLinearPhysical(pixel);
             QColor color = _mprModel.transferFunction().classify(intensity);
-            painter.fillRect(i*tileWidth, j*tileWidth, tileWidth, tileWidth, color);
+            painter.fillRect(x, y, 1, 1, color);
         }
     }
 
@@ -67,4 +56,9 @@ void MPRWidget::setColor(QColor color)
 QColor MPRWidget::color() const
 {
     return _mprModel.color();
+}
+
+void MPRWidget::changedPose()
+{
+    update();
 }

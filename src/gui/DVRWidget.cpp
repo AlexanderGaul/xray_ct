@@ -35,6 +35,7 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
     {
         for(int y = 0; y < _dvrModel.getCameraPose().getPixelVertical(); y++)
         {
+            
             float maxSample = 0;
             Eigen::ParametrizedLine<float, 3> ray;
             
@@ -63,20 +64,10 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
                 QColor color = _dvrModel.transferFunction().classify(maxSample);
                 painter.fillRect(x, y, 1, 1, color);
             }
+    
         }
     }
-    // FOR SLICE VIEWING
-    /*
-    for(int x = 0; x < _dvrModel.getCameraPose().getPixelHorizontal(); x++)
-    {
-        for(int y = 0; y < _dvrModel.getCameraPose().getPixelVertical(); y++)
-        {
-            float intensity = vol.getVoxelLinearPhysical(_dvrModel.getCameraPose().getPixel(x, y));
-            QColor color = _dvrModel.transferFunction().classify(intensity);
-            painter.fillRect(x * tileWidth, y * tileWidth, tileWidth, tileWidth, color);
-        }
-    }
-    */
+
 }
 
 void DVRWidget::keyPressEvent(QKeyEvent* event)

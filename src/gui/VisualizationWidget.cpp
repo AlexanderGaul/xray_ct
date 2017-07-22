@@ -57,7 +57,9 @@ VisualizationWidget::VisualizationWidget() :
     _dvrStepWidthSpinBox {new QDoubleSpinBox {}},
     _mprWidget {new MPRWidget{_visModel}},
     _dvrWidget {new DVRWidget{_visModel}},
-    _dvrControlWidget {new DVRControlWidget(_visModel.getDVRModel())}
+    
+    _dvrControlWidget {new DVRControlWidget(_visModel.getDVRModel())},
+    _mprControlWidget {new MPRControlWidget(_visModel.getMPRModel())}
 {
     ///all layout items for visulisation are composed in the main layout
     QHBoxLayout *mainLayout = new QHBoxLayout {};
@@ -152,8 +154,8 @@ VisualizationWidget::VisualizationWidget() :
     
     //_dvrControlWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-    
-    menuLayout->addWidget(_dvrControlWidget, 3, 0);
+    menuLayout->addWidget(_mprControlWidget, 3, 0);
+    menuLayout->addWidget(_dvrControlWidget, 4, 0);
     
     //_dvrWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     //_mprWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

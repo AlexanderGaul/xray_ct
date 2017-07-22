@@ -13,6 +13,7 @@ set(GUI_SRCS
         SliceWidget.cpp
         VisualizationWidget.cpp
         DVRControlWidget.cpp
+        MPRControlWidget.cpp
         BoxSlider.cpp
         )
 set(GUI_HDRS
@@ -27,6 +28,7 @@ set(GUI_HDRS
         SliceWidget.h
         VisualizationWidget.h
         DVRControlWidget.h
+        MPRControlWidget.h
         BoxSlider.h
         )
 

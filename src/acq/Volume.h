@@ -9,6 +9,8 @@
 
 #include "Vec3D.h"
 
+#include <iostream>
+
 class VolumeBase{    
 protected:
     Eigen::AlignedBox<float, 3> _boundingBox;
@@ -295,14 +297,18 @@ public:
     float getVoxelLinearPhysical(Eigen::Vector3f position) const
     {
         Eigen::Vector3f blf = _boundingBox.corner(Eigen::AlignedBox3f::BottomLeftFloor);
+        
         position(0) -= blf(0);
         position(1) -= blf(1);
         position(2) -= blf(2);
 
         Eigen::Vector3f spacing = getSpacing();
+        
+        
         position(0) /= spacing(0);
         position(1) /= spacing(1);
         position(2) /= spacing(2);
+        
 
         return getVoxelLinear(position);
     }

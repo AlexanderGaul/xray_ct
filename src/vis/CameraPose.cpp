@@ -14,14 +14,14 @@ CameraPose::CameraPose()
 
 CameraPose::CameraPose(int pixelHorizontal, int pixelVertical, float distance)
     :
-    Pose(Eigen::Vector3f(-distance, 0.f, 0.f)),
+    Pose(Eigen::Vector3f(-1.f, 0.f, 0.f), distance),
     _pxlHorizontal{pixelVertical},
     _pxlVertical{pixelVertical},
     _down{0.f, 0.f, -1.f},
     _right{0.f, 1.f, 0.f},
     _screenCenter{getPoint() - getNormal()}
 {
-    setFov(30);
+    setFov(90);
 }
 
 void CameraPose::setFov(float fov)
@@ -92,7 +92,6 @@ Eigen::Vector3f CameraPose::getPixel(int horizontal, int vertical, Eigen::Vector
     
     position = position + _right * _pixelSize * horizontal;
     position = position + _down * _pixelSize * vertical;
-
     
     return position;
 }
