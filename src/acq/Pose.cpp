@@ -120,7 +120,7 @@ Eigen::Vector3f Pose::getNormal() const
 void Pose::setDistanceToCenter(float distance)
 {
     _distance = distance;
-    _point = _normal * _distance;
+    //_point = _normal * _distance;
     updatePose();
 }
 

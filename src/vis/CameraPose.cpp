@@ -46,7 +46,7 @@ int CameraPose::getPixelVertical() const
 
 Eigen::ParametrizedLine<float, 3> CameraPose::getRayPerspective(int horizontal, int vertical)
 {
-    Eigen::Vector3f pixel = getPixel(horizontal, vertical, getCenter());
+    Eigen::Vector3f pixel = getPixel(horizontal, vertical, _screenCenter);
     Eigen::Vector3f direction = pixel - getPoint();
     direction.normalize();
     return Eigen::ParametrizedLine<float, 3>(getPoint(), direction);
@@ -59,7 +59,7 @@ Eigen::ParametrizedLine<float, 3> CameraPose::getRayOrthogonal(int horizontal, i
 void CameraPose::setDistance(float distance)
 {
     Pose::setDistanceToCenter(distance);
-    _screenCenter = getRotation() * (getPoint() - getNormal());
+    updatePose();
 }
 float CameraPose::getDistance()
 {

@@ -23,7 +23,6 @@ void DVRWidget::paintEvent(QPaintEvent* p_e)
 
     const Volume& vol = _visModel.volume();
     Eigen::AlignedBox3f box = vol.getBoundingBox();
-    _dvrModel.getCameraPose().setDistance(vol.getBoundingBox().diagonal().norm());
     
     
     float scale = std::min(static_cast<float>(width()) / _dvrModel.getCameraPose().getPixelHorizontal(), static_cast<float>(height()) / _dvrModel.getCameraPose().getPixelVertical());
