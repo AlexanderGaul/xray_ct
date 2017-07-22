@@ -9,7 +9,6 @@ void SliceWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     if(_model->invalid()){
         painter.fillRect(this->rect(), QBrush(QColor(Qt::black)));
-        QMessageBox::warning(this, "Invalid Reconstruction", "There was a problem in the reconstruction. This can happen when there is not enough information to restore the volume (and there are too many cg-iterations). It can also happen when lambda is too big.");
         return;
     }
 
@@ -88,7 +87,7 @@ void SliceWidget::wheelEvent(QWheelEvent* event) {
         if(_currSlice > 0) {
             _currSlice--;
             emit sliceChanged();
-            repaint();
+            update();
         }
     }
     else {
@@ -96,7 +95,15 @@ void SliceWidget::wheelEvent(QWheelEvent* event) {
         if(_currSlice < slices()-1) {
             _currSlice++;
             emit sliceChanged();
-            repaint();
+            update();
         }
     }
+}
+
+bool SliceWidget::checkModelInvalidity() {
+    if(_model->invalid()){
+        QMessageBox::warning(this, "Invalid Reconstruction", "There was a problem in the reconstruction. This can happen when there is not enough information to restore the volume (and there are too many cg-iterations). It can also happen when lambda is too big.");
+        return true;
+    }
+    return false;
 }

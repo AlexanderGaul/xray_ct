@@ -26,6 +26,8 @@ private:
     int _status;
     std::unique_ptr<ReconstructionModel> _model;
     QImage _image;
+    
+    bool checkModelInvalidity();
 
 public:
     SliceWidget() : _currSlice(0), _status(2), _model {nullptr}, _image {} {
@@ -70,6 +72,9 @@ public:
      */
     void setAcq(bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq){
         _model = std::make_unique<ReconstructionModel>(regularized, lambda, noisy, noise, cgIterations, std::move(acq));
+        if(checkModelInvalidity()){
+            return;
+        }
         update();
         //Important reset, if the volume boundaries would recParamChanged
         _currSlice = 0;
@@ -82,7 +87,7 @@ public:
      * param. description see above
      */
     void recParamChanged(bool regularized, float lambda, int cgIterations){
-        if(!_model){
+        if(!_model || checkModelInvalidity()){
             return;
         }
         _model->changeReconstructionParams(regularized, lambda, cgIterations);
@@ -90,7 +95,7 @@ public:
     }
     
     void noiseChanged(bool noisy, float noise, int cgIterations){
-        if(!_model){
+        if(!_model || checkModelInvalidity()){
             return;
         }
         _model->changeNoise(noisy, noise, cgIterations);
@@ -98,7 +103,7 @@ public:
     }
     
     std::shared_ptr<const Volume> getRec(){
-        if(!_model){
+        if(!_model || _model->invalid()){
             return nullptr;
         }
         return _model->getRec();
@@ -121,6 +126,6 @@ public slots:
             _status = newStatus;
             _currSlice = 0;
         }
-        repaint();
+        update();
     }
 };

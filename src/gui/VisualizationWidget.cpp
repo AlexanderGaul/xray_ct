@@ -70,7 +70,7 @@ VisualizationWidget::VisualizationWidget() :
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
     if(!vol){
-        QMessageBox::warning(this, "No Reconstruction Present!", "You have to generate a reconstruction before it can be visualized!");
+        QMessageBox::warning(nullptr, "No Reconstruction Present or Invalid Reconstruction!", "You have to generate a valid reconstruction before it can be visualized!");
         return;
     }
     _visModel.setVolume(*vol);
