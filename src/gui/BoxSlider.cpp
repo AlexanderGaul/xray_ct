@@ -14,7 +14,6 @@ BoxSlider::BoxSlider(float minValue, float maxValue, int decimal, float singleSt
     _box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     //_box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     
-    
     _slider->setOrientation(Qt::Horizontal);
     _slider->setRange(0, static_cast<int>((maxValue - minValue) / singleStep));
     _slider->setSingleStep(1);
@@ -73,6 +72,15 @@ void BoxSlider::changedValue(float value)
 QSize BoxSlider::minimumSizeHint() const
 {
     return _box->minimumSizeHint();
+}
+
+void BoxSlider::setMax(float max)
+{
+    
+}
+void BoxSlider::setMin(float min)
+{
+    
 }
 
 bool BoxSlider::catchEvent()

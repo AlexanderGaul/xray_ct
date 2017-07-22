@@ -11,6 +11,7 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     _rotY{new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _rotZ{new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _zoom{new BoxSlider(0.f, 200.f, 2, 2.f )},
+    _func{new TransferFuncWidget(_model.transferFunction())},
     _layout{new QGridLayout}
 {
     QLabel* posXLabel = new QLabel("X Position");
@@ -36,6 +37,7 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     _layout->addWidget(_rotY, 3, 1);
     _layout->addWidget(_rotZ, 4, 1);
     _layout->addWidget(_zoom, 5, 1);
+    _layout->addWidget(_func, 6, 0, 1, 2);
     
     _layout->setAlignment(Qt::AlignTop);
     
@@ -49,6 +51,8 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     connect(_rotZ, &BoxSlider::valueChanged, &_model, &MPRModel::setRotationZDeg);
     
     connect(_zoom, &BoxSlider::valueChanged, &_model, &MPRModel::setZoom);
+    
+    connect(_func, &TransferFuncWidget::valueChanged, &_model, &MPRModel::redraw);
     
     
     updatePositionX();

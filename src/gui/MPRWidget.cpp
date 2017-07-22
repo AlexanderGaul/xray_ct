@@ -13,7 +13,7 @@ void MPRWidget::paintEvent(QPaintEvent* p_e)
 {
     QPainter painter(this);
     const Volume& vol = _visModel.volume();
-    _mprModel.transferFunction().setRange(0, 0, vol.maxEntry());
+    //_mprModel.transferFunction().setRange(0, 0, vol.maxEntry());
     
     if(vol.getTotalVoxelCount() == 0)
     {
