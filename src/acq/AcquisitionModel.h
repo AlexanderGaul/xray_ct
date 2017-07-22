@@ -41,8 +41,9 @@ public:
     /**
      * @brief loadImage. Loads a new EDF image into the acquisition model.
      * @param path - file system path determining location of EDF image.
+     * @return returns true if the volume data was correctly read
      */
-    void loadImage(std::string path);
+    bool loadFile(QString path);
     
     /**
      * The next few methods offer an interface to pose that is shown in the the gui.
@@ -171,8 +172,6 @@ signals:
     void poseChanged();
 private:
     void addCircularPoses(int count, float angle, float range = 2.f * M_PI);
-    
-    bool checkIfVolumeFitsBlackBox() const;
     
     /*
      * adds a new default AcquisitionPose

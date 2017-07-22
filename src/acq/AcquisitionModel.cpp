@@ -3,24 +3,6 @@
 
 #include "AcquisitionModel.h"
 
-bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
-{
-    // check if the volume fits the black box
-    Eigen::Vector3i voxels = _volume.getNumVoxels();
-    Eigen::Vector3f spacing = _volume.getSpacing();
-
-    for(int i = 0; i<3; i++)
-    {
-        if(voxels[i] * spacing[i] > FIXED_BOX_SIZE[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-
 AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)},
     _posePrototype {_volume.getBoundingBox()},
@@ -30,15 +12,20 @@ AcquisitionModel::AcquisitionModel(std::string path)
 }
 
 
-void AcquisitionModel::loadImage(std::string path)
-{
-    _volume = EDFHandler::read(path);
-    addDefaultPose();
-    emit poseChanged();
-    if(!checkIfVolumeFitsBlackBox())
-    {
-        throw std::logic_error("the specified volume does not fit the black box!");
+bool AcquisitionModel::loadFile(QString path) {   
+    try{
+        _volume = EDFHandler::read(path.toStdString());
+    } catch (std::invalid_argument){
+        return false;
+    } catch (std::runtime_error){
+        return false;
     }
+    _posePrototype = AcquisitionPose {_volume.getBoundingBox()};
+    _poses.clear();
+    addDefaultPose();
+    updateProjection();
+    emit poseChanged();
+    return true;
 }
 
 void AcquisitionModel::updateRotation(RotationAxis axis, float angle){

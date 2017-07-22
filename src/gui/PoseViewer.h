@@ -51,7 +51,9 @@ private:
     QDoubleSpinBox *_detectorWidth;
     QDoubleSpinBox *_detectorHeight;
     QDoubleSpinBox *_detectorSouceDistance;
-
+    
+    QPushButton *_loadFileButton;
+    
     AcquisitionModel& _model;
 	bool _showRays;
 	int _zoom;
@@ -142,4 +144,5 @@ public slots:
         _model.addSphericalPoses(_poseCount1->value(), _poseCount2->value());
     }
 
+    void loadFile();
 };
