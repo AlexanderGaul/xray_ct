@@ -43,7 +43,10 @@ public:
     QSize minimumSizeHint() const override;
 
 private:
-    // the connection of valueChanged functions can lead to chained resets of values
+    /*
+     * this function decides whether the current valueChanged call is redundant
+     * the connection of valueChanged functions can lead to chained resets of values
+     */ 
     bool catchEvent();
 
 };

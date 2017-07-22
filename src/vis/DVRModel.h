@@ -118,12 +118,16 @@ public:
     float getRotationYDeg()
     {
         float deg = _pose.getRotationY() / M_PI * 180.f;
+        deg = fmod(deg, 360.f);
+        if(deg < 0) deg = 360.f - deg;
         return deg;
     }
     
     float getRotationZDeg()
     {
         float deg = _pose.getRotationZ() / M_PI * 180.f;
+        deg = fmod(deg, 360.f);
+        if(deg < 0) deg = 360.f - deg;
         return deg;
     }
     
