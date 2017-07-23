@@ -1,0 +1,4 @@
+<map id="Pose" name="Pose">
+<area shape="rect" id="node2" href="$classAcquisitionPose.html" title="AcquisitionPose" alt="" coords="5,80,121,107"/>
+<area shape="rect" id="node3" href="$classCameraPose.html" title="CameraPose" alt="" coords="146,80,245,107"/>
+</map>

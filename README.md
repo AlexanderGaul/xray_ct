@@ -41,6 +41,11 @@ The documentation is generated during the build process
 automatically, but it can also be updated by the 
 command "make doc" in the build folder.
 
+The documentation should be generated in a build folder inside the project 
+folder (on the same level as src/, test/ etc.). A snapshot of the latest
+documentation before last submission can be found in the documentation/ 
+directory.
+
 To view the documentation, open docs/html/index.html (relative 
 to the location of the build folder). This will open a doxygen 
 documentation of our project, including class hierarchies, 
