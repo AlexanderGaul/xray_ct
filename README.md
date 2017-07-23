@@ -58,9 +58,10 @@ The user can store the currently modified pose, for the use in the reconstructio
 which means that a new pose that can be modified/stored again is generated.
 The currently modified pose can also be deleted, so the last stored pose becomes the new current pose.
 
-Poses can also be automatically generated. This is done by generating a certain amount of circles consisting of poses around the volume. 
+It is also possible, to generate poses automatically by generating
+a certain amount of circles consisting of poses around the volume. 
 These circles are themselves generated in a (half-)circle around the aquisition. 
-The closer these circles get to the ends of this half circle the smaller the pose-circles get, 
+The closer these circles get to the ends of this half circle the smaller the pose-circles, 
 which means that all the generated pose form a rough sphere.
 The user has to provide the number of circles and the (maximum) number of poses per circle.
 
@@ -76,7 +77,7 @@ size, such that similar distances lead to similar behavior
 on different volumes.
 
 All positions of stored acquisition poses' sources are shown on the screen as faded out red circle, 
-while the brightest red circle is the position of the currently modified pose.
+while the solid red circle is the position of the currently modified pose.
 
 On the right side of the screen, the user can see the current acquisition
 data (the image that reaches the detector in the current acquisition 
@@ -110,11 +111,12 @@ custom value for lambda, to change the
 regularization parameter of the Tikhonov regularization.
 Warning: Too high values for lambda can degrade the reconstruction 
 results to a level below the noisy image!
-We recommend to set lambda between 10,00 and 20 for an error of 4%  (or similar values).
+We recommend to set lambda between 10.00 and 20.00 for an error of 4%  (or similar values).
 
 After changing the setup of reconstruction, the user has to hit 
 "Update reconstruction" to apply his changes and recompute the 
-reconstructed volume using the new setup. The error is only recalculated (or removed) when "Update Noise" is presesd.
+reconstructed volume using the new setup. 
+The error is only recalculated (or removed) when "Update Noise" is presesd.
 
 ### Visualization widget manual
 
@@ -142,4 +144,6 @@ Additionally, it is possible to zoom and rotate around Y and Z axis,
 such that the user can view any plane in the volume from any direction.
 In the same way as in the DVR visualization, the MPR's transfer function
 can be changed regarding range and color.
-To better show where the cutting plane is currently located, the current rotation of it compared to the initial state is shown directly below the visualization.
+To imporove the visualization of the cutting plane's current location, 
+the current rotation of the plane (compared to its initial state)
+is shown directly below the visualization.
