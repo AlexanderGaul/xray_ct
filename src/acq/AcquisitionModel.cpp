@@ -170,7 +170,7 @@ void AcquisitionModel::addCircularPoses(int count, float yAngle, float range)
     for(int i = 0; i < count; i++)
     {
         AcquisitionPose pose {_posePrototype};
-        pose.setRotation(distance / 2.f + i * distance, yAngle);
+        pose.setRotation(i * distance, yAngle);
         _poses.push_back(pose);
     }
 }
