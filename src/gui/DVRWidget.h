@@ -33,7 +33,7 @@ private:
     
 
 public:
-    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event) override;
     
     
     DVRWidget(VisualizationModel& visModel);

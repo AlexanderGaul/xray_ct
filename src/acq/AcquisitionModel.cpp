@@ -7,7 +7,7 @@ AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)},
     _posePrototype {_volume.getBoundingBox()},
     _poses { _posePrototype},
-    _measurements {ForwardProjectionOperator::forwardProj(_volume, currPoseChecked())}
+    _measurements {RayTracing::forwardProj(_volume, currPoseChecked())}
 {
 }
 
@@ -174,14 +174,14 @@ void AcquisitionModel::addDefaultPose(){
 
 void AcquisitionModel::updateProjection(){
     _measurements = 
-        ForwardProjectionOperator::forwardProj(_volume, _poses, _volume.content().rawVec());
+        RayTracing::forwardProj(_volume, _poses, _volume.content().rawVec());
     // TODO is this necessary??
     //emit poseChanged();
 }
 
 void AcquisitionModel::updateLastProjection(){
     const int rayCount = currPoseChecked().getPixelCount();
-    const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
+    const Eigen::VectorXf proj = RayTracing::forwardProj(volume(), currPoseChecked());
     const int offset = _measurements.size() - rayCount;
     assert(rayCount == proj.size());
     

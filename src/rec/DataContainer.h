@@ -7,7 +7,6 @@
 
 #include "AcquisitionPose.h"
 #include "RayTracing.h"
-#include "ForwardProjectionOperator.h"
 #include "Volume.h"
 
 
@@ -34,7 +33,7 @@ public:
      * computes A*x, where A is the system matrix of the tomographic problem (= forward projection)
      */
     Eigen::VectorXf forwardProj( const Eigen::VectorXf& x) const{
-        return ForwardProjectionOperator::forwardProj(_base, _poses, x);
+        return RayTracing::forwardProj(_base, _poses, x);
     }
     
     /*
