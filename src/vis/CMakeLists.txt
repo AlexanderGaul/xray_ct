@@ -4,12 +4,10 @@ cmake_minimum_required(VERSION 3.5.1)
 set(VIS_SRCS
         CameraPose.cpp
         DVRCamera.cpp
-        DVRModel.cpp
         LinearPiece.cpp
         MIP.cpp
         MPRModel.cpp
         TransferFunction.cpp
-        VisualizationModel.cpp
         )
 set(VIS_HDRS
         CameraPose.h
