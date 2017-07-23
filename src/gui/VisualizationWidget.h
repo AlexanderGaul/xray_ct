@@ -43,7 +43,7 @@ private:
     VisualizationModel _visModel;
 
     ///loads the Volume from a file
-    QPushButton *_loadFileButton;    
+    QPushButton *_loadFileButton;
     ///loads the Volume from the ReconstructionPose
     QPushButton *_loadRecButton;
     ///shows the dimensions of the volume on screen

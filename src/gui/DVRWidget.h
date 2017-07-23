@@ -18,10 +18,9 @@
 #include "CameraPose.h"
 
 /**
- * Implementation of orthographic
+ * Implementation of orthographic and perspective
  * direct volume rendering (DVR).
  *
- * Currently only one axis roation (X value stays fixed)!
  * @brief The DVRWidget class
  */
 class DVRWidget : public QWidget
@@ -50,6 +49,11 @@ public:
     void setColorRange(float from, float to);
     
     void updateVolume(Volume vol);
+    
+    virtual int heightForWidth(int w) const override;
+    virtual bool hasHeightForWidth() const override;
+    QSize sizeHint() const override;
+    void resizeEvent(QResizeEvent *event) override;
     
 public slots:
     void changedPose();

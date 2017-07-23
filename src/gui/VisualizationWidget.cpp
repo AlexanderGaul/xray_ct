@@ -54,13 +54,20 @@ VisualizationWidget::VisualizationWidget() :
     mprLayout->setStretch(0, 5);
     mprLayout->setStretch(1, 1);
     
-    mainLayout->addItem(mprLayout);
-    //mainLayout->addWidget(_axisWidget);
-    mainLayout->addWidget(_dvrWidget);
     
-    mainLayout->setStretch(0, 3);
+    QVBoxLayout* dvrLayout = new QVBoxLayout();
+    dvrLayout->addWidget(_dvrWidget);
+    dvrLayout->setAlignment(Qt::AlignTop);
+    
+    
+    mainLayout->addItem(mprLayout);
+    mainLayout->addItem(dvrLayout);
+    
+    mainLayout->setStretch(0, 2);
     mainLayout->setStretch(1, 5);
     mainLayout->setStretch(2, 5);
+    
+    mainLayout->setAlignment(Qt::AlignTop);
 
     setLayout(mainLayout);
 

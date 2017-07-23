@@ -7,6 +7,10 @@ MPRWidget::MPRWidget(VisualizationModel& visModel)
       _mprModel {visModel.getMPRModel()}
 {
     connect(&_mprModel, &MPRModel::redraw, this, &MPRWidget::changedPose);
+    
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    sizePolicy.setHeightForWidth(true);
+    setSizePolicy(sizePolicy);
 }
 
 void MPRWidget::paintEvent(QPaintEvent*)
@@ -48,6 +52,30 @@ QColor MPRWidget::color() const
 {
     return _mprModel.color();
 }
+
+int MPRWidget::heightForWidth(int w) const
+{
+    float aspectRatio = _mprModel.getPixelVertical() / static_cast<float>(_mprModel.getPixelHorizontal());
+    return static_cast<int>(aspectRatio * w);
+}
+QSize MPRWidget::sizeHint() const
+{
+    int heightHint = heightForWidth(width());
+
+    return QSize(QWidget::sizeHint().width(), heightHint);
+}
+bool MPRWidget::hasHeightForWidth() const
+{
+    return true;
+}
+
+void MPRWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    updateGeometry();
+}
+
 
 void MPRWidget::changedPose()
 {

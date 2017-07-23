@@ -19,9 +19,11 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
     _iMin->setRange(0.f, 100.f);
     _iMax->setRange(0.f, 100.f);
     
-    _iMin->setDecimals(4);
-    _iMax->setDecimals(4);
+    _iMin->setDecimals(3);
+    _iMax->setDecimals(3);
     
+    _iMin->setSingleStep(1.f);
+    _iMax->setSingleStep(1.f);
     
     _layout->addWidget(minLabel);
     _layout->addWidget(_iMin);
@@ -44,6 +46,10 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
 void TransferFuncWidget::setRange(float from, float to)
 {
     _function.setRange(0, from, to);
+    
+    _iMin->setSingleStep((to - from) / 20.f);
+    _iMax->setSingleStep((to -from) / 20.f);
+    
     changedFunction();
 }
 

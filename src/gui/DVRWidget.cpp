@@ -8,6 +8,10 @@ DVRWidget::DVRWidget(VisualizationModel& visModel)
     setFocusPolicy(Qt::ClickFocus);
     
     connect(&_dvrModel, &DVRModel::redraw, this, &DVRWidget::changedPose);
+    
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    sizePolicy.setHeightForWidth(true);
+    setSizePolicy(sizePolicy);
 }
 
 void DVRWidget::paintEvent(QPaintEvent*)
@@ -122,4 +126,30 @@ void DVRWidget::changedPose()
 {
     update();
 }
+
+
+int DVRWidget::heightForWidth(int w) const
+{
+    float aspectRatio = _dvrModel.getCameraPose().getPixelVertical() / static_cast<float>(_dvrModel.getCameraPose().getPixelHorizontal());
+    return static_cast<int>(aspectRatio * w);
+}
+
+QSize DVRWidget::sizeHint() const
+{
+    int heightHint = heightForWidth(width());
+
+    return QSize(QWidget::sizeHint().width(), heightHint);
+}
+bool DVRWidget::hasHeightForWidth() const
+{
+    return true;
+}
+
+void DVRWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    updateGeometry();
+}
+
 

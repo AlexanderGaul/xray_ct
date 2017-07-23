@@ -56,6 +56,11 @@ public slots:
      * @return
      */
     QColor color() const;
+    
+    virtual int heightForWidth(int w) const override;
+    virtual bool hasHeightForWidth() const override;
+    QSize sizeHint() const override;
+    void resizeEvent(QResizeEvent *event) override;
 
 
 public slots:
