@@ -55,6 +55,7 @@ ReconstructionViewer::ReconstructionViewer()
     regLayout->addWidget(_regLambda);
     _regLambda->setRange(0, 5000);
     _regLambda->setPrefix("λ=");
+    _regLambda->setValue(10);
     layout->addItem(regLayout, 4, 0);
 
     _updateButton->setEnabled(false);
@@ -90,6 +91,7 @@ ReconstructionViewer::ReconstructionViewer()
     _noiseSpinBox->setMinimum(0.);
     _noiseSpinBox->setDecimals(2);
     _noiseSpinBox->setSuffix("%");
+    _noiseSpinBox->setValue(4);
     _noiseSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
     _noiseSpinBox->setKeyboardTracking(false);
         
