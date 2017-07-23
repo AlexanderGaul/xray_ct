@@ -3,42 +3,29 @@
 
 #include "AcquisitionModel.h"
 
-bool AcquisitionModel::checkIfVolumeFitsBlackBox() const
-{
-    // check if the volume fits the black box
-    Eigen::Vector3i voxels = _volume.getNumVoxels();
-    Eigen::Vector3f spacing = _volume.getSpacing();
-
-    for(int i = 0; i<3; i++)
-    {
-        if(voxels[i] * spacing[i] > FIXED_BOX_SIZE[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-
 AcquisitionModel::AcquisitionModel(std::string path)
     :  _filled {true}, _volume{EDFHandler::read(path)},
     _posePrototype {_volume.getBoundingBox()},
     _poses { _posePrototype},
-    _measurements {ForwardProjectionOperator::forwardProj(_volume, currPoseChecked())}
+    _measurements {RayTracing::forwardProj(_volume, currPoseChecked())}
 {
 }
 
 
-void AcquisitionModel::loadImage(std::string path)
-{
-    _volume = EDFHandler::read(path);
-    addDefaultPose();
-    emit poseChanged();
-    if(!checkIfVolumeFitsBlackBox())
-    {
-        throw std::logic_error("the specified volume does not fit the black box!");
+bool AcquisitionModel::loadFile(QString path) {   
+    try{
+        _volume = EDFHandler::read(path.toStdString());
+    } catch (std::invalid_argument){
+        return false;
+    } catch (std::runtime_error){
+        return false;
     }
+    _posePrototype = AcquisitionPose {_volume.getBoundingBox()};
+    _poses.clear();
+    addDefaultPose();
+    updateProjection();
+    emit poseChanged();
+    return true;
 }
 
 void AcquisitionModel::updateRotation(RotationAxis axis, float angle){
@@ -137,7 +124,6 @@ void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float
     for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
     {
         int count;
-        float distance;
         float cosine = cosf(yRot);
         if(1.f > cosine * equatorialCount)
         {
@@ -188,14 +174,14 @@ void AcquisitionModel::addDefaultPose(){
 
 void AcquisitionModel::updateProjection(){
     _measurements = 
-        ForwardProjectionOperator::forwardProj(_volume, _poses, _volume.content().rawVec());
+        RayTracing::forwardProj(_volume, _poses, _volume.content().rawVec());
     // TODO is this necessary??
     //emit poseChanged();
 }
 
 void AcquisitionModel::updateLastProjection(){
     const int rayCount = currPoseChecked().getPixelCount();
-    const Eigen::VectorXf proj = ForwardProjectionOperator::forwardProj(volume(), currPoseChecked());
+    const Eigen::VectorXf proj = RayTracing::forwardProj(volume(), currPoseChecked());
     const int offset = _measurements.size() - rayCount;
     assert(rayCount == proj.size());
     

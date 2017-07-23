@@ -26,6 +26,8 @@ private:
     int _status;
     std::unique_ptr<ReconstructionModel> _model;
     QImage _image;
+    
+    bool checkModelInvalidity();
 
 public:
     SliceWidget() : _currSlice(0), _status(2), _model {nullptr}, _image {} {
@@ -36,106 +38,9 @@ public:
     }
 
     virtual
-    void paintEvent(QPaintEvent *event)
-    {
-        if(!_model){
-            return;
-        }
-        QPainter painter(this);
+    void paintEvent(QPaintEvent *event);
 
-        const Vec3D<float>& content = _model->getContent();
-        const Eigen::Vector3f& spacing = _model->getVolumeBase().getSpacing();
-        if(content.totalSize() == 0){
-            return;
-        }
-
-        float maxColor = _model->rec().maxEntry();
-        float colorCoeff = 255.0/maxColor;
-        if(_status == 2) {   
-            const float spacingRatio = spacing.x()/spacing.y();
-            int maxPixelWidth = 1.0*width()/(content.sizeX())/spacingRatio;
-            int maxPixelHeight = 1.0*height()/(content.sizeY());
-           
-            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
-            
-            int pixelWidth = pixelSize * spacingRatio;
-            int pixelHeight = pixelSize;
-
-            for(int i = 0; i< content.sizeX(); ++i) {
-                for(int j = 0; j<content.sizeY(); ++j) {
-                    int curr = std::abs(content.get(i,j,_currSlice)) * colorCoeff;
-                    QColor color = QColor::fromRgb(curr, curr, curr);
-                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
-                }
-            }
-        } else if(_status == 1) {
-            const float spacingRatio = spacing.x()/spacing.z();
-            int maxPixelWidth = 1.0*width()/(content.sizeX())/spacingRatio;
-            int maxPixelHeight = 1.0*height()/(content.sizeZ());
-            
-            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
-            
-            int pixelWidth = pixelSize * spacingRatio;
-            int pixelHeight = pixelSize;
-            
-            for(int i = 0; i< content.sizeX(); ++i) {
-                for(int j = 0; j<content.sizeZ(); ++j) {
-                    int curr = std::abs(content.get(i,_currSlice,j)) * colorCoeff;
-
-                    QColor color = QColor::fromRgb(curr, curr, curr);
-                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
-                }
-            }
-        } else {
-            const float spacingRatio = spacing.y()/spacing.z();
-            int maxPixelWidth = 1.0*width()/(content.sizeY())/spacingRatio;
-            int maxPixelHeight = 1.0*height()/(content.sizeZ());
-            
-            int pixelSize = std::min(maxPixelWidth, maxPixelHeight);
-            
-            int pixelWidth = pixelSize * spacingRatio;
-            int pixelHeight = pixelSize;
-            
-            for(int i = 0; i< content.sizeY(); ++i) {
-                for(int j = 0; j<content.sizeZ(); ++j) {
-                    int curr = std::abs(content.get(_currSlice,i,j)) * colorCoeff;
-
-                    QColor color = QColor::fromRgb(curr, curr, curr);
-                    painter.fillRect(QRect(i*pixelWidth, j*pixelHeight, pixelWidth, pixelHeight), QBrush(color));
-                }
-            }
-        }
-
-    }
-
-    void wheelEvent(QWheelEvent* event)
-    {
-        if(event->delta() == 0)
-        {
-            // no real motion! do nothing!
-            return;
-        }
-        if(event->delta() < 0)
-        {
-            // go back
-            if(_currSlice > 0)
-            {
-                _currSlice--;
-                emit sliceChanged();
-                repaint();
-            }
-        }
-        else
-        {
-            // go forward
-            if(_currSlice < slices()-1)
-            {
-                _currSlice++;
-                emit sliceChanged();
-                repaint();
-            }
-        }
-    }
+    void wheelEvent(QWheelEvent* event);
 
     int currSlice()
     {
@@ -167,6 +72,9 @@ public:
      */
     void setAcq(bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq){
         _model = std::make_unique<ReconstructionModel>(regularized, lambda, noisy, noise, cgIterations, std::move(acq));
+        if(checkModelInvalidity()){
+            return;
+        }
         update();
         //Important reset, if the volume boundaries would recParamChanged
         _currSlice = 0;
@@ -179,7 +87,7 @@ public:
      * param. description see above
      */
     void recParamChanged(bool regularized, float lambda, int cgIterations){
-        if(!_model){
+        if(!_model || checkModelInvalidity()){
             return;
         }
         _model->changeReconstructionParams(regularized, lambda, cgIterations);
@@ -187,7 +95,7 @@ public:
     }
     
     void noiseChanged(bool noisy, float noise, int cgIterations){
-        if(!_model){
+        if(!_model || checkModelInvalidity()){
             return;
         }
         _model->changeNoise(noisy, noise, cgIterations);
@@ -195,7 +103,7 @@ public:
     }
     
     std::shared_ptr<const Volume> getRec(){
-        if(!_model){
+        if(!_model || _model->invalid()){
             return nullptr;
         }
         return _model->getRec();
@@ -218,6 +126,6 @@ public slots:
             _status = newStatus;
             _currSlice = 0;
         }
-        repaint();
+        update();
     }
 };

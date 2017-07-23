@@ -9,7 +9,7 @@ MPRWidget::MPRWidget(VisualizationModel& visModel)
     connect(&_mprModel, &MPRModel::redraw, this, &MPRWidget::changedPose);
 }
 
-void MPRWidget::paintEvent(QPaintEvent* p_e)
+void MPRWidget::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
     const Volume& vol = _visModel.volume();

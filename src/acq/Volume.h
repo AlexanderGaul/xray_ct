@@ -184,6 +184,13 @@ public:
     }
 
     /**
+     * returns true if the content cotains at least one NaN-value
+     **/
+    bool containsNan(){
+        return _content.containsNan();
+    }
+    
+    /**
      * Trillinear interpolation with surrounding voxels
      * returns zero if outside volume
      * extrapolates trilinearly if outside voxel centers

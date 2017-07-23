@@ -46,7 +46,6 @@ public slots:
     void update(){
         QWidget::update();
     }
-
 };
 
 #endif // AQUISITIONWIDGET_H

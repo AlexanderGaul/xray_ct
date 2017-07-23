@@ -32,6 +32,14 @@ private:
     
     std::shared_ptr<Volume> _reconstruction;
     
+    /**
+     * The reconstruction can be invalid if there is not enough information to restore there
+     * volume or if lambda in the regularized reconstruction was too big
+     * 
+     * The result is that the reconstruction contains at least one NaN
+     */
+    bool _invalid;
+    
 
 public:
     
@@ -49,6 +57,7 @@ public:
     
     void recalcReconstruction(int iterations){
         _reconstruction = std::make_shared<Volume>(*_reconstruction, CG::conjugateGradient(iterations, *_cont, getMeasurements()));
+        _invalid = _reconstruction->containsNan();
     }
     
     const VolumeBase& getVolumeBase(){
@@ -59,9 +68,9 @@ public:
         if (noise == 0.0) {
             return Eigen::VectorXf::Zero(_measurements.size());
         } else {
-            auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-            //TODO
-            static std::mt19937 gen {1};
+            static const unsigned int seed = static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()
+                        % std::numeric_limits<unsigned int>::max());
+            static std::mt19937 gen {seed};
             static std::normal_distribution<float> dist {};
             
             Eigen::VectorXf noiseVec {_measurements.size()};
@@ -74,6 +83,10 @@ public:
         
     }
     
+    bool invalid(){
+        return _invalid;
+    }
+    
 public:
     ReconstructionModel (bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq)
     :
@@ -81,7 +94,7 @@ public:
                 _measurements {std::move(acq.measurements)},
                 _cont {generateContainer(acq.volBase, regularized, lambda)},
                 _noisy {noisy}, _noise {generateNoise(noise)},
-                _reconstruction {std::make_shared<Volume>(acq.volBase, CG::conjugateGradient(cgIterations, *_cont, getMeasurements()))}
+                _reconstruction {std::make_shared<Volume>(acq.volBase, CG::conjugateGradient(cgIterations, *_cont, getMeasurements()))}, _invalid {_reconstruction->containsNan()}
     {
     }
     

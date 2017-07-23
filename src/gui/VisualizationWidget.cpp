@@ -70,7 +70,7 @@ VisualizationWidget::VisualizationWidget() :
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
     if(!vol){
-        QMessageBox::warning(this, "No Reconstruction Present!", "You have to generate a reconstruction before it can be visualized!");
+        QMessageBox::warning(nullptr, "No Reconstruction Present or Invalid Reconstruction!", "You have to generate a valid reconstruction before it can be visualized!");
         return;
     }
     _visModel.setVolume(*vol);
@@ -79,16 +79,17 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
 
 
 void VisualizationWidget::loadFromFile(){
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setNameFilter(tr("Medical image data (*.edf)"));
-    QStringList fileNames;
-    if (dialog.exec())
-    {
-        fileNames = dialog.selectedFiles();
-        QString selection = fileNames.at(0);
-
-        _visModel.setVolume(EDFHandler::read(selection.toStdString()));
+    QString filename = QFileDialog::getOpenFileName(this, "Open File", "", "Medical image data (*.edf)");
+    if(filename.isEmpty()){
+        return;
+    }
+    
+    try{
+        _visModel.setVolume(EDFHandler::read(filename.toStdString()));
         updateVolumeChanged();
+    } catch (std::invalid_argument){
+        QMessageBox::warning(this, "Unable to Open File", "The file couldn't be read!");
+    } catch (std::runtime_error){
+        QMessageBox::warning(this, "Unable to Open File", "The file couldn't be read!");
     }
 }

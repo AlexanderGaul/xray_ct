@@ -1,6 +1,6 @@
 #include "PoseDisplay.h"
 
-void PoseDisplay::paintEvent(QPaintEvent* p_e)
+void PoseDisplay::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
     QPen pen;

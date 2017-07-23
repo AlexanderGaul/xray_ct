@@ -169,6 +169,19 @@ public:
         }
         return max;
     }
+    
+    /**
+     * Checks if the Vector contains at least one NaN
+     **/
+    bool containsNan(){
+        //we assume that this normally doesn't happen
+        bool ret = false;
+        for(int i = 0; i < totalSize(); ++i){
+            //if one nan is found ret is true and stays so until the return
+            ret |= std::isnan(_content[i]);
+        }
+        return ret;
+    }
 };
 
 #endif // VEC3D_H

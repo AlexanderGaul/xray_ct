@@ -1,5 +1,7 @@
 #include "PoseViewer.h"
 
+#include <QFileDialog>
+
 PoseViewer::PoseViewer(AcquisitionModel& model) : 
     _zoomBox{new QSpinBox {}}, 
     _raysBox {new QCheckBox {}}, 
@@ -17,6 +19,7 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _detectorWidth {new QDoubleSpinBox {}},
     _detectorHeight {new QDoubleSpinBox {}},
     _detectorSouceDistance {new QDoubleSpinBox {}},
+    _loadFileButton {new QPushButton {"Load New File"}},
      _model {model},
      _showRays {false},
      _zoom {100}
@@ -121,6 +124,9 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     _poseCount2->setValue(30);
     layout->addLayout(generatorLayout, 9, 0);
     
+    layout->addWidget(_loadFileButton, 10, 0);
+    connect(_loadFileButton, &QPushButton::pressed, this, &PoseViewer::loadFile);
+    
     setLayout(layout);
     
     connect(_generatePosesButton, &QPushButton::pressed, this, &PoseViewer::generatePoses);
@@ -144,4 +150,19 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     connect(_zoomBox, SIGNAL(valueChanged(int)), _poseDisplay3, SLOT(setZoom(int)));
 
    //connect(&_poseDisplay, &PoseDisplay::sceneChanged(), this, PoseView::sceneChanged()));
+}
+
+void PoseViewer::loadFile() {
+    QString filename = QFileDialog::getOpenFileName(this, "Open File", "", "Medical image data (*.edf)");
+    if(filename.isEmpty()){
+        return;
+    }
+    if(!_model.loadFile(filename)){
+        QMessageBox::warning(this, "Unable to Open File", "The file couldn't be read!");
+    }
+    detSourceDistanceChanged();
+    detectorWidthChanged();
+    detectorHeightChanged();
+    horizontalPixelsChanged();
+    verticalPixelsChanged();
 }
