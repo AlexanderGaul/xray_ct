@@ -20,7 +20,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     QLabel* zoomLabel  = new QLabel("Zoom");
     QLabel* distanceLabel = new QLabel("Distance");
     QLabel* stepLabel = new QLabel("Step Size");
-    QLabel* perspectiveLabel = new QLabel("Perspective");
+    QLabel* perspectiveLabel = new QLabel("Perspective Projection");
     
     _layout->addWidget(perspectiveLabel, 0, 0);
     _layout->addWidget(rotYLabel, 1, 0);
@@ -43,8 +43,11 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     
     setLayout(_layout);
     
+    _distance->setEnabled(false);
+    
     //connects
     connect(_perspective, &QCheckBox::stateChanged, &_model, &DVRModel::setPerspective);
+    connect(_perspective, &QCheckBox::stateChanged, _distance, &BoxSlider::setEnabled);
     connect(_rotY, &BoxSlider::valueChanged, &_model, &DVRModel::setRotationYDeg);
     connect(_rotZ, &BoxSlider::valueChanged, &_model, &DVRModel::setRotationZDeg);
     connect(_distance, &BoxSlider::valueChanged, &_model, &DVRModel::setDistance);
