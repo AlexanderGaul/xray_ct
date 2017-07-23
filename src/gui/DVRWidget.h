@@ -9,9 +9,7 @@
 
 #include <QKeyEvent>
 
-#include "DVRCamera.h"
 #include "DVRModel.h"
-#include "MIP.h"
 #include "RayTracing.h"
 #include "VisualizationModel.h"
 #include "Volume.h"
