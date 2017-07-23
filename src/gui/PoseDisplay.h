@@ -7,7 +7,8 @@
 #include "AcquisitionModel.h"
 
 /*
- * Only paints the current aquisition pose
+ * Paints the current aquisition pose
+ * and the Sources of all previous ones
  */
 class PoseDisplay : public QWidget
 {
@@ -19,13 +20,13 @@ private:
     bool _showRays;
     int _zoom;
     int _axis;
-	AcquisitionModel &_model;
+    AcquisitionModel &_model;
 
 
 public:
 
-	PoseDisplay(AcquisitionModel& model);
-	PoseDisplay(AcquisitionModel& model, int axis);
+    PoseDisplay(AcquisitionModel& model);
+    PoseDisplay(AcquisitionModel& model, int axis);
 
     virtual void paintEvent(QPaintEvent *) override;
     

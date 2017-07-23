@@ -22,8 +22,8 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
     _iMin->setDecimals(3);
     _iMax->setDecimals(3);
     
-    _iMin->setSingleStep(1.f);
-    _iMax->setSingleStep(1.f);
+    _iMin->setSingleStep(.5f);
+    _iMax->setSingleStep(.5f);
     
     _layout->addWidget(minLabel);
     _layout->addWidget(_iMin);

@@ -43,9 +43,10 @@ public:
 
     void setColorRange(float from, float to);
     
+    // Changes the transfer function to accomodate for the maximum intensity of the volume
     void updateVolume(Volume vol);
     
-    // used to force the aspect ratio of the widget to the one of the camera
+    // used to force the aspect ratio of the widget to the aspect ratio of the camera
     virtual int heightForWidth(int w) const override;
     virtual bool hasHeightForWidth() const override;
     QSize sizeHint() const override;

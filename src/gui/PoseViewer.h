@@ -19,6 +19,7 @@
 
 /*
  * shows three 2D projections of the current acquisition pose
+ * contains widgets to change the current pose setup
  */
 class PoseViewer : public QWidget
 {

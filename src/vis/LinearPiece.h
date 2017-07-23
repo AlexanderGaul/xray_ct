@@ -2,6 +2,10 @@
 
 #include <QColor>
 
+/**
+ * Represents a linear piece of the Transfer Function.
+ */
+
 class LinearPiece
 {
 private:

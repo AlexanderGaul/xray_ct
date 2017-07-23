@@ -112,28 +112,49 @@ const AcquisitionPose& AcquisitionModel::currPoseChecked() const {
         return _poses.back();
     }
 
-
-void AcquisitionModel::addSphericalPoses(int circles, int equatorialCount, float range)
+void AcquisitionModel::addSphericalPoses(int circles, int maxCount, float range)
 {
     _poses.pop_back();
     
     float distance = M_PI / circles;
     
-    _poses.reserve(circles * equatorialCount);
+    float adjustedCount;
+    if(circles % 2 == 0)
+    {
+        adjustedCount =  1.f / cos(distance / 2.f) * maxCount;
+    }
     
-    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < M_PI / 2.f; yRot += distance)
+    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < 0 - distance / 10.f; yRot += distance)
     {
         int count;
         float cosine = cosf(yRot);
-        if(1.f > cosine * equatorialCount)
+        if(yRot > 0.f)
+        {
+            cosine = cosf(-yRot);
+        }
+        float countf;
+        if(circles % 2 == 0)
+        {
+            countf = cosine * adjustedCount;
+        }
+        else
+        {
+            countf = cosine * maxCount;
+        }
+        if(1. > countf)
         {
             count = 1;
         }
         else
         {
-            count = static_cast<int>(cosine * equatorialCount);
+            count = static_cast<int>(countf);
         }
         addCircularPoses(count, yRot, range);
+        addCircularPoses(count, -yRot, range);
+    }
+    if(circles % 2 == 1)
+    {
+        addCircularPoses(maxCount, 0.f, range);
     }
     updateProjection();
     emit poseChanged();

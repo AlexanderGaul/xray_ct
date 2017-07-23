@@ -118,9 +118,9 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     generatorLayout->addWidget(_poseCount2);
     generatorLayout->addWidget(_generatePosesButton);
     
-    _poseCount1->setMinimum(1);
+    _poseCount1->setRange(1, 200);
     _poseCount1->setValue(30);
-    _poseCount2->setMinimum(1);
+    _poseCount2->setRange(1, 200);
     _poseCount2->setValue(30);
     layout->addLayout(generatorLayout, 9, 0);
     

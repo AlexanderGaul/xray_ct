@@ -221,6 +221,10 @@ public:
         // index of voxel centers surrounding the position
         position = position - Eigen::Vector3f(0.5, 0.5, 0.5);
         Eigen::Vector3i minVoxel = position.cast<int>();
+        
+        // decides in which directions the volume ends and intensity values habe to be replaced by zero
+        // -1 means that the first intensity of the respective axis has to be zero
+        // 1 means that the second intensity of the respective axis has to be zero
         Eigen::Vector3i zero {0, 0, 0};
         
         for(int i = 0; i < 3; i++)
@@ -254,17 +258,18 @@ public:
         /*
         Eigen::Vector4f firstValues {
             getVoxel(minVoxel),
-            getVoxel(minVoxel + Eigen::Vector3i(0, step(1),       0)),
-            getVoxel(minVoxel + Eigen::Vector3i(0,       0, step(2))),
-            getVoxel(minVoxel + Eigen::Vector3i(0, step(1), step(2)))
+            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(0, 0, 1)),
+            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1))
         };
         Eigen::Vector4f secondValues {
-            getVoxel(minVoxel + Eigen::Vector3i(step(0),       0,       0)),
-            getVoxel(minVoxel + Eigen::Vector3i(step(0), step(1),       0)),
-            getVoxel(minVoxel + Eigen::Vector3i(step(0),       0, step(2))),
-            getVoxel(minVoxel + Eigen::Vector3i(step(0), step(1), step(2)))
+            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(1, 1, 0)),
+            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 1)),
+            getVoxel(minVoxel + Eigen::Vector3i(1, 1, 1))
         };
         */
+        // first values along the x-Axis
         Eigen::Vector4f firstValues {0.f, 0.f, 0.f, 0.f};
         if(zero(0) != -1)
         {
@@ -285,6 +290,7 @@ public:
                 firstValues(3) = getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1));
             }
         }
+        // second values alsong the x-Axis
         Eigen::Vector4f secondValues {0.f, 0.f, 0.f, 0.f};
         if(zero(0) != 1)
         {
@@ -306,6 +312,7 @@ public:
             }
         }
         
+        // values interpolated along the x-Axis
         Eigen::Vector4f interpX = firstValues + voxelPos.x() * (secondValues - firstValues);
         
         Eigen::Vector2f interpXY {

@@ -132,7 +132,7 @@ void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOp
 
     pen.setColor(Qt::red);
     if(lowOpacity)
-    { pen.setColor(QColor(255, 0, 0, 32)); }
+    { pen.setColor(QColor(255, 0, 0, 48)); }
     else
     { pen.setColor(Qt::red); }
     pen.setWidth(2);

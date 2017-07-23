@@ -43,6 +43,7 @@ protected:
 public:
     Eigen::Vector3f getPixel(int horizontal, int vertical);
 private:
+    // returns the positiion of a given pixel relative to screenCenter with respect to the current rotation and zoom
     Eigen::Vector3f getPixel(int horizontal, int vertical, Eigen::Vector3f screenCenter);
 };
 
