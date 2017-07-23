@@ -206,13 +206,16 @@ private:
     Volume _volume;
     AcquisitionPose _posePrototype;
     /*
-     * Is effectively a stack. May later be replaced with std::stack TODO
+     * Is effectively a stack.
      * Stores older poses that were created by the user, so that a ForwardProjection on 
      * more than one pose can be calculated.
      * There has to be alway one element in this stack, which is the one shown in the gui.
      */
     std::vector<AcquisitionPose> _poses;
     
+    /**
+     * Stores the _measurements of all stored acquisition poses
+     */
     Eigen::VectorXf _measurements;
     
 
