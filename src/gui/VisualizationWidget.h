@@ -46,8 +46,6 @@ private:
     QPushButton *_loadFileButton;
     ///loads the Volume from the ReconstructionPose
     QPushButton *_loadRecButton;
-    ///shows the dimensions of the volume on screen
-    QLabel *_volumeInfoLabel;
     
     ///renders the 2D MPR visualization
     MPRWidget *_mprWidget;

@@ -95,16 +95,6 @@ void DVRWidget::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void DVRWidget::setColor(QColor color)
-{
-    _dvrModel.setColor(color);
-}
-
-QColor DVRWidget::color() const
-{
-    return _dvrModel.color();
-}
-
 void DVRWidget::setStepSize(float stepSize)
 {
     _dvrModel.setStepSize(stepSize);

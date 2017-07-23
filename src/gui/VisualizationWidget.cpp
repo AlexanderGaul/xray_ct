@@ -10,7 +10,6 @@ VisualizationWidget::VisualizationWidget() :
     _visModel {},
     _loadFileButton {new QPushButton{"Load from file"}},
     _loadRecButton {new QPushButton{"Load reconstruction"}},
-    _volumeInfoLabel {new QLabel{}},
     _mprWidget {new MPRWidget{_visModel}},
     _dvrWidget {new DVRWidget{_visModel}},
     _axisWidget {new AxisWidget {_visModel.getMPRModel()}},
