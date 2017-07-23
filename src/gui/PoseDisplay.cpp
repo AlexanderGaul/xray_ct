@@ -40,20 +40,6 @@ void PoseDisplay::paintEvent(QPaintEvent*)
                       (maxCorner(_xAxis) - minCorner(_xAxis)) *_zoom,
                       (maxCorner(_yAxis) - minCorner(_yAxis)) *_zoom);
                      
-    
-    /*
-    //painter.setWidth(2)
-    painter.translate(
-        x_center + pose_->getDetectorCenter()(0) * zoom_, 
-        y_center - pose_->getDetectorCenter()(1) * zoom_
-       );
-    painter.rotate(-pose_->getRotation() / M_PI * 180);
-
-    // we need to move the rectangle that we draw by rx and ry so it's in the center.
-    float rx = 0;
-    float ry = -pose_->getDetectorWidth() * zoom_ * 0.5;
-    painter.drawRect(QRect(rx, ry, 4, pose_->getDetectorWidth() * zoom_));
-    */
 }
 
 void PoseDisplay::paintPose(QPainter& painter, AcquisitionPose& pose, bool lowOpacity = false, bool onlySources = false)
@@ -203,16 +189,16 @@ PoseDisplay::PoseDisplay(AcquisitionModel& model, int axis) :
 void PoseDisplay::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _model.updateRotation(RotationAxis::Z, 0.05f);
-        //emit _model.poseChanged();
-    } else if(event->key() == Qt::Key_Right) {  
         _model.updateRotation(RotationAxis::Z, -0.05f);
         //emit _model.poseChanged();
+    } else if(event->key() == Qt::Key_Right) {  
+        _model.updateRotation(RotationAxis::Z, 0.05f);
+        //emit _model.poseChanged();
     } else if(event->key() == Qt::Key_Up) {
-        _model.updateRotation(RotationAxis::Y, -0.05f);
+        _model.updateRotation(RotationAxis::Y, 0.05f);
         //emit _model.poseChanged();
     } else if(event->key() == Qt::Key_Down) {
-        _model.updateRotation(RotationAxis::Y, 0.05f);
+        _model.updateRotation(RotationAxis::Y, -0.05f);
         //emit _model.poseChanged();
     }
 }

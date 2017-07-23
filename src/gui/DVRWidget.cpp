@@ -72,23 +72,20 @@ void DVRWidget::paintEvent(QPaintEvent*)
 void DVRWidget::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
-        _dvrModel.getCameraPose().addRotationZ(0.05f);
-        //emit sceneChanged();
+        _dvrModel.getCameraPose().addRotationZ(-0.05f);
         emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Right) {  
-        _dvrModel.getCameraPose().addRotationZ(-0.05f);
-        //emit sceneChanged();
+        _dvrModel.getCameraPose().addRotationZ(0.05f);
         emit _dvrModel.updateRotationZ();
         update();
     } else if(event->key() == Qt::Key_Up) {
-        _dvrModel.getCameraPose().addRotationY(-0.05f);
-        //emit sceneChanged();
+        _dvrModel.getCameraPose().addRotationY(0.05f);
         emit _dvrModel.updateRotationY();
         update();
     } else if(event->key() == Qt::Key_Down) {
-        _dvrModel.getCameraPose().addRotationY(0.05f);
-        //emit sceneChanged();
+        _dvrModel.getCameraPose().addRotationY(-0.05f);
+
         emit _dvrModel.updateRotationY();
         update();
     }
@@ -120,7 +117,6 @@ void DVRWidget::updateVolume(Volume vol)
     setColorRange(0, vol.maxEntry());
     
 }
-
 
 void DVRWidget::changedPose()
 {
