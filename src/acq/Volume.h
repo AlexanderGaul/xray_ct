@@ -119,7 +119,7 @@ public:
         }
         return true;
     }
-
+    /*
     bool validInnerPosition(const Eigen::Vector3f& position) const
     {
         Eigen::Vector3f enhanced = position + Eigen::Vector3f(1,1,1);
@@ -134,6 +134,7 @@ public:
         }
         return true;
     }
+    */
 
     
     const content_type& content() const
@@ -211,33 +212,25 @@ public:
         {
             return -1.0;
         }
-
-        /*
-        if(!validInnerPosition(position))
-        {
-            return getVoxel(position.cast<int>());
-        }
-        */
-
         // index of voxel centers surrounding the position
         position = position - Eigen::Vector3f(0.5, 0.5, 0.5);
         Eigen::Vector3i minVoxel = position.cast<int>();
+        Eigen::Vector3i zero {0, 0, 0};
         
-        bool reset = false;
         for(int i = 0; i < 3; i++)
         {
             if(minVoxel(i) < 0)
-            { minVoxel(i) = 0; 
-              reset = true;}
-            if(minVoxel(i) > getNumVoxels()(i) - 2)
-            { minVoxel(i) = getNumVoxels()(i) - 1; 
-              reset = true;}
+            {
+                minVoxel(i) = -1;
+                zero(i) = -1;
+            }
+            if(minVoxel(i) >= getNumVoxels()(i) - 1)
+            {
+                minVoxel(i) = getNumVoxels()(i) - 1;
+                zero(i) = 1;
+            }
         }
-        if(reset)
-        {
-            return getVoxel(minVoxel);
-        }
-
+        
         // relative position between surrounding voxel centers
         Eigen::Vector3f voxelPos(3);
         for(int i = 0; i<3; ++i)
@@ -248,22 +241,64 @@ public:
             }
             else
             {
-                voxelPos(i) = fmod(position(i),minVoxel(i));
+                voxelPos(i) = fmod(position(i), minVoxel(i));
             }
         }
-
+        
+        /*
         Eigen::Vector4f firstValues {
             getVoxel(minVoxel),
-            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 0)),
-            getVoxel(minVoxel + Eigen::Vector3i(0, 0, 1)),
-            getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1))
+            getVoxel(minVoxel + Eigen::Vector3i(0, step(1),       0)),
+            getVoxel(minVoxel + Eigen::Vector3i(0,       0, step(2))),
+            getVoxel(minVoxel + Eigen::Vector3i(0, step(1), step(2)))
         };
         Eigen::Vector4f secondValues {
-            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 0)),
-            getVoxel(minVoxel + Eigen::Vector3i(1, 1, 0)),
-            getVoxel(minVoxel + Eigen::Vector3i(1, 0, 1)),
-            getVoxel(minVoxel + Eigen::Vector3i(1,1,1))
+            getVoxel(minVoxel + Eigen::Vector3i(step(0),       0,       0)),
+            getVoxel(minVoxel + Eigen::Vector3i(step(0), step(1),       0)),
+            getVoxel(minVoxel + Eigen::Vector3i(step(0),       0, step(2))),
+            getVoxel(minVoxel + Eigen::Vector3i(step(0), step(1), step(2)))
         };
+        */
+        Eigen::Vector4f firstValues {0.f, 0.f, 0.f, 0.f};
+        if(zero(0) != -1)
+        {
+            if(zero(1) != -1 && zero(2) != -1)
+            {
+                firstValues(0) = getVoxel(minVoxel);
+            }
+            if(zero(1) != 1 && zero(2) != -1)
+            {
+                firstValues(1) = getVoxel(minVoxel + Eigen::Vector3i(0, 1, 0));
+            }
+            if(zero(1) != -1 && zero(2) != 1)
+            {
+                firstValues(2) = getVoxel(minVoxel + Eigen::Vector3i(0, 0, 1));
+            }
+            if(zero(1) != 1 && zero(2) != 1)
+            {
+                firstValues(3) = getVoxel(minVoxel + Eigen::Vector3i(0, 1, 1));
+            }
+        }
+        Eigen::Vector4f secondValues {0.f, 0.f, 0.f, 0.f};
+        if(zero(0) != 1)
+        {
+            if(zero(1) != -1 && zero(2) != -1)
+            {
+                secondValues(0) = getVoxel(minVoxel + Eigen::Vector3i(1, 0, 0));
+            }
+            if(zero(1) != 1 && zero(2) != -1)
+            {
+                secondValues(1) = getVoxel(minVoxel + Eigen::Vector3i(1, 1, 0));
+            }
+            if(zero(1) != -1 && zero(2) != 1)
+            {
+                secondValues(2) = getVoxel(minVoxel + Eigen::Vector3i(1, 0, 1));
+            }
+            if(zero(1) != 1 && zero(2) != 1)
+            {
+                secondValues(3) = getVoxel(minVoxel + Eigen::Vector3i(1, 1, 1));
+            }
+        }
         
         Eigen::Vector4f interpX = firstValues + voxelPos.x() * (secondValues - firstValues);
         
@@ -273,7 +308,7 @@ public:
         };
         
         float interpXYZ = interpXY(0) + voxelPos.z() * (interpXY(1) - interpXY(0));
-
+        
         return interpXYZ;
     }
 

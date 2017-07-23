@@ -199,33 +199,20 @@ PoseDisplay::PoseDisplay(AcquisitionModel& model, int axis) :
         _yAxis = 2;
     }
 }
-/*
-void PoseDisplay::mousePressEvent(QMouseEvent* event)
-{
-    grabKeyboard();
-}*/
 
 void PoseDisplay::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Left) {
         _model.updateRotation(RotationAxis::Z, 0.05f);
-        //emit sceneChanged();
-        emit _model.poseChanged();
-        //update();
+        //emit _model.poseChanged();
     } else if(event->key() == Qt::Key_Right) {  
         _model.updateRotation(RotationAxis::Z, -0.05f);
-        //emit sceneChanged();
-        emit _model.poseChanged();
-        //update();
+        //emit _model.poseChanged();
     } else if(event->key() == Qt::Key_Up) {
         _model.updateRotation(RotationAxis::Y, -0.05f);
-        //emit sceneChanged();
-        emit _model.poseChanged();
-        //update();
+        //emit _model.poseChanged();
     } else if(event->key() == Qt::Key_Down) {
         _model.updateRotation(RotationAxis::Y, 0.05f);
-        //emit sceneChanged();
-        emit _model.poseChanged();
-        //update();
+        //emit _model.poseChanged();
     }
 }

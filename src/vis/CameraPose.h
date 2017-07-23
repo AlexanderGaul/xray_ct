@@ -6,13 +6,12 @@
 #include "Pose.h"
 
 /*
- * Acts as the camera setup for the direct volume rendering
+ * Acts as the camera setup for the volume rendering
  */
 
 class CameraPose : public Pose
 {
 private:
-    
     int _pxlHorizontal;
     int _pxlVertical;
     
