@@ -68,8 +68,8 @@ public:
         if (noise == 0.0) {
             return Eigen::VectorXf::Zero(_measurements.size());
         } else {
-            static const int seed = static_cast<int>(std::chrono::system_clock::now().time_since_epoch().count()
-                        % std::numeric_limits<int>::max());
+            static const unsigned int seed = static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()
+                        % std::numeric_limits<unsigned int>::max());
             static std::mt19937 gen {seed};
             static std::normal_distribution<float> dist {};
             
