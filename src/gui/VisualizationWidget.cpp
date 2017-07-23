@@ -5,25 +5,6 @@
 #include <QMessageBox>
 
 
-void VisualizationWidget::updateVolumeInfo()
-{
-    Eigen::Vector3i size = _visModel.volume().getNumVoxels();
-    int x = size[0], y = size[1], z = size[2];
-    _volumeInfoLabel->setText("Volume size: ("+QString::number(x)+","+QString::number(y)+","+QString::number(z)+")");
-}
-
-void VisualizationWidget::updateVolumeChanged()
-{
-    updateDVRWidget();
-    updateVolumeInfo();
-}
-
-void VisualizationWidget::updateDVRWidget()
-{
-    //_dvrWidget->setAngle(0.0);
-    //_dvrWidget->calibrateCamera();
-    _dvrWidget->setColorRange(0, _visModel.volume().maxEntry());
-}
 
 VisualizationWidget::VisualizationWidget() :
     _visModel {},
@@ -84,7 +65,6 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
         return;
     }
     _visModel.setVolume(*vol);
-    updateVolumeChanged();
 }
 
 void VisualizationWidget::resetMPRTransferFunction()
@@ -105,7 +85,6 @@ void VisualizationWidget::loadFromFile(){
     
     try{
         _visModel.setVolume(EDFHandler::read(filename.toStdString()));
-        updateVolumeChanged();
     } catch (std::invalid_argument){
         QMessageBox::warning(this, "Unable to Open File", "The file couldn't be read!");
     } catch (std::runtime_error){

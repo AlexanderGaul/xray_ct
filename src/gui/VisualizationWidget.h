@@ -61,26 +61,6 @@ private:
     MPRControlWidget* _mprControlWidget;
     
 
-    /**
-     *  Updates the info label which
-     *  displays the current volume size.
-     */
-    void updateVolumeInfo();
-
-    /**
-     * Helper method, called after change of volume data.
-     * Updates the user interface accordingly.
-     * @brief updateVolumeChanged
-     */
-    void updateVolumeChanged();
-
-    /**
-     * Reset the DRW widget to its default position and
-     * calibrate the camera for a new volume.
-     * @brief updateDRWWidget
-     */
-    void updateDVRWidget();
-
 
 public:    
     /**
@@ -113,7 +93,6 @@ public slots:
     /**
      * Loads a 3D medical image file into a Volume.
      *
-     * After that, the visualization widgets are reset to the default viewpoints.
      * @brief loadFromFile
      */
     void loadFromFile();
