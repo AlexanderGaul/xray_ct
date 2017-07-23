@@ -123,6 +123,12 @@ protected slots:
         recalcProject();
     }
     
+    void paintEvent(QPaintEvent *event) override{
+        //for some reason update wasn't called automatically
+        //even though the drawWidgets are children of this widget
+        currWidget().update();
+    }
+    
     /*
      * Does the drawing.
      * paintEvent can't be used, since it it isn't allowed to draw on children, so this
