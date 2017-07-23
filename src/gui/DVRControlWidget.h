@@ -36,10 +36,15 @@ private:
 
     QGridLayout* _layout;
     
+    void resetTransferFunction()
+    {
+        emit requestTransferFunctionReset();
+    }
     
 public:
     DVRControlWidget(DVRModel& model);
     void changedVolume(const Volume& vol);
+    void setTransferFunctionRange(float from, float to);
 
 private slots:
     void updateRotationY();
@@ -53,7 +58,7 @@ signals:
     void rotationZChanged(float z);
     void zoomChanged(float zoom);
     void distanceChanged(float distance);
-    
+    void requestTransferFunctionReset();
 };
 
 #endif

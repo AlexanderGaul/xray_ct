@@ -41,7 +41,6 @@ public:
 
 public slots:
 
-
     /**
      * Sets the color used for the MPR transfer
      * function visualization.

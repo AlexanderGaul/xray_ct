@@ -8,6 +8,7 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
     _iMin {new QDoubleSpinBox},
     _iMax {new QDoubleSpinBox},
     _color {new QPushButton{"Color"}},
+    _reset {new QPushButton{"Reset"}},
     _layout {new QHBoxLayout}
 {
     QLabel* minLabel = new QLabel("min");
@@ -27,14 +28,23 @@ TransferFuncWidget::TransferFuncWidget(TransferFunction& function)
     
     _layout->addWidget(maxLabel);
     _layout->addWidget(_iMax);
+
+    _layout->addWidget(_reset);
     
     _layout->addWidget(_color);
     
     setLayout(_layout);
     
+    connect(_reset, &QPushButton::clicked, this, &TransferFuncWidget::resetRange);
     connect(_iMin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &TransferFuncWidget::setIMin);
     connect(_iMax, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &TransferFuncWidget::setIMax);
     connect(_color, &QPushButton::pressed, this, &TransferFuncWidget::changeColor);
+}
+
+void TransferFuncWidget::setRange(float from, float to)
+{
+    _function.setRange(0, from, to);
+    changedFunction();
 }
 
 void TransferFuncWidget::setIMin(float min)
@@ -45,6 +55,7 @@ void TransferFuncWidget::setIMin(float min)
     }
     emit functionChanged();
 }
+
 void TransferFuncWidget::setIMax(float max)
 {
     if(!_function.empty())
@@ -53,6 +64,7 @@ void TransferFuncWidget::setIMax(float max)
     }
     emit functionChanged();
 }
+
 void TransferFuncWidget::changeColor()
 {
     if(!_function.empty())
@@ -60,6 +72,14 @@ void TransferFuncWidget::changeColor()
         QColor newColor = QColorDialog::getColor(_function.color(0), parentWidget());
         _function.getPieces()[0].setColor(newColor);
 
+    }
+}
+
+void TransferFuncWidget::resetRange()
+{
+    if(!_function.empty())
+    {
+        emit requestFunctionReset();
     }
 }
 

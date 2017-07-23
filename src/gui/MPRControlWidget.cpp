@@ -51,8 +51,10 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     connect(_rotZ, &BoxSlider::valueChanged, &_model, &MPRModel::setRotationZDeg);
     
     connect(_zoom, &BoxSlider::valueChanged, &_model, &MPRModel::setZoom);
-    
+
+
     connect(_func, &TransferFuncWidget::functionChanged, &_model, &MPRModel::redraw);
+    connect(_func, &TransferFuncWidget::requestFunctionReset, this, &MPRControlWidget::resetTransferFunction);
     
     connect(&model, &MPRModel::volumeChanged, this, &MPRControlWidget::changedVolume);
     
@@ -64,6 +66,11 @@ MPRControlWidget::MPRControlWidget(MPRModel& model)
     updateRotationY();
     updateRotationZ();
     updateZoom();
+}
+
+void MPRControlWidget::setTransferFunctionRange(float from, float to)
+{
+    _func->setRange(from, to);
 }
 
 void MPRControlWidget::changedVolume(const Volume& vol)
@@ -89,3 +96,8 @@ void MPRControlWidget::updateRotationZ()
 
 void MPRControlWidget::updateZoom()
 { _zoom->changedValue(_model.getZoom()); }
+
+void MPRControlWidget::resetTransferFunction()
+{
+    emit requestTransferFunctionReset();
+}
