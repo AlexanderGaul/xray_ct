@@ -24,6 +24,8 @@ in it.
 
 For documentation generation, we use doxygen (>1.8.0).
 
+If available, at least the forward projection is parallelized with OpenMP.
+
 ### How to run
 
 The program can be executed typing
@@ -49,23 +51,22 @@ class member overview etc.
 In the acquisition widget, the user can see the position of 
 X-ray emitter and detector (who form an 
 acquisition pose together) from three all axes.
-Using the keyboard arrow keys, the acquisition pose can be rotated 
-all around the volume, the position of emitter and detector are 
-updated accordingly. The user can also show the rays between 
-the emitter and the pixels of the detector.
+After clicking on one of the poses, the current acquisition pose can be rotated with the arrow keys. 
+The user can also show the rays between the emitter and the pixels of the detector.
 
-The user can add and remove acquisition poses by clicking "store current pose"
-and "delete current pose". These poses are then used for 
-reconstruction.
+The user can store the currently modified pose, for the use in the reconstruction, 
+which means that a new pose that can be modified/stored again is generated.
+The currently modified pose can also be deleted, so the last stored pose becomes the new current pose.
+
+Poses can also be automatically generated. This is done by generating a certain amount of circles consisting of poses around the volume. 
+These circles are themselves generated in a (half-)circle around the aquisition. 
+The closer these circles get to the ends of this half circle the smaller the pose-circles get, 
+which means that all the generated pose form a rough sphere.
+The user has to provide the number of circles and the (maximum) number of poses per circle.
 
 In experiments, we found out 30 circles of poses with 30 poses per 
 circle (maximum) are sufficient to reconstruct all information 
 of a 10x10x10 volume (using 40 iterations of CG for reconstruction).
-
-It would be cumbersome to enter all these poses manually - therefore
-we made it possible to generate poses these poses automatically. The 
-user has to provide the number of circles and the number of poses 
-per circle only.
 
 To simulate different real-world imaging setups in our software, we
 added the possibility to adjust the resolution and the size of the 
@@ -74,13 +75,13 @@ between detector and volume. This distance is relative to the volumes
 size, such that similar distances lead to similar behavior 
 on different volumes.
 
-All positions of acquisition poses' emitters are shown on the screen, 
-to convince the user of a regular sampling of the volume.
+All positions of stored acquisition poses' sources are shown on the screen as faded out red circle, 
+while the brightest red circle is the position of the currently modified pose.
 
 On the right side of the screen, the user can see the current acquisition
 data (the image that reaches the detector in the current acquisition 
-pose). It is also possible to show all acquisitions in a 
-linearized way. 
+pose). It is also possible to show the data of all acquisition poses at the same time, 
+where each line of pixels is the linearized result of each projection.
 
 ### ReconstructionWidget manual
 
@@ -91,7 +92,9 @@ press "Load Acquisition".
 This task is computationally expensive and can take several
 seconds. After the computations have finished, it is possible
 to scroll through the reconstructed volume (along all three 
-axes, which can be chosen using a slider).
+axes, which can be chosen using a slider). In each slice the ratio between the lengths of
+the visible sides of the voxels is preserved but the actual lengths may differ from
+perspective to perspective.
 
 There are several possibilities of adjusting the reconstruction
 setup in the lower part of this widget:
@@ -107,11 +110,11 @@ custom value for lambda, to change the
 regularization parameter of the Tikhonov regularization.
 Warning: Too high values for lambda can degrade the reconstruction 
 results to a level below the noisy image!
-We recommend to set lambda to 10,00 (or similar values).
+We recommend to set lambda between 10,00 and 20 for an error of 4%  (or similar values).
 
 After changing the setup of reconstruction, the user has to hit 
 "Update reconstruction" to apply his changes and recompute the 
-reconstructed volume using the new setup. 
+reconstructed volume using the new setup. The error is only recalculated (or removed) when "Update Noise" is presesd.
 
 ### Visualization widget manual
 
@@ -139,3 +142,4 @@ Additionally, it is possible to zoom and rotate around Y and Z axis,
 such that the user can view any plane in the volume from any direction.
 In the same way as in the DVR visualization, the MPR's transfer function
 can be changed regarding range and color.
+To better show where the cutting plane is currently located, the current rotation of it compared to the initial state is shown directly below the visualization.
