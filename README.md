@@ -28,7 +28,7 @@ For documentation generation, we use doxygen (>1.8.0).
 
 The program can be executed typing
 
-./part2 <<path_to_volume.edf>>
+./part2 path_to_volume.edf
 
 into a terminal (at the location of the executable, which is
 called part2 by default).
