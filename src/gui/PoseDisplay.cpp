@@ -14,6 +14,10 @@ void PoseDisplay::paintEvent(QPaintEvent*)
     // draw the cross lines.
     painter.drawLine(x_center, rect().top(), x_center, rect().bottom());
     painter.drawLine(rect().left(), y_center, rect().right(), y_center);
+    
+    std::array<QString, 3> labels {"X", "Y", "Z"};
+    painter.drawText(width() - 20, y_center + 20, labels.at(_xAxis));
+    painter.drawText(x_center + 10, 20, labels.at(_yAxis));
 
     for(unsigned int i = 0; i < _model.getPoses()->size(); i++)
     {
