@@ -9,6 +9,9 @@
 
 #include "MPRModel.h"
 
+/**
+ * Shows the axis of the coordinate system of the cutting plane
+ */
 class AxisWidget : public QWidget
 {
     Q_OBJECT
@@ -18,7 +21,8 @@ private:
     
 public:
     AxisWidget(const MPRModel& model) : _model {model} {
-        connect(&_model, &MPRModel::redraw, this, &AxisWidget::test);
+        connect(&_model, &MPRModel::redraw, this, &AxisWidget::redraw
+        );
     }
 
     void paintEvent(QPaintEvent *) override;
@@ -26,7 +30,7 @@ public:
 
 public slots:
     
-    void test (){
+    void redraw (){
         update();
     }
 };
