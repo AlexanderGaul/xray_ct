@@ -10,6 +10,10 @@
 #include "Volume.h"
 //#include "VisualizationModel.h"
 
+/**
+ * Contains the Camera Set-Up for the Direct Volume Rendering
+ */
+
 
 class DVRModel : public QObject
 {
@@ -18,7 +22,6 @@ private:
     float _stepSize;
     bool _perspective;
     TransferFunction _transferFunction;
-    QColor _color;
     
     CameraPose _pose;
     
@@ -29,8 +32,7 @@ public:
         :
           _stepSize{stepSize},
           _perspective{false},
-          _transferFunction {transferFunction},
-          _color(transferFunction.color(0))
+          _transferFunction {transferFunction}
     {
     }
 
@@ -46,16 +48,6 @@ public:
     {
         _transferFunction.setRange(0, from, to);
         emit functionChanged();
-    }
-    void setColor(QColor color)
-    {
-        _color = color;
-        _transferFunction.setColor(0, color);
-    }
-
-    const QColor& color() const
-    {
-        return _color;
     }
 
     void setStepSize(float stepsize)
