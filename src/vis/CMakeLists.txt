@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.5.1)
 # specifiy visualization source files
 set(VIS_SRCS
         CameraPose.cpp
-        DVRModel.cpp
         LinearPiece.cpp
         MPRModel.cpp
         TransferFunction.cpp
