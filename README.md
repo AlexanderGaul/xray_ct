@@ -41,6 +41,11 @@ The documentation is generated during the build process
 automatically, but it can also be updated by the 
 command "make doc" in the build folder.
 
+The documentation should be generated in a build folder inside the project 
+folder (on the same level as src/, test/ etc.). A snapshot of the latest
+documentation before last submission can be found in the documentation/ 
+directory.
+
 To view the documentation, open docs/html/index.html (relative 
 to the location of the build folder). This will open a doxygen 
 documentation of our project, including class hierarchies, 
@@ -60,9 +65,9 @@ The currently modified pose can also be deleted, so the last stored pose becomes
 
 It is also possible, to generate poses automatically by generating
 a certain amount of circles consisting of poses around the volume. 
-These circles are themselves generated in a (half-)circle around the aquisition. 
-The closer these circles get to the ends of this half circle the smaller the pose-circles, 
-which means that all the generated pose form a rough sphere.
+These circles are themselves generated in a (half-)circle around the acquisition. 
+The closer these circles get to the ends of this half circle the smaller they get, 
+which means that all the generated poses form a rough sphere.
 The user has to provide the number of circles and the (maximum) number of poses per circle.
 
 In experiments, we found out 30 circles of poses with 30 poses per 
@@ -145,5 +150,4 @@ such that the user can view any plane in the volume from any direction.
 In the same way as in the DVR visualization, the MPR's transfer function
 can be changed regarding range and color.
 To imporove the visualization of the cutting plane's current location, 
-the current rotation of the plane (compared to its initial state)
-is shown directly below the visualization.
+its current rotation is shown directly below the visualization.

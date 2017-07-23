@@ -7,7 +7,6 @@ set(VIS_SRCS
         LinearPiece.cpp
         MPRModel.cpp
         TransferFunction.cpp
-        VisualizationModel.cpp
         )
 set(VIS_HDRS
         CameraPose.h

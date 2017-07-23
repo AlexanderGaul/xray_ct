@@ -9,7 +9,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _rotZ {new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _zoom {new BoxSlider(0.f, 10.f, 4, 0.01f )},
     _distance {new BoxSlider(0.f, 1.5f, 4, 0.01f)},
-    _step {new BoxSlider(0.f, 0.5f, 5, 0.0005f)},
+    _step {new BoxSlider(0.f, 0.2f, 5, 0.0005f)},
     _perspective {new QCheckBox()},
     _func {new TransferFuncWidget(_model.transferFunction())},
     _layout {new QGridLayout()}

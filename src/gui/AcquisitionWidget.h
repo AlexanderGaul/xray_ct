@@ -39,9 +39,8 @@ public:
     
 public slots:
     /*
-     * It should be possible to directly acess the update of QWidget inside of connect
+     * It should be possible to directly access the update of QWidget inside of connect
      * but something didn't quite work, so this is a quick fix
-     * TODO
      */
     void update(){
         QWidget::update();

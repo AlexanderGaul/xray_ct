@@ -58,7 +58,7 @@ public:
     
     
 signals:
-    //calls this function if you need the acquistion information. it is set through setAcq
+    //emit this signal if you need the acquistion information. it is set through setAcq
     void requestAcquisition();
     
 public slots:    
