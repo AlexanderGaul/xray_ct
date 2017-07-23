@@ -175,8 +175,6 @@ void AcquisitionModel::addDefaultPose(){
 void AcquisitionModel::updateProjection(){
     _measurements = 
         RayTracing::forwardProj(_volume, _poses, _volume.content().rawVec());
-    // TODO is this necessary??
-    //emit poseChanged();
 }
 
 void AcquisitionModel::updateLastProjection(){

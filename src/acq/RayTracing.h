@@ -41,7 +41,6 @@ public:
     static float boxIntersectHelper(const Eigen::AlignedBox3f& box, const Line3f& ray) noexcept;
     
     /**
-     *
      * @brief boxIntersect Returns the intersection point of the ray with the box.
      * @return an 3x1 Eigen Vector which contains the point of intersection.
      */
@@ -51,13 +50,12 @@ public:
     static float forwardProject(const VolumeBase& volume, const Line3f& ray, Eigen::VectorXf values);
     
     /**
-     * Forward Projection for only 1 pose.
-     * @brief forwardProject
+     * @brief Forward Projection for only 1 pose.
      * @return the forward projection in a ROW MAJOR ORDER
      */
     static Eigen::VectorXf forwardProj(const Volume& vol, const AcquisitionPose& pose);
     
-    /*
+    /**
      * Computes A*values, where A is the system matrix of the tomographic problem
      */
     static Eigen::VectorXf forwardProj(const VolumeBase& vol, const std::vector<AcquisitionPose>& poses, const Eigen::VectorXf& values);

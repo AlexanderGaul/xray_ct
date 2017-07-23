@@ -7,6 +7,12 @@
 
 #include <Eigen/Dense>
 
+/**
+ * represents 3D data.
+ * 
+ * _content stores the linearised values, while _sizes store the size of the data in 
+ * each dimension
+ */
 template <class T>
 class Vec3D
 {
@@ -153,15 +159,16 @@ public:
 
     /**
      * Convert the input coordinate into a numeric value.
-     * @brief getIndex
-     * @param input
-     * @return
+     * @brief Convert the input coordinate into a numeric value.
      */
     int getIndex(Eigen::Vector3i input) const
     {
         return input[0] + input[1] * sizeX() + input[2] * sizeX() * sizeY();
     }
     
+    /**
+     * Returns the maximum entry in the array.
+     */
     float maxEntry() {
         float max = std::numeric_limits<float>::min();
         for(int i = 0; i < totalSize(); ++i) {

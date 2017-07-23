@@ -11,6 +11,9 @@
 
 #include <iostream>
 
+/*
+ * represents a volume without the stored voxel data
+ */
 class VolumeBase{    
 protected:
     Eigen::AlignedBox<float, 3> _boundingBox;
@@ -65,6 +68,9 @@ public:
     }
 };
 
+/*
+ * represents a volume with all of its voxel data
+ */
 class Volume : public VolumeBase{
 private:
     using content_type = Vec3D<float>;

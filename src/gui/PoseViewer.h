@@ -17,6 +17,9 @@
 #include "AcquisitionPose.h"
 
 
+/*
+ * shows three 2D projections of the current acquisition pose
+ */
 class PoseViewer : public QWidget
 {
     Q_OBJECT
