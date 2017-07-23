@@ -77,7 +77,7 @@ void TransferFuncWidget::changeColor()
     {
         QColor newColor = QColorDialog::getColor(_function.color(0), parentWidget());
         _function.getPieces()[0].setColor(newColor);
-
+        emit functionChanged();
     }
 }
 
