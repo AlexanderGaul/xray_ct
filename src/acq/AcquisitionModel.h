@@ -13,7 +13,6 @@
 
 #include "AcquisitionPose.h"
 #include "EDFhandler.h"
-#include "ForwardProjectionOperator.h"
 #include "RayTracing.h"
 #include "Volume.h"
 #include "Acquisition.h"

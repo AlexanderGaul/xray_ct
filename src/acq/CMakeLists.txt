@@ -7,7 +7,6 @@ set(ACQ_SRCS
         Pose.cpp
         AcquisitionPose.cpp
         RayTracing.cpp
-        ForwardProjectionOperator.cpp
         )
 set(ACQ_HDRS
         EDFhandler.h
@@ -18,7 +17,6 @@ set(ACQ_HDRS
         AcquisitionPose.h
         RayTracing.h
         Vec3D.h
-        ForwardProjectionOperator.h
         definitions.h
         )
 
