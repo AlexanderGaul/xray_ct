@@ -39,17 +39,13 @@ public:
 
     void paintEvent(QPaintEvent* p_e) override;
 
-    void setColor(QColor color);
-
-    QColor color() const;
-
-
     void setStepSize(float stepSize);
 
     void setColorRange(float from, float to);
     
     void updateVolume(Volume vol);
     
+    // used to force the aspect ratio of the widget to the one of the camera
     virtual int heightForWidth(int w) const override;
     virtual bool hasHeightForWidth() const override;
     QSize sizeHint() const override;

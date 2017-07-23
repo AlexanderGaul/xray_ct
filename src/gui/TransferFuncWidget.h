@@ -10,6 +10,10 @@
 
 #include "TransferFunction.h"
 
+/**
+ * Implements a Widget that can change the first linear piece of a given transfer function.
+ */
+
 class TransferFuncWidget : public QGroupBox
 {
     Q_OBJECT
@@ -41,7 +45,8 @@ public slots:
 
 signals:
     void functionChanged();
-
+    
+    // Should be emitted if a reset to the maximum availible intensity of the current volume is desired.
     void requestFunctionReset();
 
     

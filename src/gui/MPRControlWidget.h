@@ -16,6 +16,10 @@
 #include "BoxSlider.h"
 #include "TransferFuncWidget.h"
 
+/**
+ * Contains a collection of widgets, that are used to manipulate the MPR.
+ */
+
 class MPRControlWidget : public QGroupBox
 {
     Q_OBJECT
@@ -47,7 +51,6 @@ public slots:
     void updatePositionX();
     void updatePositionY();
     void updatePositionZ();
-    
     void updateRotationY();
     void updateRotationZ();
     

@@ -21,13 +21,9 @@ class MPRModel : public QObject
 {
     Q_OBJECT
 private:
-    float _distance;
-    Eigen::Vector3f _normal;
     TransferFunction _transferFunction;
     
     CameraPose _pose;
-    
-    QColor _color;
 
 public:
     MPRModel();
@@ -42,17 +38,6 @@ public:
     TransferFunction& transferFunction()
     {
         return _transferFunction;
-    }
-
-    void setColor(QColor color)
-    {
-        _color = color;
-        _transferFunction.setColor(0, color);
-    }
-
-    const QColor& color() const
-    {
-        return _color;
     }
     
 public:

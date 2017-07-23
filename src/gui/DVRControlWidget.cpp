@@ -7,7 +7,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _camera {model.getCameraPose()},
     _rotY {new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _rotZ {new BoxSlider(0.f, 360.f, 1, 2.5f)},
-    _zoom {new BoxSlider(0.f, 4.f, 4, 0.01f )},
+    _zoom {new BoxSlider(0.f, 10.f, 4, 0.01f )},
     _distance {new BoxSlider(0.f, 1.5f, 4, 0.01f)},
     _step {new BoxSlider(0.f, 0.5f, 5, 0.0005f)},
     _perspective {new QCheckBox()},
@@ -83,12 +83,22 @@ void DVRControlWidget::setTransferFunctionRange(float from, float to)
 }
 
 void DVRControlWidget::updateRotationY()
-{ _rotY->changedValue(_model.getRotationYDeg()); }
+{
+    _rotY->changedValue(_model.getRotationYDeg());
+}
 void DVRControlWidget::updateRotationZ()
-{ _rotZ->changedValue(_model.getRotationZDeg()); }
+{
+    _rotZ->changedValue(_model.getRotationZDeg());
+}
 void DVRControlWidget::updateZoom()
-{ _zoom->changedValue(_model.getZoom()); }
+{
+    _zoom->changedValue(_model.getZoom());
+}
 void DVRControlWidget::updateDistance()
-{ _distance->changedValue(_model.getDistance()); }
+{
+    _distance->changedValue(_model.getDistance());
+}
  void DVRControlWidget::updateStepSize()
-{ _step->changedValue(_model.stepSize());}
+{
+    _step->changedValue(_model.stepSize());
+}

@@ -39,24 +39,8 @@ public:
      */
     void paintEvent(QPaintEvent* p_e) override;
 
-public slots:
-
-    /**
-     * Sets the color used for the MPR transfer
-     * function visualization.
-     * @brief setColor
-     * @param color
-     */
-    void setColor(QColor color);
-
-    /**
-     * Gets the current color used for the MPR transfer
-     * function visualization.
-     * @brief color
-     * @return
-     */
-    QColor color() const;
     
+    // used to  force the aspect ratio of the widget to the one of the camera
     virtual int heightForWidth(int w) const override;
     virtual bool hasHeightForWidth() const override;
     QSize sizeHint() const override;

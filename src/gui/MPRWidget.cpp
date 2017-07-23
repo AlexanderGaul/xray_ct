@@ -43,15 +43,6 @@ void MPRWidget::paintEvent(QPaintEvent*)
     }
 
 }
-void MPRWidget::setColor(QColor color)
-{
-    _mprModel.setColor(color);
-}
-
-QColor MPRWidget::color() const
-{
-    return _mprModel.color();
-}
 
 int MPRWidget::heightForWidth(int w) const
 {

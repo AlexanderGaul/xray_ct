@@ -3,14 +3,14 @@
 
 MPRControlWidget::MPRControlWidget(MPRModel& model)
     :
-    QGroupBox ("MPR"),
+    QGroupBox ("Mulit Planar Reformation"),
     _model(model),
     _posX {new BoxSlider(-.2f, .2f, 4, 0.001f)},
     _posY {new BoxSlider(-.2f, .2f, 4, 0.001f)},
     _posZ {new BoxSlider(-.2f, .2f, 4, 0.001f)},
     _rotY{new BoxSlider(0.f, 360.f, 1, 2.5f)},
     _rotZ{new BoxSlider(0.f, 360.f, 1, 2.5f)},
-    _zoom{new BoxSlider(0.f, 4.f, 4, 0.01f )},
+    _zoom{new BoxSlider(0.f, 10.f, 4, 0.01f )},
     _func{new TransferFuncWidget(_model.transferFunction())},
     _layout{new QGridLayout}
 {
@@ -83,19 +83,31 @@ void MPRControlWidget::changedVolume(const Volume& vol)
 
 
 void MPRControlWidget::updatePositionX()
-{ _posX->changedValue(_model.getPositionX()); }
+{
+    _posX->changedValue(_model.getPositionX());
+}
 void MPRControlWidget::updatePositionY()
-{ _posY->changedValue(_model.getPositionY()); }
+{
+    _posY->changedValue(_model.getPositionY());
+}
 void MPRControlWidget::updatePositionZ()
-{ _posZ->changedValue(_model.getPositionZ()); }
+{
+    _posZ->changedValue(_model.getPositionZ());
+}
 
 void MPRControlWidget::updateRotationY()
-{ _rotY->changedValue(_model.getRotationYDeg()); }
+{
+    _rotY->changedValue(_model.getRotationYDeg());
+}
 void MPRControlWidget::updateRotationZ()
-{ _rotZ->changedValue(_model.getRotationZDeg()); }
+{
+    _rotZ->changedValue(_model.getRotationZDeg());
+}
 
 void MPRControlWidget::updateZoom()
-{ _zoom->changedValue(_model.getZoom()); }
+{
+    _zoom->changedValue(_model.getZoom());
+}
 
 void MPRControlWidget::resetTransferFunction()
 {

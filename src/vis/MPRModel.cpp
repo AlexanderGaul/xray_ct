@@ -3,7 +3,6 @@
 MPRModel::MPRModel()
     : 
       _transferFunction(TransferFunction(LinearPiece(0, 100, 0, 255, QColor::fromRgb(255,255,255)))),
-      _color(QColor::fromRgb(255,255,255)),
       _pose(200, 200, 0.f)
 {
 }
