@@ -72,10 +72,10 @@ public:
      */
     void setAcq(bool regularized, float lambda, bool noisy, float noise, int cgIterations, Acquisition&& acq){
         _model = std::make_unique<ReconstructionModel>(regularized, lambda, noisy, noise, cgIterations, std::move(acq));
+        update();
         if(checkModelInvalidity()){
             return;
         }
-        update();
         //Important reset, if the volume boundaries would recParamChanged
         _currSlice = 0;
         emit sliceChanged();
@@ -87,11 +87,11 @@ public:
      * param. description see above
      */
     void recParamChanged(bool regularized, float lambda, int cgIterations){
+        _model->changeReconstructionParams(regularized, lambda, cgIterations);
+        update();
         if(!_model || checkModelInvalidity()){
             return;
         }
-        _model->changeReconstructionParams(regularized, lambda, cgIterations);
-        update();
     }
     
     void noiseChanged(bool noisy, float noise, int cgIterations){
