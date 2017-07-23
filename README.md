@@ -121,7 +121,7 @@ We recommend to set lambda between 10.00 and 20.00 for an error of 4%  (or simil
 After changing the setup of reconstruction, the user has to hit 
 "Update reconstruction" to apply his changes and recompute the 
 reconstructed volume using the new setup. 
-The error is only recalculated (or removed) when "Update Noise" is presesd.
+The error is only recalculated (or removed) when "Update Noise" is pressed.
 
 ### Visualization widget manual
 
@@ -149,5 +149,5 @@ Additionally, it is possible to zoom and rotate around Y and Z axis,
 such that the user can view any plane in the volume from any direction.
 In the same way as in the DVR visualization, the MPR's transfer function
 can be changed regarding range and color.
-To imporove the visualization of the cutting plane's current location, 
+To improve the visualization of the cutting plane's current location, 
 its current rotation is shown directly below the visualization.
