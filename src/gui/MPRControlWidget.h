@@ -1,6 +1,7 @@
 #ifndef MPRCONTROLWIDGET_H
 #define MPRCONTROLWIDGET_H
 
+#include <iostream>
 
 #include <QWidget>
 #include <QLabel>
@@ -40,6 +41,8 @@ private:
 public:
     MPRControlWidget(MPRModel& model);
 
+    void setTransferFunctionRange(float from, float to);
+
 public slots:
     void updatePositionX();
     void updatePositionY();
@@ -51,7 +54,11 @@ public slots:
     void updateZoom();
     
     void changedVolume(const Volume& vol);
-    
+
+    void resetTransferFunction();
+
+signals:
+    void requestTransferFunctionReset();
 };
 
 #endif

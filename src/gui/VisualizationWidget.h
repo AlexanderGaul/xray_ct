@@ -81,6 +81,7 @@ private:
      */
     void updateDVRWidget();
 
+
 public:    
     /**
      * Construct a new Visualization Widget and setup
@@ -105,6 +106,9 @@ signals:
     void requestRecVolume();
     
 public slots:
+    void resetMPRTransferFunction();
+
+    void resetDVRTransferFunction();
 
     /**
      * Loads a 3D medical image file into a Volume.

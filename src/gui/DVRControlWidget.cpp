@@ -39,7 +39,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     _layout->addWidget(_func, 6, 0, 1, 2);
     
     _layout->setAlignment(Qt::AlignTop);
-    
+
     
     setLayout(_layout);
     
@@ -52,6 +52,7 @@ DVRControlWidget::DVRControlWidget(DVRModel& model)
     connect(_step, &BoxSlider::valueChanged, &_model, &DVRModel::setStepSize);
     
     connect(_func, &TransferFuncWidget::functionChanged, &_model, &DVRModel::redraw);
+    connect(_func, &TransferFuncWidget::requestFunctionReset, this, &DVRControlWidget::resetTransferFunction);
     
     
     connect(&model, &DVRModel::updateRotationY, this, &DVRControlWidget::updateRotationY);
@@ -76,6 +77,10 @@ void DVRControlWidget::changedVolume(const Volume& vol)
     _distance->increaseRange(0.f, 4 * vol.getBoundingBox().diagonal().norm());
 }
 
+void DVRControlWidget::setTransferFunctionRange(float from, float to)
+{
+    _func->setRange(from, to);
+}
 
 void DVRControlWidget::updateRotationY()
 { _rotY->changedValue(_model.getRotationYDeg()); }

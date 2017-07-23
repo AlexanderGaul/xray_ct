@@ -66,6 +66,9 @@ VisualizationWidget::VisualizationWidget() :
 
     connect(_loadFileButton, &QPushButton::pressed, this, &VisualizationWidget::loadFromFile);
     connect(_loadRecButton, &QPushButton::pressed, this, &VisualizationWidget::requestRecVolume);
+
+    connect(_mprControlWidget, &MPRControlWidget::requestTransferFunctionReset, this, &VisualizationWidget::resetMPRTransferFunction);
+    connect(_dvrControlWidget, &DVRControlWidget::requestTransferFunctionReset, this, &VisualizationWidget::resetDVRTransferFunction);
 }
 
 void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
@@ -77,6 +80,15 @@ void VisualizationWidget::setRec(const std::shared_ptr<const Volume>& vol){
     updateVolumeChanged();
 }
 
+void VisualizationWidget::resetMPRTransferFunction()
+{
+    _mprControlWidget->setTransferFunctionRange(0, _visModel.volume().maxEntry());
+}
+
+void VisualizationWidget::resetDVRTransferFunction()
+{
+    _dvrControlWidget->setTransferFunctionRange(0, _visModel.volume().maxEntry());
+}
 
 void VisualizationWidget::loadFromFile(){
     QString filename = QFileDialog::getOpenFileName(this, "Open File", "", "Medical image data (*.edf)");
