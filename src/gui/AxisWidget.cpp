@@ -14,6 +14,7 @@ void AxisWidget::paintEvent(QPaintEvent*) {
     std::array<int, 3> order {0, 1, 2};
         
     //hardcoded bubblesort for three elements
+    //ensures that if two axes overlap the right one is painted in front of the other one
     if(axesVecs.at(0).x() > axesVecs.at(1).x()){
         std::swap(axesVecs.at(0), axesVecs.at(1));
         std::swap(order.at(0), order.at(1));

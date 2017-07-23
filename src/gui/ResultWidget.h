@@ -133,7 +133,7 @@ protected slots:
      * Does the drawing.
      * paintEvent can't be used, since it it isn't allowed to draw on children, so this
      * is the workaround that avoids creating a subclass
-     * To be get the events of the children this has to be registered in the 
+     * To get the events of the children this has to be registered in the 
      * children as listener (see constructor)
      */
     bool eventFilter(QObject * watched, QEvent * event) override;

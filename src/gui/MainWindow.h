@@ -30,10 +30,12 @@ public:
     }
 
 private slots:
+    //first function called when the aquisition data is requested by the reconstruction
     void requestedAquisition(){
         _rWidget.setAcq(_aWidget.getAcq());
     }
     
+    //first function called when the reconstruction is requested by the visualization 
     void requestedReconstruction(){
         _vWidget.setRec(_rWidget.getRec());
     }

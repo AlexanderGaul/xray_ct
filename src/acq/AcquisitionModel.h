@@ -132,8 +132,6 @@ public:
      * changes the size of the detector and/ or the number of pixels
      * since other functions assume that all poses have the same structure, this
      * requires that old poses are deleted
-     * 
-     * return true if poses have to be reset or deleted
      */
     void changePoseParams(float sourceDetDistance, float detectorWidth, float detectorHeight,
                           int horizontalPixels, int verticalPixels){
@@ -184,8 +182,7 @@ private:
     void updateProjection();
     
     /*
-     * This is somewaht useless currently. I will use it for optimisation later.
-     * Just use updateProjection for now instead
+     * Updates only the currently modified projection
      */
     void updateLastProjection();
     
