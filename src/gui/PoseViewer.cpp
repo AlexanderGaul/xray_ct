@@ -135,11 +135,6 @@ PoseViewer::PoseViewer(AcquisitionModel& model) :
     connect(_deletePoseButton, &QPushButton::pressed, &_model, &AcquisitionModel::deletePose);
     connect(_clearButton, &QPushButton::pressed, &_model, &AcquisitionModel::clearPoses);
     
-    connect(_savePoseButton, &QPushButton::pressed, &_model, &AcquisitionModel::savePose);
-    connect(_deletePoseButton, &QPushButton::pressed, &_model, &AcquisitionModel::deletePose);
-    connect(_clearButton, &QPushButton::pressed, &_model, &AcquisitionModel::clearPoses);
-
-    
     connect(_raysBox, SIGNAL(stateChanged(int)), _poseDisplay, SLOT(setShowRays(int)));
     connect(_zoomBox, SIGNAL(valueChanged(int)), _poseDisplay, SLOT(setZoom(int)));
     

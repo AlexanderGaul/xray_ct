@@ -1,5 +1,7 @@
 #include "PoseDisplay.h"
 
+#include <iostream>
+
 void PoseDisplay::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
