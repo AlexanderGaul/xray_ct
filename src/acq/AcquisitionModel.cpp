@@ -124,7 +124,7 @@ void AcquisitionModel::addSphericalPoses(int circles, int maxCount, float range)
         adjustedCount =  1.f / cos(distance / 2.f) * maxCount;
     }
     
-    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < 0 - distance / 10.f; yRot += distance)
+    for(float yRot = - M_PI / 2.f + distance / 2.f; yRot < 0 - distance; yRot += distance)
     {
         int count;
         float cosine = cosf(yRot);
@@ -155,6 +155,11 @@ void AcquisitionModel::addSphericalPoses(int circles, int maxCount, float range)
     if(circles % 2 == 1)
     {
         addCircularPoses(maxCount, 0.f, range);
+    }
+    else
+    {
+        addCircularPoses(maxCount, -distance/2.f, range);
+        addCircularPoses(maxCount, distance/2.f, range);
     }
     updateProjection();
     emit poseChanged();
